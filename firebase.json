@@ -1,0 +1,41 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "blin-car1",
+          "appId": "1:1069273290393:android:ce7ba83506f77d2f0a0a08",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "blin-car1",
+          "configurations": {
+            "android": "1:1069273290393:android:ce7ba83506f77d2f0a0a08",
+            "ios": "1:1069273290393:ios:18f48afcc6ca78e90a0a08",
+            "web": "1:1069273290393:web:e89c6cdef1438d890a0a08"
+          }
+        }
+      }
+    }
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "disallowLegacyRuntimeConfig": true,
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ],
+      "predeploy": [
+        "npm --prefix \"$RESOURCE_DIR\" run lint",
+        "npm --prefix \"$RESOURCE_DIR\" run build"
+      ]
+    }
+  ]
+}

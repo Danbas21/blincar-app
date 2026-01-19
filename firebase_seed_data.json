@@ -1,0 +1,322 @@
+{
+  "blincar": {
+    "vehicles": {
+      "veh_001": {
+        "id": "veh_001",
+        "brand": "Chevrolet",
+        "model": "Suburban High Country",
+        "year": 2025,
+        "type": "suburbanBlindado",
+        "licensePlate": "ABC-123-MX",
+        "capacity": 8,
+        "isArmored": true,
+        "armorLevel": "Nivel III",
+        "color": "Negra",
+        "interiors": "Negros",
+        "photoUrl": "https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?w=800",
+        "isAvailable": true,
+        "currentDriverId": null,
+        "currentTripId": null
+      },
+      "veh_002": {
+        "id": "veh_002",
+        "brand": "Chevrolet",
+        "model": "Suburban RST",
+        "year": 2025,
+        "type": "suv",
+        "licensePlate": "DEF-456-MX",
+        "capacity": 8,
+        "isArmored": false,
+        "armorLevel": null,
+        "color": "Negra",
+        "interiors": "Negros",
+        "photoUrl": "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=800",
+        "isAvailable": true,
+        "currentDriverId": null,
+        "currentTripId": null
+      },
+      "veh_003": {
+        "id": "veh_003",
+        "brand": "Land Rover",
+        "model": "Range Rover Autobiography 4.4 V8",
+        "year": 2023,
+        "type": "landRover",
+        "licensePlate": "GHI-789-MX",
+        "capacity": 5,
+        "isArmored": false,
+        "armorLevel": null,
+        "color": "Gris",
+        "interiors": "Miel",
+        "photoUrl": "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=800",
+        "isAvailable": true,
+        "currentDriverId": null,
+        "currentTripId": null
+      },
+      "veh_004": {
+        "id": "veh_004",
+        "brand": "Chevrolet",
+        "model": "Suburban High Country",
+        "year": 2021,
+        "type": "suburbanBlindado",
+        "licensePlate": "JKL-012-MX",
+        "capacity": 8,
+        "isArmored": true,
+        "armorLevel": "Nivel III",
+        "color": "Blanca",
+        "interiors": "Negros",
+        "photoUrl": "https://images.unsplash.com/photo-1583121274602-3e2820c69888?w=800",
+        "isAvailable": true,
+        "currentDriverId": null,
+        "currentTripId": null
+      },
+      "veh_005": {
+        "id": "veh_005",
+        "brand": "Cadillac",
+        "model": "Escalade",
+        "year": 2025,
+        "type": "escalade",
+        "licensePlate": "MNO-345-MX",
+        "capacity": 8,
+        "isArmored": false,
+        "armorLevel": null,
+        "color": "Blanca",
+        "interiors": "Camel",
+        "photoUrl": "https://images.unsplash.com/photo-1621135802920-133df287f89c?w=800",
+        "isAvailable": true,
+        "currentDriverId": null,
+        "currentTripId": null
+      },
+      "veh_006": {
+        "id": "veh_006",
+        "brand": "Ford",
+        "model": "Explorer Police Interceptor",
+        "year": 2025,
+        "type": "explorer",
+        "licensePlate": "PQR-678-MX",
+        "capacity": 5,
+        "isArmored": false,
+        "armorLevel": null,
+        "color": "Blanca",
+        "interiors": "Negros",
+        "photoUrl": "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=800",
+        "isAvailable": true,
+        "currentDriverId": null,
+        "currentTripId": null
+      },
+      "veh_007": {
+        "id": "veh_007",
+        "brand": "BMW",
+        "model": "F800 GS Police",
+        "year": 2025,
+        "type": "bmwF800",
+        "licensePlate": "STU-901-MX",
+        "capacity": 2,
+        "isArmored": false,
+        "armorLevel": null,
+        "color": "Blanca",
+        "interiors": "N/A",
+        "photoUrl": "https://images.unsplash.com/photo-1558981806-ec527fa84c39?w=800",
+        "isAvailable": true,
+        "currentDriverId": null,
+        "currentTripId": null
+      }
+    },
+    "drivers": {
+      "driver_001": {
+        "id": "driver_001",
+        "firebaseUid": "mock_firebase_uid_1",
+        "email": "juan.perez@blincar.com",
+        "phoneNumber": "+525512345678",
+        "fullName": "Juan Pérez González",
+        "licenseNumber": "CDMX-A-123456",
+        "licenseExpiryDate": "2026-12-31T00:00:00.000Z",
+        "isAvailable": true,
+        "isActive": true,
+        "currentTripId": null,
+        "currentLocation": {
+          "latitude": 19.4326,
+          "longitude": -99.1332
+        },
+        "profilePhotoUrl": "https://i.pravatar.cc/150?img=12",
+        "rating": 4.8,
+        "totalTrips": 342,
+        "lastUpdate": "2025-01-08T12:00:00.000Z"
+      },
+      "driver_002": {
+        "id": "driver_002",
+        "firebaseUid": "mock_firebase_uid_2",
+        "email": "maria.lopez@blincar.com",
+        "phoneNumber": "+525587654321",
+        "fullName": "María López Hernández",
+        "licenseNumber": "CDMX-A-789012",
+        "licenseExpiryDate": "2027-06-30T00:00:00.000Z",
+        "isAvailable": true,
+        "isActive": true,
+        "currentTripId": null,
+        "currentLocation": {
+          "latitude": 19.4363,
+          "longitude": -99.0721
+        },
+        "profilePhotoUrl": "https://i.pravatar.cc/150?img=47",
+        "rating": 4.9,
+        "totalTrips": 521,
+        "lastUpdate": "2025-01-08T12:00:00.000Z"
+      },
+      "driver_003": {
+        "id": "driver_003",
+        "firebaseUid": "mock_firebase_uid_3",
+        "email": "carlos.martinez@blincar.com",
+        "phoneNumber": "+525598765432",
+        "fullName": "Carlos Martínez Sánchez",
+        "licenseNumber": "CDMX-A-345678",
+        "licenseExpiryDate": "2026-09-15T00:00:00.000Z",
+        "isAvailable": true,
+        "isActive": true,
+        "currentTripId": null,
+        "currentLocation": {
+          "latitude": 19.4270,
+          "longitude": -99.1677
+        },
+        "profilePhotoUrl": "https://i.pravatar.cc/150?img=33",
+        "rating": 4.7,
+        "totalTrips": 289,
+        "lastUpdate": "2025-01-08T12:00:00.000Z"
+      }
+    },
+    "servicePackages": {
+      "pkg_001": {
+        "id": "pkg_001",
+        "name": "Transporte Ejecutivo",
+        "description": "Suburban o Escalade sin blindaje",
+        "vehicleTypes": ["suv", "escalade"],
+        "capacity": 8,
+        "isArmored": false,
+        "includesEscort": false,
+        "escortType": null,
+        "basePrice": 1500.0,
+        "pricePerKm": 25.0,
+        "pricePerHour": 300.0,
+        "minHours": 2,
+        "features": [
+          "Vehículo de lujo",
+          "Chofer profesional",
+          "Agua embotellada",
+          "WiFi a bordo"
+        ],
+        "imageUrl": "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=400"
+      },
+      "pkg_002": {
+        "id": "pkg_002",
+        "name": "Seguridad Premium",
+        "description": "Suburban Blindado Nivel III",
+        "vehicleTypes": ["suburbanBlindado"],
+        "capacity": 8,
+        "isArmored": true,
+        "includesEscort": false,
+        "escortType": null,
+        "basePrice": 3500.0,
+        "pricePerKm": 45.0,
+        "pricePerHour": 500.0,
+        "minHours": 3,
+        "features": [
+          "Blindaje Nivel III certificado",
+          "Chofer con entrenamiento táctico",
+          "Monitoreo GPS 24/7",
+          "Seguro amplio"
+        ],
+        "imageUrl": "https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?w=400"
+      },
+      "pkg_003": {
+        "id": "pkg_003",
+        "name": "Escolta Desarmada",
+        "description": "Transporte + escolta profesional",
+        "vehicleTypes": ["suv", "escalade", "explorer"],
+        "capacity": 5,
+        "isArmored": false,
+        "includesEscort": true,
+        "escortType": "unarmed",
+        "basePrice": 2200.0,
+        "pricePerKm": 32.0,
+        "pricePerHour": 400.0,
+        "minHours": 3,
+        "features": [
+          "Vehículo ejecutivo",
+          "Escolta profesional desarmada",
+          "Personal certificado",
+          "Comunicación constante"
+        ],
+        "imageUrl": "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=400"
+      },
+      "pkg_004": {
+        "id": "pkg_004",
+        "name": "Máxima Seguridad",
+        "description": "Blindado Nivel III + Escolta Armada",
+        "vehicleTypes": ["suburbanBlindado"],
+        "capacity": 8,
+        "isArmored": true,
+        "includesEscort": true,
+        "escortType": "armed",
+        "basePrice": 5500.0,
+        "pricePerKm": 60.0,
+        "pricePerHour": 700.0,
+        "minHours": 4,
+        "features": [
+          "Blindaje certificado Nivel III",
+          "Escolta armada con licencia vigente",
+          "Monitoreo satelital",
+          "Protocolo anti-secuestro",
+          "Grabación continua"
+        ],
+        "imageUrl": "https://images.unsplash.com/photo-1519641471654-76ce0107ad1b?w=400"
+      },
+      "pkg_005": {
+        "id": "pkg_005",
+        "name": "Transporte Compacto",
+        "description": "Land Rover o Explorer (5 pasajeros)",
+        "vehicleTypes": ["landRover", "explorer"],
+        "capacity": 5,
+        "isArmored": false,
+        "includesEscort": false,
+        "escortType": null,
+        "basePrice": 1200.0,
+        "pricePerKm": 22.0,
+        "pricePerHour": 280.0,
+        "minHours": 2,
+        "features": [
+          "Vehículo premium compacto",
+          "Ideal para grupos pequeños",
+          "Chofer profesional",
+          "Agua embotellada"
+        ],
+        "imageUrl": "https://images.unsplash.com/photo-1606664515524-ed2f786a0bd6?w=400"
+      },
+      "pkg_006": {
+        "id": "pkg_006",
+        "name": "Moto Ejecutiva",
+        "description": "BMW F800 GS Police (traslados rápidos)",
+        "vehicleTypes": ["bmwF800"],
+        "capacity": 2,
+        "isArmored": false,
+        "includesEscort": false,
+        "escortType": null,
+        "basePrice": 800.0,
+        "pricePerKm": 18.0,
+        "pricePerHour": 200.0,
+        "minHours": 1,
+        "features": [
+          "Traslados ultra-rápidos",
+          "Evita el tráfico",
+          "Piloto certificado",
+          "Casco incluido"
+        ],
+        "imageUrl": "https://images.unsplash.com/photo-1558981806-ec527fa84c39?w=400"
+      }
+    },
+    "trips": {},
+    "tripRequests": {
+      "pending": {},
+      "active": {}
+    },
+    "userTrips": {}
+  }
+}

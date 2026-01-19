@@ -1,0 +1,40 @@
+# Build configuration for code generation
+# Optimizes Freezed and JSON serialization generation
+
+targets:
+  $default:
+    builders:
+      freezed:
+        options:
+          # JSON configuration
+          union_key: type
+          union_value_case: pascal
+
+          # Feature flags
+          copy_with: true
+          equal: true
+          to_string_override: true
+          make_collections_unmodifiable: true
+          add_implicit_final: true
+
+          # Pattern matching options
+          when: true
+          when_or_null: true
+          maybe_when: true
+          map: true
+          map_or_null: true
+          maybe_map: true
+
+          # JSON serialization
+          from_json: true
+          to_json: true
+          generic_argument_factories: false
+
+      json_serializable:
+        options:
+          # JSON serialization options
+          explicit_to_json: true
+          checked: true
+          create_to_json: true
+          disallow_unrecognized_keys: false
+          any_map: false

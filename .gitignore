@@ -1,0 +1,135 @@
+# ============================================
+# ARCHIVOS SENSIBLES - NUNCA SUBIR
+# ============================================
+.env
+.env.*
+*.keystore
+*.jks
+key.properties
+android/key.properties
+secrets/
+
+# ============================================
+# PLATAFORMAS NO UTILIZADAS
+# ============================================
+linux/
+windows/
+
+# ============================================
+# CARPETAS INNECESARIAS
+# ============================================
+docs/
+errors/
+firebaseArc/
+scripts/
+
+# ============================================
+# ARCHIVOS MD INNECESARIOS
+# ============================================
+FIREBASE_SEED_INSTRUCTIONS.md
+BUENAS_PRACTICAS_FLUTTER_BLOC.md
+INSTRUCCIONES_DEMO.md
+BUILD_APK_INSTRUCTIONS.md
+GENERAR_APK_DEMO.md
+FIX_VIAJE_ACTIVO.md
+
+# ============================================
+# BUILD Y OUTPUTS
+# ============================================
+build/
+/build/
+*.apk
+*.aab
+*.ipa
+*.app
+
+# ============================================
+# FLUTTER / DART
+# ============================================
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+**/doc/api/
+**/ios/Flutter/.last_build_id
+.packages
+
+# ============================================
+# ANDROID
+# ============================================
+/android/app/debug
+/android/app/profile
+/android/app/release
+/android/.gradle/
+/android/captures/
+/android/local.properties
+*.hprof
+
+# ============================================
+# IOS / MACOS
+# ============================================
+**/ios/Pods/
+**/ios/.symlinks/
+**/ios/Flutter/Flutter.framework
+**/ios/Flutter/Flutter.podspec
+**/macos/Pods/
+**/macos/.symlinks/
+**/macos/Flutter/Flutter.framework
+**/macos/Flutter/Flutter.podspec
+**/xcuserdata/
+**/DerivedData/
+
+# ============================================
+# NODE MODULES (Firebase Functions)
+# ============================================
+**/node_modules/
+functions/node_modules/
+
+# ============================================
+# IDE
+# ============================================
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+*.swp
+*.swo
+.claude/
+
+# ============================================
+# SISTEMA OPERATIVO
+# ============================================
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# ============================================
+# LOGS Y TEMPORALES
+# ============================================
+*.log
+*.tmp
+*.temp
+*.class
+*.pyc
+.buildlog/
+.history
+.svn/
+migrate_working_dir/
+
+# ============================================
+# SIMBOLOS Y OFUSCACION
+# ============================================
+app.*.symbols
+app.*.map.json
+
+# ============================================
+# ARCHIVOS DE RESPALDO
+# ============================================
+*.bak
+*.backup
+*~
