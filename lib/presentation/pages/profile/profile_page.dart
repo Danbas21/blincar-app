@@ -9,12 +9,10 @@ import '../../bloc/auth/auth_state.dart';
 import '../../bloc/locale/locale_bloc.dart';
 import '../../bloc/locale/locale_event.dart';
 import '../../bloc/locale/locale_state.dart';
-import '../../widgets/common/custom_button.dart';
 import '../auth/login_page.dart';
 import 'edit_profile_page.dart';
 import 'emergency_contact_page.dart';
 import 'payment_methods_page.dart';
-import 'documentation_page.dart';
 import '../dev/dev_tools_page.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -255,52 +253,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 builder: (context) => const EmergencyContactPage(),
               ),
             );
-          },
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDriverSection(AppLocalizations l10n) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          l10n.documentation,
-          style: TextStyle(
-            color: AppTheme.textPrimaryColor,
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        const SizedBox(height: 16),
-        _buildMenuItem(
-          icon: Icons.description,
-          title: l10n.documentation,
-          subtitle: l10n.driverLicense,
-          onTap: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => const DocumentationPage(),
-              ),
-            );
-          },
-        ),
-        _buildMenuItem(
-          icon: Icons.verified_user,
-          title: l10n.verification,
-          subtitle: l10n.loading,
-          trailing: const Icon(Icons.pending, color: AppTheme.warningColor),
-          onTap: () {
-            // TODO: Show verification status
-          },
-        ),
-        _buildMenuItem(
-          icon: Icons.account_balance_wallet,
-          title: l10n.wallet,
-          subtitle: l10n.earnings,
-          onTap: () {
-            // TODO: Navigate to wallet
           },
         ),
       ],

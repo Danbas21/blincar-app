@@ -59,7 +59,7 @@ class EarningsChart extends StatelessWidget {
                             end: Alignment.topCenter,
                             colors: [
                               AppTheme.primaryLightColor,
-                              AppTheme.primaryLightColor.withOpacity(0.7),
+                              AppTheme.primaryLightColor.withValues(alpha: 0.7),
                             ],
                           ),
                           borderRadius: const BorderRadius.only(

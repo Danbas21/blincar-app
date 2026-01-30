@@ -151,7 +151,7 @@ class _TripHistoryPageState extends State<TripHistoryPage> {
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: _getStatusColor(trip.status).withOpacity(0.1),
+                  color: _getStatusColor(trip.status).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(

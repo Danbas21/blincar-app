@@ -3,12 +3,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'dart:async';
-import 'package:dartz/dartz.dart' hide State;
 import '../../../core/theme/app_theme.dart';
 import '../../../domain/entities/trip/trip_entity.dart';
 import '../../../domain/repositories/trip_repository.dart';
 import '../../../core/services/service_locator.dart';
-import '../../../core/errors/failures.dart';
 import 'assign_trip_dialog.dart';
 
 class MonitorDashboardPage extends StatefulWidget {

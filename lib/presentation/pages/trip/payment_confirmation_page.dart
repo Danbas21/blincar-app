@@ -12,8 +12,6 @@ import '../../bloc/payment/payment_bloc.dart';
 import '../../bloc/payment/payment_event.dart';
 import '../../bloc/payment/payment_state.dart';
 import '../profile/payment_methods_page.dart';
-import '../../widgets/stripe/add_card_bottom_sheet.dart'
-    hide AddCardBottomSheet;
 
 /// Datos del viaje para mostrar en la pantalla de pago
 class TripPaymentData {

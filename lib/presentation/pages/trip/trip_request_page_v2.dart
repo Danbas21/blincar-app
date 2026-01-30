@@ -15,7 +15,9 @@ class TripRequestPageSimple extends StatefulWidget {
 }
 
 class _TripRequestPageSimpleState extends State<TripRequestPageSimple> {
+  // ignore: unused_field - Se usará para controlar cámara del mapa
   GoogleMapController? _mapController;
+  // ignore: unused_field - Se usará para resaltar ruta seleccionada
   int? _selectedRouteIndex;
 
   // 🔥 RUTAS HARDCODEADAS INLINE (del Excel real)
@@ -227,7 +229,7 @@ class _TripRequestPageSimpleState extends State<TripRequestPageSimple> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
-                color: AppTheme.primaryLightColor.withOpacity(0.1),
+                color: AppTheme.primaryLightColor.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(

@@ -128,10 +128,10 @@ class _DocumentationPageState extends State<DocumentationPage>
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: AppTheme.warningColor.withOpacity(0.1),
+              color: AppTheme.warningColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: AppTheme.warningColor.withOpacity(0.3),
+                color: AppTheme.warningColor.withValues(alpha: 0.3),
               ),
             ),
             child: Column(
@@ -291,10 +291,10 @@ class _DocumentationPageState extends State<DocumentationPage>
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: AppTheme.successColor.withOpacity(0.1),
+              color: AppTheme.successColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: AppTheme.successColor.withOpacity(0.3),
+                color: AppTheme.successColor.withValues(alpha: 0.3),
               ),
             ),
             child: Column(
@@ -355,7 +355,7 @@ class _DocumentationPageState extends State<DocumentationPage>
         color: AppTheme.surfaceColor,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: _getStatusColor(doc.status).withOpacity(0.3),
+          color: _getStatusColor(doc.status).withValues(alpha: 0.3),
         ),
       ),
       child: Column(
@@ -366,7 +366,7 @@ class _DocumentationPageState extends State<DocumentationPage>
               Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                  color: _getStatusColor(doc.status).withOpacity(0.1),
+                  color: _getStatusColor(doc.status).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
@@ -404,7 +404,7 @@ class _DocumentationPageState extends State<DocumentationPage>
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: _getStatusColor(doc.status).withOpacity(0.1),
+                  color: _getStatusColor(doc.status).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(

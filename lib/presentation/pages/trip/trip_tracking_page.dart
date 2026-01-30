@@ -444,8 +444,10 @@ class _TripTrackingPageState extends State<TripTrackingPage> {
   @override
   Widget build(BuildContext context) {
     // Prevenir que el usuario salga accidentalmente con el botón back
-    return WillPopScope(
-      onWillPop: () async {
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
         // Mostrar confirmación antes de salir
         final shouldPop = await showDialog<bool>(
           context: context,
@@ -474,7 +476,9 @@ class _TripTrackingPageState extends State<TripTrackingPage> {
             ],
           ),
         );
-        return shouldPop ?? false;
+        if (shouldPop == true && mounted) {
+          Navigator.of(context).pop();
+        }
       },
       child: Scaffold(
         appBar: AppBar(
@@ -566,7 +570,7 @@ class _TripTrackingPageState extends State<TripTrackingPage> {
             )
           : null,
       ), // Scaffold
-    ); // WillPopScope
+    ); // PopScope
   }
 
   Widget _buildTripInfoPanel() {

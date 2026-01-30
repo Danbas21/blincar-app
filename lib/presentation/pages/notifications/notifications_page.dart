@@ -72,7 +72,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
         border: Border.all(
           color: notification.isRead
               ? AppTheme.dividerColor
-              : AppTheme.primaryLightColor.withOpacity(0.3),
+              : AppTheme.primaryLightColor.withValues(alpha: 0.3),
           width: 1,
         ),
       ),
@@ -82,7 +82,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
           Container(
             padding: const EdgeInsets.all(8),
             decoration: BoxDecoration(
-              color: _getTypeColor(notification.type).withOpacity(0.1),
+              color: _getTypeColor(notification.type).withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Icon(

@@ -15,6 +15,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "1069273290393-cll6sod0tdvpsoc13gisc837int7uhtd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.blincar.app",
+            "certificate_hash": "64acef1a459dcae0ca55c2f0bf1e748233e5bd99"
+          }
+        },
+        {
+          "client_id": "1069273290393-delnfsl92b5nn4tm30jjcnmvok8uour7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.blincar.app",
+            "certificate_hash": "a26b7fb202dce247d70f8e2df84350d4c2dbb791"
+          }
+        },
+        {
           "client_id": "1069273290393-l9g9fjnj56aju6gbo1t34lffasuvvcp5.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
@@ -40,98 +56,10 @@
               "client_type": 3
             },
             {
-              "client_id": "1069273290393-68o1avev2qgsfva6l3a74s3q8boht7bj.apps.googleusercontent.com",
+              "client_id": "1069273290393-513d1g19pfhjao3j0gid4k65i4apuj8e.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.example.blincarAppNew"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:1069273290393:android:62cdb5885911f2e10a0a08",
-        "android_client_info": {
-          "package_name": "com.blincar.blincar_app"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "1069273290393-94oj9l4qm1il827humln7n255hfrcqu5.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.blincar.blincar_app",
-            "certificate_hash": "64acef1a459dcae0ca55c2f0bf1e748233e5bd99"
-          }
-        },
-        {
-          "client_id": "1069273290393-8raj6hhue0m5545b0o9m3ee7s5vddkt8.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBIf8-4M0nSIJfHfEiCaerMUiW4H3uaSzQ"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "1069273290393-8raj6hhue0m5545b0o9m3ee7s5vddkt8.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "1069273290393-68o1avev2qgsfva6l3a74s3q8boht7bj.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.blincarAppNew"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:1069273290393:android:ce7ba83506f77d2f0a0a08",
-        "android_client_info": {
-          "package_name": "com.example.blincar_app_new"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "1069273290393-a9kfc4s6pt7e61nrispoeupic7qlvr49.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.blincar_app_new",
-            "certificate_hash": "64acef1a459dcae0ca55c2f0bf1e748233e5bd99"
-          }
-        },
-        {
-          "client_id": "1069273290393-8raj6hhue0m5545b0o9m3ee7s5vddkt8.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyBIf8-4M0nSIJfHfEiCaerMUiW4H3uaSzQ"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "1069273290393-8raj6hhue0m5545b0o9m3ee7s5vddkt8.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "1069273290393-68o1avev2qgsfva6l3a74s3q8boht7bj.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.blincarAppNew"
+                "bundle_id": "com.blincar.app"
               }
             }
           ]

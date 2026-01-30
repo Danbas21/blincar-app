@@ -28,6 +28,8 @@ import '../../core/errors/failures.dart';
 /// El resto del código NO CAMBIA.
 class PhoneCameraVideoStreamRepository implements VideoStreamRepository {
   // Dependencies (inyectadas por get_it)
+  // Preparado para Phase 2 (upload directo a Storage)
+  // ignore: unused_field
   final VideoStorageRepository _storageRepository;
   final VideoSyncRepository _syncRepository;
 

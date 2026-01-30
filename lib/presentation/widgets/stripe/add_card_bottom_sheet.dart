@@ -21,20 +21,7 @@ class AddCardBottomSheet extends StatefulWidget {
 }
 
 class _AddCardBottomSheetState extends State<AddCardBottomSheet> {
-  bool _isLoading = false;
-
-  void _addCard() async {
-    setState(() => _isLoading = true);
-
-    // TODO: Implementar integración con Stripe
-    await Future.delayed(const Duration(seconds: 1));
-
-    setState(() => _isLoading = false);
-
-    if (widget.onCardAdded != null) {
-      widget.onCardAdded!();
-    }
-  }
+  final bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {

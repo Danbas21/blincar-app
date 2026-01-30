@@ -1,13 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:camera/camera.dart';
 
 import '../../bloc/video/video_stream_bloc.dart';
 import '../../bloc/video/video_stream_event.dart';
 import '../../bloc/video/video_stream_state.dart';
 import '../../../core/services/service_locator.dart';
 import '../../../domain/repositories/video_stream_repository.dart';
-import 'waiting_assignment_page.dart';
 
 class TripTrackingScreenV2 extends StatelessWidget {
   final String tripId;

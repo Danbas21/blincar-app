@@ -149,7 +149,7 @@ class _TripRequestPageV2State extends State<TripRequestPageV2> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                 decoration: BoxDecoration(
-                  color: AppTheme.primaryLightColor.withOpacity(0.2),
+                  color: AppTheme.primaryLightColor.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
@@ -295,7 +295,7 @@ class _TripRequestPageV2State extends State<TripRequestPageV2> {
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
-                color: AppTheme.primaryLightColor.withOpacity(0.1),
+                color: AppTheme.primaryLightColor.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Row(
@@ -465,7 +465,7 @@ class _TripRequestPageV2State extends State<TripRequestPageV2> {
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
                     color: isSelected
-                        ? AppTheme.primaryLightColor.withOpacity(0.1)
+                        ? AppTheme.primaryLightColor.withValues(alpha: 0.1)
                         : AppTheme.cardColor,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
@@ -700,7 +700,7 @@ class _TripRequestPageV2State extends State<TripRequestPageV2> {
     final result = await tripRepository.createTripRequest(
       userId: user.id,
       userName: user.fullName,
-      userPhone: user.phoneNumber ?? 'Sin teléfono',
+      userPhone: user.phoneNumber,
       routeId: _selectedRoute!.id,
       serviceType: _selectedServiceType,
       totalPrice: finalPrice,

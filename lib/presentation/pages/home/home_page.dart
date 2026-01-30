@@ -1129,7 +1129,7 @@ class _HomePageState extends State<HomePage> {
     final result = await tripRepository.createTripRequest(
       userId: user.id,
       userName: user.fullName,
-      userPhone: user.phoneNumber ?? 'Sin teléfono',
+      userPhone: user.phoneNumber,
       routeId: routeId,
       serviceType: '$serviceType | ${origin.address} → ${destination.address}',
       totalPrice: finalPrice,

@@ -65,11 +65,11 @@ class StripeService {
 
   /// Obtiene el tipo de tarjeta del PaymentMethod
   String getCardBrand(PaymentMethod paymentMethod) {
-    return paymentMethod.card?.brand ?? 'unknown';
+    return paymentMethod.card.brand ?? 'unknown';
   }
 
   /// Obtiene los ultimos 4 digitos de la tarjeta
   String getLastFourDigits(PaymentMethod paymentMethod) {
-    return paymentMethod.card?.last4 ?? '****';
+    return paymentMethod.card.last4 ?? '****';
   }
 }

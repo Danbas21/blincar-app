@@ -166,11 +166,15 @@ class _WaitingAssignmentPageState extends State<WaitingAssignmentPage>
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) async {
+        if (didPop) return;
         // Confirmar antes de salir
         final shouldPop = await _showExitConfirmation();
-        return shouldPop ?? false;
+        if (shouldPop == true && mounted) {
+          Navigator.of(context).pop();
+        }
       },
       child: Scaffold(
         backgroundColor: AppTheme.backgroundColor,
@@ -215,13 +219,13 @@ class _WaitingAssignmentPageState extends State<WaitingAssignmentPage>
                               gradient: LinearGradient(
                                 colors: [
                                   AppTheme.primaryLightColor,
-                                  AppTheme.primaryLightColor.withOpacity(0.6),
+                                  AppTheme.primaryLightColor.withValues(alpha: 0.6),
                                 ],
                               ),
                               boxShadow: [
                                 BoxShadow(
                                   color: AppTheme.primaryLightColor
-                                      .withOpacity(0.3),
+                                      .withValues(alpha: 0.3),
                                   blurRadius: 20,
                                   spreadRadius: 5,
                                 ),
