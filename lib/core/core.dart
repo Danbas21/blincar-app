@@ -13,6 +13,9 @@ export 'utils/validators.dart';
 export 'services/service_locator.dart';
 export 'services/api_service.dart';
 export 'services/storage_service.dart';
+export 'services/crashlytics_service.dart';
+export 'services/analytics_service.dart';
+export 'services/push_notification_service.dart';
 
 // Errors
 export 'errors/failures.dart';

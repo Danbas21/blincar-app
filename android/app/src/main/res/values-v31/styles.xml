@@ -9,7 +9,6 @@
         <item name="android:windowSplashScreenBackground">#1a1a1a</item>
         <item name="android:windowSplashScreenAnimatedIcon">@drawable/android12splash</item>
     </style>
-
     <style name="NormalTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="android:windowBackground">?android:colorBackground</item>
     </style>

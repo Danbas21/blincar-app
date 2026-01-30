@@ -43,6 +43,30 @@ void main() async {
     _log('Error al inicializar Firebase: $e');
   }
 
+  // 📊 INICIALIZAR CRASHLYTICS (después de Firebase)
+  try {
+    await CrashlyticsService.initialize();
+    _log('Crashlytics inicializado correctamente');
+  } catch (e) {
+    _log('Error al inicializar Crashlytics: $e');
+  }
+
+  // 📈 INICIALIZAR ANALYTICS
+  try {
+    await AnalyticsService.initialize();
+    _log('Analytics inicializado correctamente');
+  } catch (e) {
+    _log('Error al inicializar Analytics: $e');
+  }
+
+  // 🔔 INICIALIZAR PUSH NOTIFICATIONS
+  try {
+    await PushNotificationService.initialize();
+    _log('Push Notifications inicializadas correctamente');
+  } catch (e) {
+    _log('Error al inicializar Push Notifications: $e');
+  }
+
   // 💳 INICIALIZAR STRIPE
   try {
     await StripeService.initialize();

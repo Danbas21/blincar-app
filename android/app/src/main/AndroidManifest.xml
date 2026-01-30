@@ -21,6 +21,7 @@
     <!-- Permisos de notificaciones -->
 <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 <uses-permission android:name="android.permission.WAKE_LOCK" />
+<uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     
     <!-- Features requeridas -->
 <uses-feature android:name="android.hardware.camera" android:required="false" />

@@ -8,6 +8,7 @@ plugins {
     id("kotlin-android")
     // 🔥 GOOGLE SERVICES (Firebase)
     id("com.google.gms.google-services")
+    id("com.google.firebase.crashlytics")
     id("dev.flutter.flutter-gradle-plugin")
 }
 
