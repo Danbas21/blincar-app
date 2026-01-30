@@ -9,6 +9,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 
 import '../constants/api_constants.dart';
 import '../security/ssl_pinning_service.dart';
+import '../security/secure_storage_service.dart';
 import '../../data/repositories/firebase_auth_repository.dart';
 import '../../data/repositories/firebase_trip_repository.dart';
 import '../../data/repositories/stripe_payment_repository.dart';
@@ -95,9 +96,19 @@ Future<void> setupServiceLocator() async {
     () => ApiService(getIt<Dio>()),
   );
 
-  getIt.registerLazySingleton<StorageService>(
-    () => StorageService(getIt<SharedPreferences>()),
+  // 🔒 Secure Storage Service (para datos sensibles)
+  getIt.registerLazySingleton<SecureStorageService>(
+    () => SecureStorageService(),
   );
+
+  // Storage Service (combina SharedPreferences + SecureStorage)
+  final storageService = StorageService(
+    getIt<SharedPreferences>(),
+    getIt<SecureStorageService>(),
+  );
+  // Migrar datos legacy a almacenamiento seguro
+  await storageService.initialize();
+  getIt.registerLazySingleton<StorageService>(() => storageService);
 
   getIt.registerLazySingleton<LocationTrackingService>(
     () => LocationTrackingService(database: getIt<FirebaseDatabase>()),
