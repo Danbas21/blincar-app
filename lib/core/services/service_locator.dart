@@ -13,9 +13,12 @@ import '../security/secure_storage_service.dart';
 import '../../data/repositories/firebase_auth_repository.dart';
 import '../../data/repositories/firebase_trip_repository.dart';
 import '../../data/repositories/stripe_payment_repository.dart';
+import '../../data/repositories/fcm_repository_impl.dart';
+import '../../data/datasources/remote/fcm_remote_data_source.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../../domain/repositories/trip_repository.dart';
 import '../../domain/repositories/payment_repository.dart';
+import '../../domain/repositories/fcm_repository.dart';
 import '../../domain/usecases/auth/login_usecase.dart';
 import '../../domain/usecases/auth/register_usecase.dart';
 import '../../domain/usecases/auth/update_profile_usecase.dart';
@@ -38,6 +41,8 @@ import 'location_tracking_service.dart';
 import 'stripe_service.dart';
 import 'stripe_backend_service.dart';
 import 'google_directions_service.dart';
+import 'fcm_manager.dart';
+import 'auth_fcm_listener.dart';
 
 final GetIt getIt = GetIt.instance;
 
@@ -126,11 +131,22 @@ Future<void> setupServiceLocator() async {
     () => GoogleDirectionsService(),
   );
 
+  // Auth FCM Listener (registra tokens cuando el usuario se autentica)
+  getIt.registerLazySingleton<AuthFcmListener>(
+    () => AuthFcmListener(
+      firebaseAuth: getIt<firebase_auth.FirebaseAuth>(),
+      fcmManager: getIt<FcmManager>(),
+    ),
+  );
+
   // ========================================
   // 3. DATA SOURCES
   // ========================================
 
-  // TODO: Agregar data sources si necesitas cache local
+  // FCM Remote Data Source (requiere Dio con auth interceptor)
+  getIt.registerLazySingleton<FcmRemoteDataSource>(
+    () => FcmRemoteDataSourceImpl(dio: getIt<Dio>()),
+  );
 
   // ========================================
   // 4. REPOSITORIES
@@ -157,6 +173,20 @@ Future<void> setupServiceLocator() async {
     () => StripePaymentRepository(
       database: getIt<FirebaseDatabase>(),
       stripeService: getIt<StripeService>(),
+    ),
+  );
+
+  // FCM Repository (Push Notifications)
+  getIt.registerLazySingleton<FcmRepository>(
+    () => FcmRepositoryImpl(
+      remoteDataSource: getIt<FcmRemoteDataSource>(),
+    ),
+  );
+
+  // FCM Manager (maneja registro automático de tokens)
+  getIt.registerLazySingleton<FcmManager>(
+    () => FcmManager(
+      fcmRepository: getIt<FcmRepository>(),
     ),
   );
 

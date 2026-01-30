@@ -12,9 +12,9 @@ abstract class AppException extends Equatable implements Exception {
 class ServerException extends AppException {
   final int statusCode;
 
-  const ServerException({
-    required String message,
-    required this.statusCode,
+  const ServerException(
+    String message, {
+    this.statusCode = 500,
   }) : super(message);
 
   @override
@@ -35,4 +35,8 @@ class ValidationException extends AppException {
 
 class LocationException extends AppException {
   const LocationException(super.message);
+}
+
+class UnauthorizedException extends AppException {
+  const UnauthorizedException(super.message);
 }

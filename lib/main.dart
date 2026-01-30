@@ -78,6 +78,15 @@ void main() async {
   // Configurar dependencias (Repositories, Use Cases, BLoCs)
   await setupServiceLocator();
 
+  // 🔔 INICIALIZAR AUTH FCM LISTENER
+  // Registra tokens automáticamente cuando el usuario se autentica
+  try {
+    getIt<AuthFcmListener>().initialize();
+    _log('Auth FCM Listener inicializado correctamente');
+  } catch (e) {
+    _log('Error al inicializar Auth FCM Listener: $e');
+  }
+
   runApp(const BlincarApp());
 }
 
@@ -91,8 +100,15 @@ void _log(String message) {
 class BlincarApp extends StatelessWidget {
   const BlincarApp({super.key});
 
+  // GlobalKey para navegación desde notificaciones
+  static final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
   @override
   Widget build(BuildContext context) {
+    // Configurar NotificationNavigator
+    final notificationNavigator = NotificationNavigator(navigatorKey: navigatorKey);
+    PushNotificationService.onNotificationTap = notificationNavigator.handleNotificationTap;
+
     // Obtener el idioma del sistema para inicialización
     final systemLocale = WidgetsBinding.instance.platformDispatcher.locale;
 
@@ -119,6 +135,7 @@ class BlincarApp extends StatelessWidget {
             title: 'Blincar',
             debugShowCheckedModeBanner: false,
             theme: AppTheme.darkTheme,
+            navigatorKey: navigatorKey,
 
             // Configuración de localización
             locale: localeState.locale,
