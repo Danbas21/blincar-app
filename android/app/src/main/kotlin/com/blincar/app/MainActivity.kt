@@ -1,4 +1,4 @@
-package com.blincar.blincar_app
+package com.blincar.app
 
 import io.flutter.embedding.android.FlutterFragmentActivity
 

@@ -19,7 +19,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace = "com.blincar.blincar_app"
+    namespace = "com.blincar.app"
     compileSdk = 36
     ndkVersion = "27.0.12077973"
 
@@ -45,7 +45,7 @@ android {
     }
 
     defaultConfig {
-        applicationId = "com.blincar.blincar_app"
+        applicationId = "com.blincar.app"
         minSdk = 24
         targetSdk = 36
         versionCode = flutter.versionCode
