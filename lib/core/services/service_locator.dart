@@ -8,6 +8,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 import '../constants/api_constants.dart';
+import '../security/ssl_pinning_service.dart';
 import '../../data/repositories/firebase_auth_repository.dart';
 import '../../data/repositories/firebase_trip_repository.dart';
 import '../../data/repositories/stripe_payment_repository.dart';
@@ -60,11 +61,15 @@ Future<void> setupServiceLocator() async {
   final sharedPreferences = await SharedPreferences.getInstance();
   getIt.registerLazySingleton<SharedPreferences>(() => sharedPreferences);
 
-  // Dio HTTP Client
+  // Dio HTTP Client con SSL Pinning
   final dio = Dio();
   dio.options.baseUrl = ApiConstants.baseUrl;
   dio.options.connectTimeout = const Duration(seconds: 30);
   dio.options.receiveTimeout = const Duration(seconds: 30);
+
+  // 🔒 Configurar SSL Pinning para proteger contra ataques MITM
+  SslPinningService.configureDio(dio);
+
   getIt.registerLazySingleton<Dio>(() => dio);
 
   // Firebase Auth

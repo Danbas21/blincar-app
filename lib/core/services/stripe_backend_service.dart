@@ -5,22 +5,29 @@ import 'package:http/http.dart' as http;
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import '../constants/api_constants.dart';
+import '../security/ssl_pinning_service.dart';
 import 'storage_service.dart';
 import 'service_locator.dart';
 
 /// Servicio para conectar con los endpoints de Stripe del backend
+///
+/// Usa SSL Pinning para proteger las comunicaciones de pago
 class StripeBackendService {
   final String baseUrl;
   final StorageService _storageService;
   final FirebaseAuth _firebaseAuth;
+  final http.Client _httpClient;
 
   StripeBackendService({
     String? baseUrl,
     StorageService? storageService,
     FirebaseAuth? firebaseAuth,
+    http.Client? httpClient,
   })  : baseUrl = baseUrl ?? ApiConstants.baseUrl,
         _storageService = storageService ?? getIt<StorageService>(),
-        _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance;
+        _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
+        // 🔒 Usar cliente HTTP con SSL Pinning
+        _httpClient = httpClient ?? SecureHttpClient.create();
 
   /// Headers con autenticacion usando Firebase ID Token
   Future<Map<String, String>> get _headers async {
@@ -45,7 +52,7 @@ class StripeBackendService {
   Future<String?> getPublishableKey() async {
     try {
       final headers = await _headers;
-      final response = await http.get(
+      final response = await _httpClient.get(
         Uri.parse('$baseUrl/api/stripe/config'),
         headers: headers,
       );
@@ -65,7 +72,7 @@ class StripeBackendService {
   Future<StripeResult<String>> getOrCreateCustomer() async {
     try {
       final headers = await _headers;
-      final response = await http.post(
+      final response = await _httpClient.post(
         Uri.parse('$baseUrl/api/stripe/customer'),
         headers: headers,
       );
@@ -86,7 +93,7 @@ class StripeBackendService {
   Future<StripeResult<SetupIntentData>> createSetupIntent() async {
     try {
       final headers = await _headers;
-      final response = await http.post(
+      final response = await _httpClient.post(
         Uri.parse('$baseUrl/api/stripe/setup-intent'),
         headers: headers,
       );
@@ -110,7 +117,7 @@ class StripeBackendService {
   Future<StripeResult<SavedCard>> attachPaymentMethod(String paymentMethodId) async {
     try {
       final headers = await _headers;
-      final response = await http.post(
+      final response = await _httpClient.post(
         Uri.parse('$baseUrl/api/stripe/payment-method'),
         headers: headers,
         body: jsonEncode({'paymentMethodId': paymentMethodId}),
@@ -132,7 +139,7 @@ class StripeBackendService {
   Future<StripeResult<List<SavedCard>>> listPaymentMethods() async {
     try {
       final headers = await _headers;
-      final response = await http.get(
+      final response = await _httpClient.get(
         Uri.parse('$baseUrl/api/stripe/payment-methods'),
         headers: headers,
       );
@@ -155,7 +162,7 @@ class StripeBackendService {
   Future<StripeResult<void>> setDefaultPaymentMethod(String paymentMethodId) async {
     try {
       final headers = await _headers;
-      final response = await http.put(
+      final response = await _httpClient.put(
         Uri.parse('$baseUrl/api/stripe/payment-method/$paymentMethodId/default'),
         headers: headers,
       );
@@ -176,7 +183,7 @@ class StripeBackendService {
   Future<StripeResult<void>> deletePaymentMethod(String paymentMethodId) async {
     try {
       final headers = await _headers;
-      final response = await http.delete(
+      final response = await _httpClient.delete(
         Uri.parse('$baseUrl/api/stripe/payment-method/$paymentMethodId'),
         headers: headers,
       );
@@ -201,7 +208,7 @@ class StripeBackendService {
   }) async {
     try {
       final headers = await _headers;
-      final response = await http.post(
+      final response = await _httpClient.post(
         Uri.parse('$baseUrl/api/stripe/payment-intent'),
         headers: headers,
         body: jsonEncode({
