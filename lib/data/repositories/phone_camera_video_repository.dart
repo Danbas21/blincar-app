@@ -2,7 +2,6 @@
 import 'dart:async';
 import 'package:dartz/dartz.dart';
 import 'package:camera/camera.dart';
-import 'package:path_provider/path_provider.dart';
 import 'dart:io';
 
 import '../../domain/repositories/video_stream_repository.dart';
@@ -130,19 +129,12 @@ class PhoneCameraVideoStreamRepository implements VideoStreamRepository {
       // Actualizar estado
       _updateStreamState(sessionId, VideoStreamingStatus.streaming);
 
-      // Directorio temporal para guardar videos
-      final directory = await getTemporaryDirectory();
-
       int chunkNumber = 0;
 
       // Loop infinito de grabación
       while (_streamControllers[sessionId] != null &&
           !_streamControllers[sessionId]!.isClosed) {
         try {
-          // Path del chunk
-          final chunkPath =
-              '${directory.path}/chunk_${sessionId}_${chunkNumber}.mp4';
-
           // Iniciar grabación
           await _cameraController!.startVideoRecording();
 

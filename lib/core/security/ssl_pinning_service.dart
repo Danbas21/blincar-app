@@ -159,13 +159,11 @@ class SslPinningService {
   /// Agrega un fingerprint dinámicamente (para testing)
   ///
   /// NO usar en producción - los fingerprints deben estar hardcodeados
+  ///
+  /// Nota: Este método no puede modificar _allowedFingerprints porque es const.
+  /// Para testing, usar mocks o inyección de dependencias.
   @visibleForTesting
-  static void addFingerprintForTesting(String fingerprint) {
-    if (!kReleaseMode) {
-      // ignore: invalid_use_of_visible_for_testing_member
-      (_allowedFingerprints as List<String>).add(fingerprint);
-    }
-  }
+  static List<String> get testFingerprints => List.from(_allowedFingerprints);
 }
 
 /// Excepción lanzada cuando falla la validación SSL
