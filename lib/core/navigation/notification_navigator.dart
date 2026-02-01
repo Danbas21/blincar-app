@@ -1,6 +1,12 @@
 // lib/core/navigation/notification_navigator.dart
 
 import 'package:flutter/material.dart';
+import '../../presentation/pages/trip/trip_tracking_page.dart';
+import '../../presentation/pages/trip/trip_history_page.dart';
+import '../../presentation/pages/reservations/reservations_page.dart';
+import '../../presentation/pages/panic/panic_page.dart';
+import '../../presentation/pages/payment/payment_history_page.dart';
+import '../../presentation/pages/notifications/notifications_page.dart';
 
 /// Navigator que maneja la navegación desde notificaciones push
 ///
@@ -84,33 +90,24 @@ class NotificationNavigator {
 
   // ========== MÉTODOS DE NAVEGACIÓN ==========
 
-  /// Navega a detalles del viaje
+  /// Navega a detalles del viaje (TripTrackingPage)
   void _navigateToTripDetails(BuildContext context, String tripId) {
     debugPrint('[NotificationNavigator] Navigate to trip: $tripId');
 
-    // TODO: Reemplazar con la ruta real de tu app
-    // Navigator.of(context).pushNamed('/trip-details', arguments: tripId);
-
-    // Por ahora, mostrar snackbar (temporal)
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Navegar a viaje: $tripId'),
-        backgroundColor: Colors.blue,
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => TripTrackingPage(tripId: tripId),
       ),
     );
   }
 
-  /// Navega a viaje activo (mapa en vivo)
+  /// Navega a viaje activo (mapa en vivo) - mismo que detalles
   void _navigateToActiveTrip(BuildContext context, String tripId) {
     debugPrint('[NotificationNavigator] Navigate to active trip: $tripId');
 
-    // TODO: Reemplazar con la ruta real
-    // Navigator.of(context).pushNamed('/active-trip', arguments: tripId);
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Navegar a viaje activo: $tripId'),
-        backgroundColor: Colors.green,
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => TripTrackingPage(tripId: tripId),
       ),
     );
   }
@@ -119,28 +116,22 @@ class NotificationNavigator {
   void _navigateToTripsHistory(BuildContext context) {
     debugPrint('[NotificationNavigator] Navigate to trips history');
 
-    // TODO: Reemplazar con la ruta real
-    // Navigator.of(context).pushNamed('/trips-history');
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Navegar a historial de viajes'),
-        backgroundColor: Colors.blue,
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const TripHistoryPage(),
       ),
     );
   }
 
   /// Navega a detalles de reserva
-  void _navigateToReservationDetails(BuildContext context, String reservationId) {
-    debugPrint('[NotificationNavigator] Navigate to reservation: $reservationId');
+  void _navigateToReservationDetails(
+      BuildContext context, String reservationId) {
+    debugPrint(
+        '[NotificationNavigator] Navigate to reservation: $reservationId');
 
-    // TODO: Reemplazar con la ruta real
-    // Navigator.of(context).pushNamed('/reservation-details', arguments: reservationId);
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Navegar a reserva: $reservationId'),
-        backgroundColor: Colors.purple,
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => ReservationsPage(reservationId: reservationId),
       ),
     );
   }
@@ -149,29 +140,20 @@ class NotificationNavigator {
   void _navigateToReservations(BuildContext context) {
     debugPrint('[NotificationNavigator] Navigate to reservations');
 
-    // TODO: Reemplazar con la ruta real
-    // Navigator.of(context).pushNamed('/reservations');
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Navegar a reservas'),
-        backgroundColor: Colors.purple,
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const ReservationsPage(),
       ),
     );
   }
 
-  /// Navega a alertas de pánico (admin)
+  /// Navega a alertas de pánico
   void _navigateToPanicAlerts(BuildContext context) {
     debugPrint('[NotificationNavigator] Navigate to panic alerts');
 
-    // TODO: Reemplazar con la ruta real
-    // Navigator.of(context).pushNamed('/panic-alerts');
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('ALERTA DE PÁNICO - Ver panel admin'),
-        backgroundColor: Colors.red,
-        duration: Duration(seconds: 3),
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const PanicPage(),
       ),
     );
   }
@@ -180,13 +162,9 @@ class NotificationNavigator {
   void _navigateToPaymentHistory(BuildContext context) {
     debugPrint('[NotificationNavigator] Navigate to payment history');
 
-    // TODO: Reemplazar con la ruta real
-    // Navigator.of(context).pushNamed('/payment-history');
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Navegar a historial de pagos'),
-        backgroundColor: Colors.amber,
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const PaymentHistoryPage(),
       ),
     );
   }
@@ -195,13 +173,9 @@ class NotificationNavigator {
   void _navigateToNotifications(BuildContext context) {
     debugPrint('[NotificationNavigator] Navigate to notifications');
 
-    // TODO: Reemplazar con la ruta real
-    // Navigator.of(context).pushNamed('/notifications');
-
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Navegar a notificaciones'),
-        backgroundColor: Colors.grey,
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const NotificationsPage(),
       ),
     );
   }

@@ -435,4 +435,104 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get noEmergencyContactConfigured =>
       'You don\'t have an emergency contact configured';
+
+  @override
+  String get confirmDeactivation => 'Confirm deactivation';
+
+  @override
+  String get typeToConfirm => 'Type: ESTOY SEGURO';
+
+  @override
+  String get verifyPhone => 'Verify your phone';
+
+  @override
+  String get enterPhoneToVerify =>
+      'Enter your phone number to receive a verification code';
+
+  @override
+  String get sendCode => 'Send code';
+
+  @override
+  String get enterVerificationCode => 'Enter the code';
+
+  @override
+  String codeSentTo(String phone) {
+    return 'We sent an SMS code to $phone';
+  }
+
+  @override
+  String get verify => 'Verify';
+
+  @override
+  String get resendCode => 'Resend code';
+
+  @override
+  String resendCodeIn(int seconds) {
+    return 'Resend code in ${seconds}s';
+  }
+
+  @override
+  String get changePhoneNumber => 'Change number';
+
+  @override
+  String get phoneVerified => 'Phone verified successfully';
+
+  @override
+  String get invalidCode => 'Invalid code';
+
+  @override
+  String get chatWithDriver => 'Chat with driver';
+
+  @override
+  String get typeMessage => 'Type a message...';
+
+  @override
+  String get send => 'Send';
+
+  @override
+  String get noMessages => 'No messages yet';
+
+  @override
+  String get startConversation => 'Start the conversation';
+
+  @override
+  String get rateYourTrip => 'Rate your trip';
+
+  @override
+  String get howWasYourTrip => 'How was your trip?';
+
+  @override
+  String get leaveComment => 'Leave a comment (optional)';
+
+  @override
+  String get commentPlaceholder => 'Tell us about your experience...';
+
+  @override
+  String get submitRating => 'Submit rating';
+
+  @override
+  String get skipRating => 'Skip';
+
+  @override
+  String get thankYouForRating => 'Thank you for your rating';
+
+  @override
+  String get deleteAccount => 'Delete account';
+
+  @override
+  String get deleteAccountWarning =>
+      'This action is irreversible. All your data will be permanently deleted.';
+
+  @override
+  String get confirmDeleteAccount =>
+      'Are you sure you want to delete your account?';
+
+  @override
+  String get typeDeleteToConfirm => 'Type DELETE to confirm';
+
+  @override
+  String get accountDeleted => 'Your account has been deleted';
+
+  @override
+  String get delete => 'Delete';
 }

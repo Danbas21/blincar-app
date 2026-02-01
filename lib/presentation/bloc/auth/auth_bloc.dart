@@ -44,6 +44,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<LogoutEvent>(_onLogout);
     on<SignInWithGoogleEvent>(_onSignInWithGoogle);
     on<SignInWithAppleEvent>(_onSignInWithApple);
+    on<ForgotPasswordEvent>(_onForgotPassword);
+    on<ForgotPasswordWithLocaleEvent>(_onForgotPasswordWithLocale);
 
     // Handlers de edición de perfil
     on<UpdateProfileEvent>(_onUpdateProfile);
@@ -157,6 +159,41 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     result.fold(
       (failure) => emit(AuthError(failure.message)),
       (user) => emit(AuthAuthenticated(user)),
+    );
+  }
+
+  /// Maneja el envío de email de recuperación de contraseña
+  Future<void> _onForgotPassword(
+    ForgotPasswordEvent event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(const AuthLoading());
+
+    final result = await authRepository.sendPasswordResetEmail(
+      email: event.email,
+    );
+
+    result.fold(
+      (failure) => emit(AuthError(failure.message)),
+      (_) => emit(PasswordResetEmailSent(event.email)),
+    );
+  }
+
+  /// Maneja el envío de email de recuperación con idioma personalizado
+  Future<void> _onForgotPasswordWithLocale(
+    ForgotPasswordWithLocaleEvent event,
+    Emitter<AuthState> emit,
+  ) async {
+    emit(const AuthLoading());
+
+    final result = await authRepository.sendPasswordResetEmailWithLocale(
+      email: event.email,
+      locale: event.locale,
+    );
+
+    result.fold(
+      (failure) => emit(AuthError(failure.message)),
+      (_) => emit(PasswordResetEmailSent(event.email)),
     );
   }
 

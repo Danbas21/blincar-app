@@ -47,7 +47,7 @@
 		<true/>
 		<!-- Permisos específicos para Blincar -->
 		<key>NSFaceIDUsageDescription</key>
-        <string>Usa Face ID para autorizar pagos de forma segura</string>
+		<string>Usa Face ID para autorizar pagos de forma segura</string>
 		<key>NSCameraUsageDescription</key>
 		<string>Blincar necesita acceso a la cámara para grabar video de seguridad durante los viajes y tomar fotos de documentos.</string>
 		<key>NSMicrophoneUsageDescription</key>

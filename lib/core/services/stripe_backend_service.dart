@@ -243,6 +243,74 @@ class StripeBackendService {
     }
   }
 
+  /// Obtener historial de pagos del usuario
+  Future<StripeResult<List<PaymentTransaction>>> getPaymentHistory({
+    int limit = 50,
+    String? startingAfter,
+  }) async {
+    try {
+      final headers = await _headers;
+      final queryParams = <String, String>{
+        'limit': limit.toString(),
+        if (startingAfter != null) 'starting_after': startingAfter,
+      };
+
+      final uri = Uri.parse('$baseUrl/api/stripe/payment-history')
+          .replace(queryParameters: queryParams);
+
+      final response = await _httpClient.get(uri, headers: headers);
+      final data = jsonDecode(response.body);
+
+      if (response.statusCode == 200) {
+        final List<dynamic> transactionsJson = data['data']['transactions'] ?? [];
+        final transactions = transactionsJson
+            .map((t) => PaymentTransaction.fromJson(t))
+            .toList();
+        return StripeResult.success(transactions);
+      }
+
+      return StripeResult.error(data['message'] ?? 'Error obteniendo historial');
+    } catch (e) {
+      return StripeResult.error('Error de conexion: $e');
+    }
+  }
+
+  /// Confirmar PaymentIntent para 3D Secure / SCA
+  Future<StripeResult<PaymentResultData>> confirmPaymentIntent({
+    required String clientSecret,
+  }) async {
+    try {
+      // Usar el SDK de Stripe para manejar 3D Secure
+      final paymentIntent = await Stripe.instance.confirmPayment(
+        paymentIntentClientSecret: clientSecret,
+        data: const PaymentMethodParams.card(
+          paymentMethodData: PaymentMethodData(),
+        ),
+      );
+
+      if (paymentIntent.status == PaymentIntentsStatus.Succeeded) {
+        return StripeResult.success(PaymentResultData(
+          success: true,
+          paymentIntentId: paymentIntent.id,
+          status: 'succeeded',
+        ));
+      } else if (paymentIntent.status == PaymentIntentsStatus.RequiresAction) {
+        return StripeResult.success(PaymentResultData(
+          success: false,
+          paymentIntentId: paymentIntent.id,
+          status: 'requires_action',
+          requiresAction: true,
+        ));
+      }
+
+      return StripeResult.error('Error al confirmar el pago');
+    } on StripeException catch (e) {
+      return StripeResult.error(e.error.localizedMessage ?? 'Error de Stripe');
+    } catch (e) {
+      return StripeResult.error('Error: ${e.toString()}');
+    }
+  }
+
   /// Agregar tarjeta usando el CardField de Flutter Stripe
   /// Este metodo integra con el SDK de Stripe para tokenizar la tarjeta
   Future<StripeResult<SavedCard>> addCardWithStripeSDK() async {
@@ -365,4 +433,122 @@ class PaymentResultData {
     this.clientSecret,
     this.requiresAction = false,
   });
+}
+
+/// Transacción de pago para historial
+class PaymentTransaction {
+  final String id;
+  final double amount;
+  final String currency;
+  final String description;
+  final PaymentTransactionStatus status;
+  final PaymentTransactionType type;
+  final DateTime createdAt;
+  final String? paymentMethodBrand;
+  final String? paymentMethodLast4;
+  final String? tripId;
+  final String? errorMessage;
+  final String? refundReason;
+
+  PaymentTransaction({
+    required this.id,
+    required this.amount,
+    required this.currency,
+    required this.description,
+    required this.status,
+    required this.type,
+    required this.createdAt,
+    this.paymentMethodBrand,
+    this.paymentMethodLast4,
+    this.tripId,
+    this.errorMessage,
+    this.refundReason,
+  });
+
+  factory PaymentTransaction.fromJson(Map<String, dynamic> json) {
+    return PaymentTransaction(
+      id: json['id'] ?? '',
+      amount: (json['amount'] as num?)?.toDouble() ?? 0.0,
+      currency: json['currency'] ?? 'MXN',
+      description: json['description'] ?? '',
+      status: PaymentTransactionStatus.fromString(json['status']),
+      type: PaymentTransactionType.fromString(json['type']),
+      createdAt: json['createdAt'] != null
+          ? DateTime.parse(json['createdAt'])
+          : DateTime.now(),
+      paymentMethodBrand: json['paymentMethodBrand'],
+      paymentMethodLast4: json['paymentMethodLast4'],
+      tripId: json['tripId'],
+      errorMessage: json['errorMessage'],
+      refundReason: json['refundReason'],
+    );
+  }
+
+  String get paymentMethodDisplay {
+    if (paymentMethodBrand == null || paymentMethodLast4 == null) {
+      return 'Tarjeta';
+    }
+    final brand = paymentMethodBrand!.substring(0, 1).toUpperCase() +
+        paymentMethodBrand!.substring(1);
+    return '$brand •••• $paymentMethodLast4';
+  }
+}
+
+/// Estado de una transacción de pago
+enum PaymentTransactionStatus {
+  succeeded,
+  pending,
+  failed,
+  refunded,
+  canceled;
+
+  static PaymentTransactionStatus fromString(String? value) {
+    switch (value?.toLowerCase()) {
+      case 'succeeded':
+        return PaymentTransactionStatus.succeeded;
+      case 'pending':
+      case 'processing':
+      case 'requires_action':
+      case 'requires_payment_method':
+        return PaymentTransactionStatus.pending;
+      case 'failed':
+        return PaymentTransactionStatus.failed;
+      case 'refunded':
+        return PaymentTransactionStatus.refunded;
+      case 'canceled':
+        return PaymentTransactionStatus.canceled;
+      default:
+        return PaymentTransactionStatus.pending;
+    }
+  }
+
+  String get displayName {
+    switch (this) {
+      case PaymentTransactionStatus.succeeded:
+        return 'Completado';
+      case PaymentTransactionStatus.pending:
+        return 'Pendiente';
+      case PaymentTransactionStatus.failed:
+        return 'Fallido';
+      case PaymentTransactionStatus.refunded:
+        return 'Reembolsado';
+      case PaymentTransactionStatus.canceled:
+        return 'Cancelado';
+    }
+  }
+}
+
+/// Tipo de transacción de pago
+enum PaymentTransactionType {
+  payment,
+  refund;
+
+  static PaymentTransactionType fromString(String? value) {
+    switch (value?.toLowerCase()) {
+      case 'refund':
+        return PaymentTransactionType.refund;
+      default:
+        return PaymentTransactionType.payment;
+    }
+  }
 }

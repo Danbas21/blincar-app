@@ -31,6 +31,9 @@ mixin _$AuthEvent {
     required TResult Function() logout,
     required TResult Function() signInWithGoogle,
     required TResult Function() signInWithApple,
+    required TResult Function(String email) forgotPassword,
+    required TResult Function(String email, String locale)
+        forgotPasswordWithLocale,
     required TResult Function(String fullName, String? phoneNumber,
             String? emergencyContactName, String? emergencyContactPhone)
         updateProfile,
@@ -56,6 +59,8 @@ mixin _$AuthEvent {
     TResult? Function()? logout,
     TResult? Function()? signInWithGoogle,
     TResult? Function()? signInWithApple,
+    TResult? Function(String email)? forgotPassword,
+    TResult? Function(String email, String locale)? forgotPasswordWithLocale,
     TResult? Function(String fullName, String? phoneNumber,
             String? emergencyContactName, String? emergencyContactPhone)?
         updateProfile,
@@ -80,6 +85,8 @@ mixin _$AuthEvent {
     TResult Function()? logout,
     TResult Function()? signInWithGoogle,
     TResult Function()? signInWithApple,
+    TResult Function(String email)? forgotPassword,
+    TResult Function(String email, String locale)? forgotPasswordWithLocale,
     TResult Function(String fullName, String? phoneNumber,
             String? emergencyContactName, String? emergencyContactPhone)?
         updateProfile,
@@ -98,6 +105,9 @@ mixin _$AuthEvent {
     required TResult Function(LogoutEvent value) logout,
     required TResult Function(SignInWithGoogleEvent value) signInWithGoogle,
     required TResult Function(SignInWithAppleEvent value) signInWithApple,
+    required TResult Function(ForgotPasswordEvent value) forgotPassword,
+    required TResult Function(ForgotPasswordWithLocaleEvent value)
+        forgotPasswordWithLocale,
     required TResult Function(UpdateProfileEvent value) updateProfile,
     required TResult Function(UpdateEmailEvent value) updateEmail,
     required TResult Function(UpdatePasswordEvent value) updatePassword,
@@ -112,6 +122,9 @@ mixin _$AuthEvent {
     TResult? Function(LogoutEvent value)? logout,
     TResult? Function(SignInWithGoogleEvent value)? signInWithGoogle,
     TResult? Function(SignInWithAppleEvent value)? signInWithApple,
+    TResult? Function(ForgotPasswordEvent value)? forgotPassword,
+    TResult? Function(ForgotPasswordWithLocaleEvent value)?
+        forgotPasswordWithLocale,
     TResult? Function(UpdateProfileEvent value)? updateProfile,
     TResult? Function(UpdateEmailEvent value)? updateEmail,
     TResult? Function(UpdatePasswordEvent value)? updatePassword,
@@ -126,6 +139,9 @@ mixin _$AuthEvent {
     TResult Function(LogoutEvent value)? logout,
     TResult Function(SignInWithGoogleEvent value)? signInWithGoogle,
     TResult Function(SignInWithAppleEvent value)? signInWithApple,
+    TResult Function(ForgotPasswordEvent value)? forgotPassword,
+    TResult Function(ForgotPasswordWithLocaleEvent value)?
+        forgotPasswordWithLocale,
     TResult Function(UpdateProfileEvent value)? updateProfile,
     TResult Function(UpdateEmailEvent value)? updateEmail,
     TResult Function(UpdatePasswordEvent value)? updatePassword,
@@ -209,6 +225,9 @@ class _$CheckAuthStatusImpl implements CheckAuthStatus {
     required TResult Function() logout,
     required TResult Function() signInWithGoogle,
     required TResult Function() signInWithApple,
+    required TResult Function(String email) forgotPassword,
+    required TResult Function(String email, String locale)
+        forgotPasswordWithLocale,
     required TResult Function(String fullName, String? phoneNumber,
             String? emergencyContactName, String? emergencyContactPhone)
         updateProfile,
@@ -237,6 +256,8 @@ class _$CheckAuthStatusImpl implements CheckAuthStatus {
     TResult? Function()? logout,
     TResult? Function()? signInWithGoogle,
     TResult? Function()? signInWithApple,
+    TResult? Function(String email)? forgotPassword,
+    TResult? Function(String email, String locale)? forgotPasswordWithLocale,
     TResult? Function(String fullName, String? phoneNumber,
             String? emergencyContactName, String? emergencyContactPhone)?
         updateProfile,
@@ -264,6 +285,8 @@ class _$CheckAuthStatusImpl implements CheckAuthStatus {
     TResult Function()? logout,
     TResult Function()? signInWithGoogle,
     TResult Function()? signInWithApple,
+    TResult Function(String email)? forgotPassword,
+    TResult Function(String email, String locale)? forgotPasswordWithLocale,
     TResult Function(String fullName, String? phoneNumber,
             String? emergencyContactName, String? emergencyContactPhone)?
         updateProfile,
@@ -288,6 +311,9 @@ class _$CheckAuthStatusImpl implements CheckAuthStatus {
     required TResult Function(LogoutEvent value) logout,
     required TResult Function(SignInWithGoogleEvent value) signInWithGoogle,
     required TResult Function(SignInWithAppleEvent value) signInWithApple,
+    required TResult Function(ForgotPasswordEvent value) forgotPassword,
+    required TResult Function(ForgotPasswordWithLocaleEvent value)
+        forgotPasswordWithLocale,
     required TResult Function(UpdateProfileEvent value) updateProfile,
     required TResult Function(UpdateEmailEvent value) updateEmail,
     required TResult Function(UpdatePasswordEvent value) updatePassword,
@@ -305,6 +331,9 @@ class _$CheckAuthStatusImpl implements CheckAuthStatus {
     TResult? Function(LogoutEvent value)? logout,
     TResult? Function(SignInWithGoogleEvent value)? signInWithGoogle,
     TResult? Function(SignInWithAppleEvent value)? signInWithApple,
+    TResult? Function(ForgotPasswordEvent value)? forgotPassword,
+    TResult? Function(ForgotPasswordWithLocaleEvent value)?
+        forgotPasswordWithLocale,
     TResult? Function(UpdateProfileEvent value)? updateProfile,
     TResult? Function(UpdateEmailEvent value)? updateEmail,
     TResult? Function(UpdatePasswordEvent value)? updatePassword,
@@ -322,6 +351,9 @@ class _$CheckAuthStatusImpl implements CheckAuthStatus {
     TResult Function(LogoutEvent value)? logout,
     TResult Function(SignInWithGoogleEvent value)? signInWithGoogle,
     TResult Function(SignInWithAppleEvent value)? signInWithApple,
+    TResult Function(ForgotPasswordEvent value)? forgotPassword,
+    TResult Function(ForgotPasswordWithLocaleEvent value)?
+        forgotPasswordWithLocale,
     TResult Function(UpdateProfileEvent value)? updateProfile,
     TResult Function(UpdateEmailEvent value)? updateEmail,
     TResult Function(UpdatePasswordEvent value)? updatePassword,
@@ -429,6 +461,9 @@ class _$LoginEventImpl implements LoginEvent {
     required TResult Function() logout,
     required TResult Function() signInWithGoogle,
     required TResult Function() signInWithApple,
+    required TResult Function(String email) forgotPassword,
+    required TResult Function(String email, String locale)
+        forgotPasswordWithLocale,
     required TResult Function(String fullName, String? phoneNumber,
             String? emergencyContactName, String? emergencyContactPhone)
         updateProfile,
@@ -457,6 +492,8 @@ class _$LoginEventImpl implements LoginEvent {
     TResult? Function()? logout,
     TResult? Function()? signInWithGoogle,
     TResult? Function()? signInWithApple,
+    TResult? Function(String email)? forgotPassword,
+    TResult? Function(String email, String locale)? forgotPasswordWithLocale,
     TResult? Function(String fullName, String? phoneNumber,
             String? emergencyContactName, String? emergencyContactPhone)?
         updateProfile,
@@ -484,6 +521,8 @@ class _$LoginEventImpl implements LoginEvent {
     TResult Function()? logout,
     TResult Function()? signInWithGoogle,
     TResult Function()? signInWithApple,
+    TResult Function(String email)? forgotPassword,
+    TResult Function(String email, String locale)? forgotPasswordWithLocale,
     TResult Function(String fullName, String? phoneNumber,
             String? emergencyContactName, String? emergencyContactPhone)?
         updateProfile,
@@ -508,6 +547,9 @@ class _$LoginEventImpl implements LoginEvent {
     required TResult Function(LogoutEvent value) logout,
     required TResult Function(SignInWithGoogleEvent value) signInWithGoogle,
     required TResult Function(SignInWithAppleEvent value) signInWithApple,
+    required TResult Function(ForgotPasswordEvent value) forgotPassword,
+    required TResult Function(ForgotPasswordWithLocaleEvent value)
+        forgotPasswordWithLocale,
     required TResult Function(UpdateProfileEvent value) updateProfile,
     required TResult Function(UpdateEmailEvent value) updateEmail,
     required TResult Function(UpdatePasswordEvent value) updatePassword,
@@ -525,6 +567,9 @@ class _$LoginEventImpl implements LoginEvent {
     TResult? Function(LogoutEvent value)? logout,
     TResult? Function(SignInWithGoogleEvent value)? signInWithGoogle,
     TResult? Function(SignInWithAppleEvent value)? signInWithApple,
+    TResult? Function(ForgotPasswordEvent value)? forgotPassword,
+    TResult? Function(ForgotPasswordWithLocaleEvent value)?
+        forgotPasswordWithLocale,
     TResult? Function(UpdateProfileEvent value)? updateProfile,
     TResult? Function(UpdateEmailEvent value)? updateEmail,
     TResult? Function(UpdatePasswordEvent value)? updatePassword,
@@ -542,6 +587,9 @@ class _$LoginEventImpl implements LoginEvent {
     TResult Function(LogoutEvent value)? logout,
     TResult Function(SignInWithGoogleEvent value)? signInWithGoogle,
     TResult Function(SignInWithAppleEvent value)? signInWithApple,
+    TResult Function(ForgotPasswordEvent value)? forgotPassword,
+    TResult Function(ForgotPasswordWithLocaleEvent value)?
+        forgotPasswordWithLocale,
     TResult Function(UpdateProfileEvent value)? updateProfile,
     TResult Function(UpdateEmailEvent value)? updateEmail,
     TResult Function(UpdatePasswordEvent value)? updatePassword,
@@ -709,6 +757,9 @@ class _$RegisterEventImpl implements RegisterEvent {
     required TResult Function() logout,
     required TResult Function() signInWithGoogle,
     required TResult Function() signInWithApple,
+    required TResult Function(String email) forgotPassword,
+    required TResult Function(String email, String locale)
+        forgotPasswordWithLocale,
     required TResult Function(String fullName, String? phoneNumber,
             String? emergencyContactName, String? emergencyContactPhone)
         updateProfile,
@@ -738,6 +789,8 @@ class _$RegisterEventImpl implements RegisterEvent {
     TResult? Function()? logout,
     TResult? Function()? signInWithGoogle,
     TResult? Function()? signInWithApple,
+    TResult? Function(String email)? forgotPassword,
+    TResult? Function(String email, String locale)? forgotPasswordWithLocale,
     TResult? Function(String fullName, String? phoneNumber,
             String? emergencyContactName, String? emergencyContactPhone)?
         updateProfile,
@@ -766,6 +819,8 @@ class _$RegisterEventImpl implements RegisterEvent {
     TResult Function()? logout,
     TResult Function()? signInWithGoogle,
     TResult Function()? signInWithApple,
+    TResult Function(String email)? forgotPassword,
+    TResult Function(String email, String locale)? forgotPasswordWithLocale,
     TResult Function(String fullName, String? phoneNumber,
             String? emergencyContactName, String? emergencyContactPhone)?
         updateProfile,
@@ -791,6 +846,9 @@ class _$RegisterEventImpl implements RegisterEvent {
     required TResult Function(LogoutEvent value) logout,
     required TResult Function(SignInWithGoogleEvent value) signInWithGoogle,
     required TResult Function(SignInWithAppleEvent value) signInWithApple,
+    required TResult Function(ForgotPasswordEvent value) forgotPassword,
+    required TResult Function(ForgotPasswordWithLocaleEvent value)
+        forgotPasswordWithLocale,
     required TResult Function(UpdateProfileEvent value) updateProfile,
     required TResult Function(UpdateEmailEvent value) updateEmail,
     required TResult Function(UpdatePasswordEvent value) updatePassword,
@@ -808,6 +866,9 @@ class _$RegisterEventImpl implements RegisterEvent {
     TResult? Function(LogoutEvent value)? logout,
     TResult? Function(SignInWithGoogleEvent value)? signInWithGoogle,
     TResult? Function(SignInWithAppleEvent value)? signInWithApple,
+    TResult? Function(ForgotPasswordEvent value)? forgotPassword,
+    TResult? Function(ForgotPasswordWithLocaleEvent value)?
+        forgotPasswordWithLocale,
     TResult? Function(UpdateProfileEvent value)? updateProfile,
     TResult? Function(UpdateEmailEvent value)? updateEmail,
     TResult? Function(UpdatePasswordEvent value)? updatePassword,
@@ -825,6 +886,9 @@ class _$RegisterEventImpl implements RegisterEvent {
     TResult Function(LogoutEvent value)? logout,
     TResult Function(SignInWithGoogleEvent value)? signInWithGoogle,
     TResult Function(SignInWithAppleEvent value)? signInWithApple,
+    TResult Function(ForgotPasswordEvent value)? forgotPassword,
+    TResult Function(ForgotPasswordWithLocaleEvent value)?
+        forgotPasswordWithLocale,
     TResult Function(UpdateProfileEvent value)? updateProfile,
     TResult Function(UpdateEmailEvent value)? updateEmail,
     TResult Function(UpdatePasswordEvent value)? updatePassword,
@@ -915,6 +979,9 @@ class _$LogoutEventImpl implements LogoutEvent {
     required TResult Function() logout,
     required TResult Function() signInWithGoogle,
     required TResult Function() signInWithApple,
+    required TResult Function(String email) forgotPassword,
+    required TResult Function(String email, String locale)
+        forgotPasswordWithLocale,
     required TResult Function(String fullName, String? phoneNumber,
             String? emergencyContactName, String? emergencyContactPhone)
         updateProfile,
@@ -943,6 +1010,8 @@ class _$LogoutEventImpl implements LogoutEvent {
     TResult? Function()? logout,
     TResult? Function()? signInWithGoogle,
     TResult? Function()? signInWithApple,
+    TResult? Function(String email)? forgotPassword,
+    TResult? Function(String email, String locale)? forgotPasswordWithLocale,
     TResult? Function(String fullName, String? phoneNumber,
             String? emergencyContactName, String? emergencyContactPhone)?
         updateProfile,
@@ -970,6 +1039,8 @@ class _$LogoutEventImpl implements LogoutEvent {
     TResult Function()? logout,
     TResult Function()? signInWithGoogle,
     TResult Function()? signInWithApple,
+    TResult Function(String email)? forgotPassword,
+    TResult Function(String email, String locale)? forgotPasswordWithLocale,
     TResult Function(String fullName, String? phoneNumber,
             String? emergencyContactName, String? emergencyContactPhone)?
         updateProfile,
@@ -994,6 +1065,9 @@ class _$LogoutEventImpl implements LogoutEvent {
     required TResult Function(LogoutEvent value) logout,
     required TResult Function(SignInWithGoogleEvent value) signInWithGoogle,
     required TResult Function(SignInWithAppleEvent value) signInWithApple,
+    required TResult Function(ForgotPasswordEvent value) forgotPassword,
+    required TResult Function(ForgotPasswordWithLocaleEvent value)
+        forgotPasswordWithLocale,
     required TResult Function(UpdateProfileEvent value) updateProfile,
     required TResult Function(UpdateEmailEvent value) updateEmail,
     required TResult Function(UpdatePasswordEvent value) updatePassword,
@@ -1011,6 +1085,9 @@ class _$LogoutEventImpl implements LogoutEvent {
     TResult? Function(LogoutEvent value)? logout,
     TResult? Function(SignInWithGoogleEvent value)? signInWithGoogle,
     TResult? Function(SignInWithAppleEvent value)? signInWithApple,
+    TResult? Function(ForgotPasswordEvent value)? forgotPassword,
+    TResult? Function(ForgotPasswordWithLocaleEvent value)?
+        forgotPasswordWithLocale,
     TResult? Function(UpdateProfileEvent value)? updateProfile,
     TResult? Function(UpdateEmailEvent value)? updateEmail,
     TResult? Function(UpdatePasswordEvent value)? updatePassword,
@@ -1028,6 +1105,9 @@ class _$LogoutEventImpl implements LogoutEvent {
     TResult Function(LogoutEvent value)? logout,
     TResult Function(SignInWithGoogleEvent value)? signInWithGoogle,
     TResult Function(SignInWithAppleEvent value)? signInWithApple,
+    TResult Function(ForgotPasswordEvent value)? forgotPassword,
+    TResult Function(ForgotPasswordWithLocaleEvent value)?
+        forgotPasswordWithLocale,
     TResult Function(UpdateProfileEvent value)? updateProfile,
     TResult Function(UpdateEmailEvent value)? updateEmail,
     TResult Function(UpdatePasswordEvent value)? updatePassword,
@@ -1101,6 +1181,9 @@ class _$SignInWithGoogleEventImpl implements SignInWithGoogleEvent {
     required TResult Function() logout,
     required TResult Function() signInWithGoogle,
     required TResult Function() signInWithApple,
+    required TResult Function(String email) forgotPassword,
+    required TResult Function(String email, String locale)
+        forgotPasswordWithLocale,
     required TResult Function(String fullName, String? phoneNumber,
             String? emergencyContactName, String? emergencyContactPhone)
         updateProfile,
@@ -1129,6 +1212,8 @@ class _$SignInWithGoogleEventImpl implements SignInWithGoogleEvent {
     TResult? Function()? logout,
     TResult? Function()? signInWithGoogle,
     TResult? Function()? signInWithApple,
+    TResult? Function(String email)? forgotPassword,
+    TResult? Function(String email, String locale)? forgotPasswordWithLocale,
     TResult? Function(String fullName, String? phoneNumber,
             String? emergencyContactName, String? emergencyContactPhone)?
         updateProfile,
@@ -1156,6 +1241,8 @@ class _$SignInWithGoogleEventImpl implements SignInWithGoogleEvent {
     TResult Function()? logout,
     TResult Function()? signInWithGoogle,
     TResult Function()? signInWithApple,
+    TResult Function(String email)? forgotPassword,
+    TResult Function(String email, String locale)? forgotPasswordWithLocale,
     TResult Function(String fullName, String? phoneNumber,
             String? emergencyContactName, String? emergencyContactPhone)?
         updateProfile,
@@ -1180,6 +1267,9 @@ class _$SignInWithGoogleEventImpl implements SignInWithGoogleEvent {
     required TResult Function(LogoutEvent value) logout,
     required TResult Function(SignInWithGoogleEvent value) signInWithGoogle,
     required TResult Function(SignInWithAppleEvent value) signInWithApple,
+    required TResult Function(ForgotPasswordEvent value) forgotPassword,
+    required TResult Function(ForgotPasswordWithLocaleEvent value)
+        forgotPasswordWithLocale,
     required TResult Function(UpdateProfileEvent value) updateProfile,
     required TResult Function(UpdateEmailEvent value) updateEmail,
     required TResult Function(UpdatePasswordEvent value) updatePassword,
@@ -1197,6 +1287,9 @@ class _$SignInWithGoogleEventImpl implements SignInWithGoogleEvent {
     TResult? Function(LogoutEvent value)? logout,
     TResult? Function(SignInWithGoogleEvent value)? signInWithGoogle,
     TResult? Function(SignInWithAppleEvent value)? signInWithApple,
+    TResult? Function(ForgotPasswordEvent value)? forgotPassword,
+    TResult? Function(ForgotPasswordWithLocaleEvent value)?
+        forgotPasswordWithLocale,
     TResult? Function(UpdateProfileEvent value)? updateProfile,
     TResult? Function(UpdateEmailEvent value)? updateEmail,
     TResult? Function(UpdatePasswordEvent value)? updatePassword,
@@ -1214,6 +1307,9 @@ class _$SignInWithGoogleEventImpl implements SignInWithGoogleEvent {
     TResult Function(LogoutEvent value)? logout,
     TResult Function(SignInWithGoogleEvent value)? signInWithGoogle,
     TResult Function(SignInWithAppleEvent value)? signInWithApple,
+    TResult Function(ForgotPasswordEvent value)? forgotPassword,
+    TResult Function(ForgotPasswordWithLocaleEvent value)?
+        forgotPasswordWithLocale,
     TResult Function(UpdateProfileEvent value)? updateProfile,
     TResult Function(UpdateEmailEvent value)? updateEmail,
     TResult Function(UpdatePasswordEvent value)? updatePassword,
@@ -1286,6 +1382,9 @@ class _$SignInWithAppleEventImpl implements SignInWithAppleEvent {
     required TResult Function() logout,
     required TResult Function() signInWithGoogle,
     required TResult Function() signInWithApple,
+    required TResult Function(String email) forgotPassword,
+    required TResult Function(String email, String locale)
+        forgotPasswordWithLocale,
     required TResult Function(String fullName, String? phoneNumber,
             String? emergencyContactName, String? emergencyContactPhone)
         updateProfile,
@@ -1314,6 +1413,8 @@ class _$SignInWithAppleEventImpl implements SignInWithAppleEvent {
     TResult? Function()? logout,
     TResult? Function()? signInWithGoogle,
     TResult? Function()? signInWithApple,
+    TResult? Function(String email)? forgotPassword,
+    TResult? Function(String email, String locale)? forgotPasswordWithLocale,
     TResult? Function(String fullName, String? phoneNumber,
             String? emergencyContactName, String? emergencyContactPhone)?
         updateProfile,
@@ -1341,6 +1442,8 @@ class _$SignInWithAppleEventImpl implements SignInWithAppleEvent {
     TResult Function()? logout,
     TResult Function()? signInWithGoogle,
     TResult Function()? signInWithApple,
+    TResult Function(String email)? forgotPassword,
+    TResult Function(String email, String locale)? forgotPasswordWithLocale,
     TResult Function(String fullName, String? phoneNumber,
             String? emergencyContactName, String? emergencyContactPhone)?
         updateProfile,
@@ -1365,6 +1468,9 @@ class _$SignInWithAppleEventImpl implements SignInWithAppleEvent {
     required TResult Function(LogoutEvent value) logout,
     required TResult Function(SignInWithGoogleEvent value) signInWithGoogle,
     required TResult Function(SignInWithAppleEvent value) signInWithApple,
+    required TResult Function(ForgotPasswordEvent value) forgotPassword,
+    required TResult Function(ForgotPasswordWithLocaleEvent value)
+        forgotPasswordWithLocale,
     required TResult Function(UpdateProfileEvent value) updateProfile,
     required TResult Function(UpdateEmailEvent value) updateEmail,
     required TResult Function(UpdatePasswordEvent value) updatePassword,
@@ -1382,6 +1488,9 @@ class _$SignInWithAppleEventImpl implements SignInWithAppleEvent {
     TResult? Function(LogoutEvent value)? logout,
     TResult? Function(SignInWithGoogleEvent value)? signInWithGoogle,
     TResult? Function(SignInWithAppleEvent value)? signInWithApple,
+    TResult? Function(ForgotPasswordEvent value)? forgotPassword,
+    TResult? Function(ForgotPasswordWithLocaleEvent value)?
+        forgotPasswordWithLocale,
     TResult? Function(UpdateProfileEvent value)? updateProfile,
     TResult? Function(UpdateEmailEvent value)? updateEmail,
     TResult? Function(UpdatePasswordEvent value)? updatePassword,
@@ -1399,6 +1508,9 @@ class _$SignInWithAppleEventImpl implements SignInWithAppleEvent {
     TResult Function(LogoutEvent value)? logout,
     TResult Function(SignInWithGoogleEvent value)? signInWithGoogle,
     TResult Function(SignInWithAppleEvent value)? signInWithApple,
+    TResult Function(ForgotPasswordEvent value)? forgotPassword,
+    TResult Function(ForgotPasswordWithLocaleEvent value)?
+        forgotPasswordWithLocale,
     TResult Function(UpdateProfileEvent value)? updateProfile,
     TResult Function(UpdateEmailEvent value)? updateEmail,
     TResult Function(UpdatePasswordEvent value)? updatePassword,
@@ -1414,6 +1526,496 @@ class _$SignInWithAppleEventImpl implements SignInWithAppleEvent {
 
 abstract class SignInWithAppleEvent implements AuthEvent {
   const factory SignInWithAppleEvent() = _$SignInWithAppleEventImpl;
+}
+
+/// @nodoc
+abstract class _$$ForgotPasswordEventImplCopyWith<$Res> {
+  factory _$$ForgotPasswordEventImplCopyWith(_$ForgotPasswordEventImpl value,
+          $Res Function(_$ForgotPasswordEventImpl) then) =
+      __$$ForgotPasswordEventImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String email});
+}
+
+/// @nodoc
+class __$$ForgotPasswordEventImplCopyWithImpl<$Res>
+    extends _$AuthEventCopyWithImpl<$Res, _$ForgotPasswordEventImpl>
+    implements _$$ForgotPasswordEventImplCopyWith<$Res> {
+  __$$ForgotPasswordEventImplCopyWithImpl(_$ForgotPasswordEventImpl _value,
+      $Res Function(_$ForgotPasswordEventImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? email = null,
+  }) {
+    return _then(_$ForgotPasswordEventImpl(
+      email: null == email
+          ? _value.email
+          : email // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$ForgotPasswordEventImpl implements ForgotPasswordEvent {
+  const _$ForgotPasswordEventImpl({required this.email});
+
+  @override
+  final String email;
+
+  @override
+  String toString() {
+    return 'AuthEvent.forgotPassword(email: $email)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ForgotPasswordEventImpl &&
+            (identical(other.email, email) || other.email == email));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, email);
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ForgotPasswordEventImplCopyWith<_$ForgotPasswordEventImpl> get copyWith =>
+      __$$ForgotPasswordEventImplCopyWithImpl<_$ForgotPasswordEventImpl>(
+          this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() checkStatus,
+    required TResult Function(String email, String password) login,
+    required TResult Function(
+            String email,
+            String password,
+            String fullName,
+            String? phoneNumber,
+            String? emergencyContactName,
+            String? emergencyContactPhone)
+        register,
+    required TResult Function() logout,
+    required TResult Function() signInWithGoogle,
+    required TResult Function() signInWithApple,
+    required TResult Function(String email) forgotPassword,
+    required TResult Function(String email, String locale)
+        forgotPasswordWithLocale,
+    required TResult Function(String fullName, String? phoneNumber,
+            String? emergencyContactName, String? emergencyContactPhone)
+        updateProfile,
+    required TResult Function(String newEmail, String currentPassword)
+        updateEmail,
+    required TResult Function(String currentPassword, String newPassword)
+        updatePassword,
+    required TResult Function(File imageFile) uploadProfilePhoto,
+  }) {
+    return forgotPassword(email);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? checkStatus,
+    TResult? Function(String email, String password)? login,
+    TResult? Function(
+            String email,
+            String password,
+            String fullName,
+            String? phoneNumber,
+            String? emergencyContactName,
+            String? emergencyContactPhone)?
+        register,
+    TResult? Function()? logout,
+    TResult? Function()? signInWithGoogle,
+    TResult? Function()? signInWithApple,
+    TResult? Function(String email)? forgotPassword,
+    TResult? Function(String email, String locale)? forgotPasswordWithLocale,
+    TResult? Function(String fullName, String? phoneNumber,
+            String? emergencyContactName, String? emergencyContactPhone)?
+        updateProfile,
+    TResult? Function(String newEmail, String currentPassword)? updateEmail,
+    TResult? Function(String currentPassword, String newPassword)?
+        updatePassword,
+    TResult? Function(File imageFile)? uploadProfilePhoto,
+  }) {
+    return forgotPassword?.call(email);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? checkStatus,
+    TResult Function(String email, String password)? login,
+    TResult Function(
+            String email,
+            String password,
+            String fullName,
+            String? phoneNumber,
+            String? emergencyContactName,
+            String? emergencyContactPhone)?
+        register,
+    TResult Function()? logout,
+    TResult Function()? signInWithGoogle,
+    TResult Function()? signInWithApple,
+    TResult Function(String email)? forgotPassword,
+    TResult Function(String email, String locale)? forgotPasswordWithLocale,
+    TResult Function(String fullName, String? phoneNumber,
+            String? emergencyContactName, String? emergencyContactPhone)?
+        updateProfile,
+    TResult Function(String newEmail, String currentPassword)? updateEmail,
+    TResult Function(String currentPassword, String newPassword)?
+        updatePassword,
+    TResult Function(File imageFile)? uploadProfilePhoto,
+    required TResult orElse(),
+  }) {
+    if (forgotPassword != null) {
+      return forgotPassword(email);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(CheckAuthStatus value) checkStatus,
+    required TResult Function(LoginEvent value) login,
+    required TResult Function(RegisterEvent value) register,
+    required TResult Function(LogoutEvent value) logout,
+    required TResult Function(SignInWithGoogleEvent value) signInWithGoogle,
+    required TResult Function(SignInWithAppleEvent value) signInWithApple,
+    required TResult Function(ForgotPasswordEvent value) forgotPassword,
+    required TResult Function(ForgotPasswordWithLocaleEvent value)
+        forgotPasswordWithLocale,
+    required TResult Function(UpdateProfileEvent value) updateProfile,
+    required TResult Function(UpdateEmailEvent value) updateEmail,
+    required TResult Function(UpdatePasswordEvent value) updatePassword,
+    required TResult Function(UploadProfilePhotoEvent value) uploadProfilePhoto,
+  }) {
+    return forgotPassword(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(CheckAuthStatus value)? checkStatus,
+    TResult? Function(LoginEvent value)? login,
+    TResult? Function(RegisterEvent value)? register,
+    TResult? Function(LogoutEvent value)? logout,
+    TResult? Function(SignInWithGoogleEvent value)? signInWithGoogle,
+    TResult? Function(SignInWithAppleEvent value)? signInWithApple,
+    TResult? Function(ForgotPasswordEvent value)? forgotPassword,
+    TResult? Function(ForgotPasswordWithLocaleEvent value)?
+        forgotPasswordWithLocale,
+    TResult? Function(UpdateProfileEvent value)? updateProfile,
+    TResult? Function(UpdateEmailEvent value)? updateEmail,
+    TResult? Function(UpdatePasswordEvent value)? updatePassword,
+    TResult? Function(UploadProfilePhotoEvent value)? uploadProfilePhoto,
+  }) {
+    return forgotPassword?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(CheckAuthStatus value)? checkStatus,
+    TResult Function(LoginEvent value)? login,
+    TResult Function(RegisterEvent value)? register,
+    TResult Function(LogoutEvent value)? logout,
+    TResult Function(SignInWithGoogleEvent value)? signInWithGoogle,
+    TResult Function(SignInWithAppleEvent value)? signInWithApple,
+    TResult Function(ForgotPasswordEvent value)? forgotPassword,
+    TResult Function(ForgotPasswordWithLocaleEvent value)?
+        forgotPasswordWithLocale,
+    TResult Function(UpdateProfileEvent value)? updateProfile,
+    TResult Function(UpdateEmailEvent value)? updateEmail,
+    TResult Function(UpdatePasswordEvent value)? updatePassword,
+    TResult Function(UploadProfilePhotoEvent value)? uploadProfilePhoto,
+    required TResult orElse(),
+  }) {
+    if (forgotPassword != null) {
+      return forgotPassword(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class ForgotPasswordEvent implements AuthEvent {
+  const factory ForgotPasswordEvent({required final String email}) =
+      _$ForgotPasswordEventImpl;
+
+  String get email;
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$ForgotPasswordEventImplCopyWith<_$ForgotPasswordEventImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$ForgotPasswordWithLocaleEventImplCopyWith<$Res> {
+  factory _$$ForgotPasswordWithLocaleEventImplCopyWith(
+          _$ForgotPasswordWithLocaleEventImpl value,
+          $Res Function(_$ForgotPasswordWithLocaleEventImpl) then) =
+      __$$ForgotPasswordWithLocaleEventImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String email, String locale});
+}
+
+/// @nodoc
+class __$$ForgotPasswordWithLocaleEventImplCopyWithImpl<$Res>
+    extends _$AuthEventCopyWithImpl<$Res, _$ForgotPasswordWithLocaleEventImpl>
+    implements _$$ForgotPasswordWithLocaleEventImplCopyWith<$Res> {
+  __$$ForgotPasswordWithLocaleEventImplCopyWithImpl(
+      _$ForgotPasswordWithLocaleEventImpl _value,
+      $Res Function(_$ForgotPasswordWithLocaleEventImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? email = null,
+    Object? locale = null,
+  }) {
+    return _then(_$ForgotPasswordWithLocaleEventImpl(
+      email: null == email
+          ? _value.email
+          : email // ignore: cast_nullable_to_non_nullable
+              as String,
+      locale: null == locale
+          ? _value.locale
+          : locale // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$ForgotPasswordWithLocaleEventImpl
+    implements ForgotPasswordWithLocaleEvent {
+  const _$ForgotPasswordWithLocaleEventImpl(
+      {required this.email, required this.locale});
+
+  @override
+  final String email;
+  @override
+  final String locale;
+
+  @override
+  String toString() {
+    return 'AuthEvent.forgotPasswordWithLocale(email: $email, locale: $locale)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$ForgotPasswordWithLocaleEventImpl &&
+            (identical(other.email, email) || other.email == email) &&
+            (identical(other.locale, locale) || other.locale == locale));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, email, locale);
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$ForgotPasswordWithLocaleEventImplCopyWith<
+          _$ForgotPasswordWithLocaleEventImpl>
+      get copyWith => __$$ForgotPasswordWithLocaleEventImplCopyWithImpl<
+          _$ForgotPasswordWithLocaleEventImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() checkStatus,
+    required TResult Function(String email, String password) login,
+    required TResult Function(
+            String email,
+            String password,
+            String fullName,
+            String? phoneNumber,
+            String? emergencyContactName,
+            String? emergencyContactPhone)
+        register,
+    required TResult Function() logout,
+    required TResult Function() signInWithGoogle,
+    required TResult Function() signInWithApple,
+    required TResult Function(String email) forgotPassword,
+    required TResult Function(String email, String locale)
+        forgotPasswordWithLocale,
+    required TResult Function(String fullName, String? phoneNumber,
+            String? emergencyContactName, String? emergencyContactPhone)
+        updateProfile,
+    required TResult Function(String newEmail, String currentPassword)
+        updateEmail,
+    required TResult Function(String currentPassword, String newPassword)
+        updatePassword,
+    required TResult Function(File imageFile) uploadProfilePhoto,
+  }) {
+    return forgotPasswordWithLocale(email, locale);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? checkStatus,
+    TResult? Function(String email, String password)? login,
+    TResult? Function(
+            String email,
+            String password,
+            String fullName,
+            String? phoneNumber,
+            String? emergencyContactName,
+            String? emergencyContactPhone)?
+        register,
+    TResult? Function()? logout,
+    TResult? Function()? signInWithGoogle,
+    TResult? Function()? signInWithApple,
+    TResult? Function(String email)? forgotPassword,
+    TResult? Function(String email, String locale)? forgotPasswordWithLocale,
+    TResult? Function(String fullName, String? phoneNumber,
+            String? emergencyContactName, String? emergencyContactPhone)?
+        updateProfile,
+    TResult? Function(String newEmail, String currentPassword)? updateEmail,
+    TResult? Function(String currentPassword, String newPassword)?
+        updatePassword,
+    TResult? Function(File imageFile)? uploadProfilePhoto,
+  }) {
+    return forgotPasswordWithLocale?.call(email, locale);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? checkStatus,
+    TResult Function(String email, String password)? login,
+    TResult Function(
+            String email,
+            String password,
+            String fullName,
+            String? phoneNumber,
+            String? emergencyContactName,
+            String? emergencyContactPhone)?
+        register,
+    TResult Function()? logout,
+    TResult Function()? signInWithGoogle,
+    TResult Function()? signInWithApple,
+    TResult Function(String email)? forgotPassword,
+    TResult Function(String email, String locale)? forgotPasswordWithLocale,
+    TResult Function(String fullName, String? phoneNumber,
+            String? emergencyContactName, String? emergencyContactPhone)?
+        updateProfile,
+    TResult Function(String newEmail, String currentPassword)? updateEmail,
+    TResult Function(String currentPassword, String newPassword)?
+        updatePassword,
+    TResult Function(File imageFile)? uploadProfilePhoto,
+    required TResult orElse(),
+  }) {
+    if (forgotPasswordWithLocale != null) {
+      return forgotPasswordWithLocale(email, locale);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(CheckAuthStatus value) checkStatus,
+    required TResult Function(LoginEvent value) login,
+    required TResult Function(RegisterEvent value) register,
+    required TResult Function(LogoutEvent value) logout,
+    required TResult Function(SignInWithGoogleEvent value) signInWithGoogle,
+    required TResult Function(SignInWithAppleEvent value) signInWithApple,
+    required TResult Function(ForgotPasswordEvent value) forgotPassword,
+    required TResult Function(ForgotPasswordWithLocaleEvent value)
+        forgotPasswordWithLocale,
+    required TResult Function(UpdateProfileEvent value) updateProfile,
+    required TResult Function(UpdateEmailEvent value) updateEmail,
+    required TResult Function(UpdatePasswordEvent value) updatePassword,
+    required TResult Function(UploadProfilePhotoEvent value) uploadProfilePhoto,
+  }) {
+    return forgotPasswordWithLocale(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(CheckAuthStatus value)? checkStatus,
+    TResult? Function(LoginEvent value)? login,
+    TResult? Function(RegisterEvent value)? register,
+    TResult? Function(LogoutEvent value)? logout,
+    TResult? Function(SignInWithGoogleEvent value)? signInWithGoogle,
+    TResult? Function(SignInWithAppleEvent value)? signInWithApple,
+    TResult? Function(ForgotPasswordEvent value)? forgotPassword,
+    TResult? Function(ForgotPasswordWithLocaleEvent value)?
+        forgotPasswordWithLocale,
+    TResult? Function(UpdateProfileEvent value)? updateProfile,
+    TResult? Function(UpdateEmailEvent value)? updateEmail,
+    TResult? Function(UpdatePasswordEvent value)? updatePassword,
+    TResult? Function(UploadProfilePhotoEvent value)? uploadProfilePhoto,
+  }) {
+    return forgotPasswordWithLocale?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(CheckAuthStatus value)? checkStatus,
+    TResult Function(LoginEvent value)? login,
+    TResult Function(RegisterEvent value)? register,
+    TResult Function(LogoutEvent value)? logout,
+    TResult Function(SignInWithGoogleEvent value)? signInWithGoogle,
+    TResult Function(SignInWithAppleEvent value)? signInWithApple,
+    TResult Function(ForgotPasswordEvent value)? forgotPassword,
+    TResult Function(ForgotPasswordWithLocaleEvent value)?
+        forgotPasswordWithLocale,
+    TResult Function(UpdateProfileEvent value)? updateProfile,
+    TResult Function(UpdateEmailEvent value)? updateEmail,
+    TResult Function(UpdatePasswordEvent value)? updatePassword,
+    TResult Function(UploadProfilePhotoEvent value)? uploadProfilePhoto,
+    required TResult orElse(),
+  }) {
+    if (forgotPasswordWithLocale != null) {
+      return forgotPasswordWithLocale(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class ForgotPasswordWithLocaleEvent implements AuthEvent {
+  const factory ForgotPasswordWithLocaleEvent(
+      {required final String email,
+      required final String locale}) = _$ForgotPasswordWithLocaleEventImpl;
+
+  String get email;
+  String get locale;
+
+  /// Create a copy of AuthEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$ForgotPasswordWithLocaleEventImplCopyWith<
+          _$ForgotPasswordWithLocaleEventImpl>
+      get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -1535,6 +2137,9 @@ class _$UpdateProfileEventImpl implements UpdateProfileEvent {
     required TResult Function() logout,
     required TResult Function() signInWithGoogle,
     required TResult Function() signInWithApple,
+    required TResult Function(String email) forgotPassword,
+    required TResult Function(String email, String locale)
+        forgotPasswordWithLocale,
     required TResult Function(String fullName, String? phoneNumber,
             String? emergencyContactName, String? emergencyContactPhone)
         updateProfile,
@@ -1564,6 +2169,8 @@ class _$UpdateProfileEventImpl implements UpdateProfileEvent {
     TResult? Function()? logout,
     TResult? Function()? signInWithGoogle,
     TResult? Function()? signInWithApple,
+    TResult? Function(String email)? forgotPassword,
+    TResult? Function(String email, String locale)? forgotPasswordWithLocale,
     TResult? Function(String fullName, String? phoneNumber,
             String? emergencyContactName, String? emergencyContactPhone)?
         updateProfile,
@@ -1592,6 +2199,8 @@ class _$UpdateProfileEventImpl implements UpdateProfileEvent {
     TResult Function()? logout,
     TResult Function()? signInWithGoogle,
     TResult Function()? signInWithApple,
+    TResult Function(String email)? forgotPassword,
+    TResult Function(String email, String locale)? forgotPasswordWithLocale,
     TResult Function(String fullName, String? phoneNumber,
             String? emergencyContactName, String? emergencyContactPhone)?
         updateProfile,
@@ -1617,6 +2226,9 @@ class _$UpdateProfileEventImpl implements UpdateProfileEvent {
     required TResult Function(LogoutEvent value) logout,
     required TResult Function(SignInWithGoogleEvent value) signInWithGoogle,
     required TResult Function(SignInWithAppleEvent value) signInWithApple,
+    required TResult Function(ForgotPasswordEvent value) forgotPassword,
+    required TResult Function(ForgotPasswordWithLocaleEvent value)
+        forgotPasswordWithLocale,
     required TResult Function(UpdateProfileEvent value) updateProfile,
     required TResult Function(UpdateEmailEvent value) updateEmail,
     required TResult Function(UpdatePasswordEvent value) updatePassword,
@@ -1634,6 +2246,9 @@ class _$UpdateProfileEventImpl implements UpdateProfileEvent {
     TResult? Function(LogoutEvent value)? logout,
     TResult? Function(SignInWithGoogleEvent value)? signInWithGoogle,
     TResult? Function(SignInWithAppleEvent value)? signInWithApple,
+    TResult? Function(ForgotPasswordEvent value)? forgotPassword,
+    TResult? Function(ForgotPasswordWithLocaleEvent value)?
+        forgotPasswordWithLocale,
     TResult? Function(UpdateProfileEvent value)? updateProfile,
     TResult? Function(UpdateEmailEvent value)? updateEmail,
     TResult? Function(UpdatePasswordEvent value)? updatePassword,
@@ -1651,6 +2266,9 @@ class _$UpdateProfileEventImpl implements UpdateProfileEvent {
     TResult Function(LogoutEvent value)? logout,
     TResult Function(SignInWithGoogleEvent value)? signInWithGoogle,
     TResult Function(SignInWithAppleEvent value)? signInWithApple,
+    TResult Function(ForgotPasswordEvent value)? forgotPassword,
+    TResult Function(ForgotPasswordWithLocaleEvent value)?
+        forgotPasswordWithLocale,
     TResult Function(UpdateProfileEvent value)? updateProfile,
     TResult Function(UpdateEmailEvent value)? updateEmail,
     TResult Function(UpdatePasswordEvent value)? updatePassword,
@@ -1776,6 +2394,9 @@ class _$UpdateEmailEventImpl implements UpdateEmailEvent {
     required TResult Function() logout,
     required TResult Function() signInWithGoogle,
     required TResult Function() signInWithApple,
+    required TResult Function(String email) forgotPassword,
+    required TResult Function(String email, String locale)
+        forgotPasswordWithLocale,
     required TResult Function(String fullName, String? phoneNumber,
             String? emergencyContactName, String? emergencyContactPhone)
         updateProfile,
@@ -1804,6 +2425,8 @@ class _$UpdateEmailEventImpl implements UpdateEmailEvent {
     TResult? Function()? logout,
     TResult? Function()? signInWithGoogle,
     TResult? Function()? signInWithApple,
+    TResult? Function(String email)? forgotPassword,
+    TResult? Function(String email, String locale)? forgotPasswordWithLocale,
     TResult? Function(String fullName, String? phoneNumber,
             String? emergencyContactName, String? emergencyContactPhone)?
         updateProfile,
@@ -1831,6 +2454,8 @@ class _$UpdateEmailEventImpl implements UpdateEmailEvent {
     TResult Function()? logout,
     TResult Function()? signInWithGoogle,
     TResult Function()? signInWithApple,
+    TResult Function(String email)? forgotPassword,
+    TResult Function(String email, String locale)? forgotPasswordWithLocale,
     TResult Function(String fullName, String? phoneNumber,
             String? emergencyContactName, String? emergencyContactPhone)?
         updateProfile,
@@ -1855,6 +2480,9 @@ class _$UpdateEmailEventImpl implements UpdateEmailEvent {
     required TResult Function(LogoutEvent value) logout,
     required TResult Function(SignInWithGoogleEvent value) signInWithGoogle,
     required TResult Function(SignInWithAppleEvent value) signInWithApple,
+    required TResult Function(ForgotPasswordEvent value) forgotPassword,
+    required TResult Function(ForgotPasswordWithLocaleEvent value)
+        forgotPasswordWithLocale,
     required TResult Function(UpdateProfileEvent value) updateProfile,
     required TResult Function(UpdateEmailEvent value) updateEmail,
     required TResult Function(UpdatePasswordEvent value) updatePassword,
@@ -1872,6 +2500,9 @@ class _$UpdateEmailEventImpl implements UpdateEmailEvent {
     TResult? Function(LogoutEvent value)? logout,
     TResult? Function(SignInWithGoogleEvent value)? signInWithGoogle,
     TResult? Function(SignInWithAppleEvent value)? signInWithApple,
+    TResult? Function(ForgotPasswordEvent value)? forgotPassword,
+    TResult? Function(ForgotPasswordWithLocaleEvent value)?
+        forgotPasswordWithLocale,
     TResult? Function(UpdateProfileEvent value)? updateProfile,
     TResult? Function(UpdateEmailEvent value)? updateEmail,
     TResult? Function(UpdatePasswordEvent value)? updatePassword,
@@ -1889,6 +2520,9 @@ class _$UpdateEmailEventImpl implements UpdateEmailEvent {
     TResult Function(LogoutEvent value)? logout,
     TResult Function(SignInWithGoogleEvent value)? signInWithGoogle,
     TResult Function(SignInWithAppleEvent value)? signInWithApple,
+    TResult Function(ForgotPasswordEvent value)? forgotPassword,
+    TResult Function(ForgotPasswordWithLocaleEvent value)?
+        forgotPasswordWithLocale,
     TResult Function(UpdateProfileEvent value)? updateProfile,
     TResult Function(UpdateEmailEvent value)? updateEmail,
     TResult Function(UpdatePasswordEvent value)? updatePassword,
@@ -2010,6 +2644,9 @@ class _$UpdatePasswordEventImpl implements UpdatePasswordEvent {
     required TResult Function() logout,
     required TResult Function() signInWithGoogle,
     required TResult Function() signInWithApple,
+    required TResult Function(String email) forgotPassword,
+    required TResult Function(String email, String locale)
+        forgotPasswordWithLocale,
     required TResult Function(String fullName, String? phoneNumber,
             String? emergencyContactName, String? emergencyContactPhone)
         updateProfile,
@@ -2038,6 +2675,8 @@ class _$UpdatePasswordEventImpl implements UpdatePasswordEvent {
     TResult? Function()? logout,
     TResult? Function()? signInWithGoogle,
     TResult? Function()? signInWithApple,
+    TResult? Function(String email)? forgotPassword,
+    TResult? Function(String email, String locale)? forgotPasswordWithLocale,
     TResult? Function(String fullName, String? phoneNumber,
             String? emergencyContactName, String? emergencyContactPhone)?
         updateProfile,
@@ -2065,6 +2704,8 @@ class _$UpdatePasswordEventImpl implements UpdatePasswordEvent {
     TResult Function()? logout,
     TResult Function()? signInWithGoogle,
     TResult Function()? signInWithApple,
+    TResult Function(String email)? forgotPassword,
+    TResult Function(String email, String locale)? forgotPasswordWithLocale,
     TResult Function(String fullName, String? phoneNumber,
             String? emergencyContactName, String? emergencyContactPhone)?
         updateProfile,
@@ -2089,6 +2730,9 @@ class _$UpdatePasswordEventImpl implements UpdatePasswordEvent {
     required TResult Function(LogoutEvent value) logout,
     required TResult Function(SignInWithGoogleEvent value) signInWithGoogle,
     required TResult Function(SignInWithAppleEvent value) signInWithApple,
+    required TResult Function(ForgotPasswordEvent value) forgotPassword,
+    required TResult Function(ForgotPasswordWithLocaleEvent value)
+        forgotPasswordWithLocale,
     required TResult Function(UpdateProfileEvent value) updateProfile,
     required TResult Function(UpdateEmailEvent value) updateEmail,
     required TResult Function(UpdatePasswordEvent value) updatePassword,
@@ -2106,6 +2750,9 @@ class _$UpdatePasswordEventImpl implements UpdatePasswordEvent {
     TResult? Function(LogoutEvent value)? logout,
     TResult? Function(SignInWithGoogleEvent value)? signInWithGoogle,
     TResult? Function(SignInWithAppleEvent value)? signInWithApple,
+    TResult? Function(ForgotPasswordEvent value)? forgotPassword,
+    TResult? Function(ForgotPasswordWithLocaleEvent value)?
+        forgotPasswordWithLocale,
     TResult? Function(UpdateProfileEvent value)? updateProfile,
     TResult? Function(UpdateEmailEvent value)? updateEmail,
     TResult? Function(UpdatePasswordEvent value)? updatePassword,
@@ -2123,6 +2770,9 @@ class _$UpdatePasswordEventImpl implements UpdatePasswordEvent {
     TResult Function(LogoutEvent value)? logout,
     TResult Function(SignInWithGoogleEvent value)? signInWithGoogle,
     TResult Function(SignInWithAppleEvent value)? signInWithApple,
+    TResult Function(ForgotPasswordEvent value)? forgotPassword,
+    TResult Function(ForgotPasswordWithLocaleEvent value)?
+        forgotPasswordWithLocale,
     TResult Function(UpdateProfileEvent value)? updateProfile,
     TResult Function(UpdateEmailEvent value)? updateEmail,
     TResult Function(UpdatePasswordEvent value)? updatePassword,
@@ -2236,6 +2886,9 @@ class _$UploadProfilePhotoEventImpl implements UploadProfilePhotoEvent {
     required TResult Function() logout,
     required TResult Function() signInWithGoogle,
     required TResult Function() signInWithApple,
+    required TResult Function(String email) forgotPassword,
+    required TResult Function(String email, String locale)
+        forgotPasswordWithLocale,
     required TResult Function(String fullName, String? phoneNumber,
             String? emergencyContactName, String? emergencyContactPhone)
         updateProfile,
@@ -2264,6 +2917,8 @@ class _$UploadProfilePhotoEventImpl implements UploadProfilePhotoEvent {
     TResult? Function()? logout,
     TResult? Function()? signInWithGoogle,
     TResult? Function()? signInWithApple,
+    TResult? Function(String email)? forgotPassword,
+    TResult? Function(String email, String locale)? forgotPasswordWithLocale,
     TResult? Function(String fullName, String? phoneNumber,
             String? emergencyContactName, String? emergencyContactPhone)?
         updateProfile,
@@ -2291,6 +2946,8 @@ class _$UploadProfilePhotoEventImpl implements UploadProfilePhotoEvent {
     TResult Function()? logout,
     TResult Function()? signInWithGoogle,
     TResult Function()? signInWithApple,
+    TResult Function(String email)? forgotPassword,
+    TResult Function(String email, String locale)? forgotPasswordWithLocale,
     TResult Function(String fullName, String? phoneNumber,
             String? emergencyContactName, String? emergencyContactPhone)?
         updateProfile,
@@ -2315,6 +2972,9 @@ class _$UploadProfilePhotoEventImpl implements UploadProfilePhotoEvent {
     required TResult Function(LogoutEvent value) logout,
     required TResult Function(SignInWithGoogleEvent value) signInWithGoogle,
     required TResult Function(SignInWithAppleEvent value) signInWithApple,
+    required TResult Function(ForgotPasswordEvent value) forgotPassword,
+    required TResult Function(ForgotPasswordWithLocaleEvent value)
+        forgotPasswordWithLocale,
     required TResult Function(UpdateProfileEvent value) updateProfile,
     required TResult Function(UpdateEmailEvent value) updateEmail,
     required TResult Function(UpdatePasswordEvent value) updatePassword,
@@ -2332,6 +2992,9 @@ class _$UploadProfilePhotoEventImpl implements UploadProfilePhotoEvent {
     TResult? Function(LogoutEvent value)? logout,
     TResult? Function(SignInWithGoogleEvent value)? signInWithGoogle,
     TResult? Function(SignInWithAppleEvent value)? signInWithApple,
+    TResult? Function(ForgotPasswordEvent value)? forgotPassword,
+    TResult? Function(ForgotPasswordWithLocaleEvent value)?
+        forgotPasswordWithLocale,
     TResult? Function(UpdateProfileEvent value)? updateProfile,
     TResult? Function(UpdateEmailEvent value)? updateEmail,
     TResult? Function(UpdatePasswordEvent value)? updatePassword,
@@ -2349,6 +3012,9 @@ class _$UploadProfilePhotoEventImpl implements UploadProfilePhotoEvent {
     TResult Function(LogoutEvent value)? logout,
     TResult Function(SignInWithGoogleEvent value)? signInWithGoogle,
     TResult Function(SignInWithAppleEvent value)? signInWithApple,
+    TResult Function(ForgotPasswordEvent value)? forgotPassword,
+    TResult Function(ForgotPasswordWithLocaleEvent value)?
+        forgotPasswordWithLocale,
     TResult Function(UpdateProfileEvent value)? updateProfile,
     TResult Function(UpdateEmailEvent value)? updateEmail,
     TResult Function(UpdatePasswordEvent value)? updatePassword,

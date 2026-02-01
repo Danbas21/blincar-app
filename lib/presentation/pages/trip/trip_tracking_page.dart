@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'dart:async';
 import '../../../core/theme/app_theme.dart';
 import '../../../domain/entities/trip/trip_entity.dart';
@@ -8,6 +9,8 @@ import '../../../core/services/service_locator.dart';
 import '../../../core/services/storage_service.dart';
 import '../../../core/services/vehicle_marker_service.dart';
 import '../panic/panic_page.dart';
+import 'trip_chat_page.dart';
+import 'trip_rating_page.dart';
 import 'package:dartz/dartz.dart' hide State;
 import '../../../core/errors/failures.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -119,10 +122,12 @@ class _TripTrackingPageState extends State<TripTrackingPage> {
 
   /// 📍 Escucha la ubicación del conductor en tiempo real desde Firebase
   void _startDriverLocationTracking() {
-    
+
     final locationRef = _database.ref('blincar/trips/${widget.tripId}/currentLocation');
 
     _locationSubscription = locationRef.onValue.listen((DatabaseEvent event) {
+      if (!mounted) return;
+
       if (event.snapshot.value != null) {
         try {
           final data = event.snapshot.value as Map<dynamic, dynamic>;
@@ -132,6 +137,8 @@ class _TripTrackingPageState extends State<TripTrackingPage> {
 
           if (latitude != null && longitude != null) {
             final newPosition = LatLng(latitude, longitude);
+
+            if (!mounted) return;
 
             // Inicializar o actualizar el controlador de animación
             if (_vehicleAnimController == null) {
@@ -159,12 +166,14 @@ class _TripTrackingPageState extends State<TripTrackingPage> {
             // Actualizar el marcador y la polilínea
             _updateVehicleMarker();
 
-                      }
+          }
         } catch (e) {
-                  }
+          debugPrint('[TripTracking] ❌ Error en stream de ubicación: $e');
+        }
       }
     }, onError: (error) {
-          });
+      debugPrint('[TripTracking] ❌ Error en listener de ubicación: $error');
+    });
   }
 
   /// Callback cuando la animación del vehículo se actualiza
@@ -187,12 +196,23 @@ class _TripTrackingPageState extends State<TripTrackingPage> {
   Future<void> _updateVehicleMarker() async {
     if (_driverLocation == null || _currentTrip == null) return;
 
-    // Obtener el marcador rotado
-    _vehicleMarker = await _vehicleMarkerService.getVehicleMarker(
-      color: _vehicleColor,
-      heading: _driverHeading,
-      size: 80,
-    );
+    try {
+      // Obtener el marcador rotado con imagen PNG de vehículo real
+      _vehicleMarker = await _vehicleMarkerService.getVehicleMarker(
+        type: VehicleType.tahoe, // Tipo de vehículo - puede venir del trip data
+        color: _vehicleColor,
+        heading: _driverHeading,
+        size: 80,
+      );
+
+      debugPrint('[TripTracking] ✅ Vehicle marker loaded successfully');
+    } catch (e) {
+      debugPrint('[TripTracking] ❌ Error loading vehicle marker: $e');
+      // Usar marcador predeterminado si falla
+      _vehicleMarker = BitmapDescriptor.defaultMarkerWithHue(
+        BitmapDescriptor.hueBlue,
+      );
+    }
 
     if (mounted) {
       setState(() {
@@ -375,30 +395,43 @@ class _TripTrackingPageState extends State<TripTrackingPage> {
           ],
         ),
         actions: [
-          ElevatedButton(
+          TextButton(
             onPressed: () async {
-              
-              // 🗑️ Limpiar tripId activo del storage
+              // Limpiar tripId activo del storage
               final storageService = getIt<StorageService>();
               await storageService.clearActiveTripId();
-              
+
+              if (mounted) {
+                Navigator.of(context).pop();
+                Navigator.of(context).popUntil((route) => route.isFirst);
+              }
+            },
+            child: const Text(
+              'Omitir',
+              style: TextStyle(color: AppTheme.textSecondaryColor),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              // Limpiar tripId activo del storage
+              final storageService = getIt<StorageService>();
+              await storageService.clearActiveTripId();
+
               // Cerrar el dialog
               if (mounted) {
                 Navigator.of(context).pop();
               }
 
-              // Volver al home (HomePage) removiendo todas las pantallas intermedias
+              // Mostrar página de calificación
               if (mounted) {
-                Navigator.of(context).popUntil((route) {
-                                    return route.isFirst;
-                });
+                _showRatingPage();
               }
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppTheme.successColor,
               foregroundColor: Colors.white,
             ),
-            child: const Text('Aceptar'),
+            child: const Text('Calificar viaje'),
           ),
         ],
       ),
@@ -545,6 +578,16 @@ class _TripTrackingPageState extends State<TripTrackingPage> {
                       child: _buildTripInfoPanel(),
                     ),
 
+                    // Botón de chat con conductor
+                    if (_currentTrip != null &&
+                        _currentTrip!.isActive &&
+                        _currentTrip!.driverName != null)
+                      Positioned(
+                        bottom: 100,
+                        right: 24,
+                        child: _buildChatButton(),
+                      ),
+
                     // Botón de pánico
                     Positioned(
                       bottom: 24,
@@ -680,11 +723,33 @@ class _TripTrackingPageState extends State<TripTrackingPage> {
                 // Botón para llamar
                 IconButton(
                   icon: const Icon(Icons.phone, color: AppTheme.successColor),
-                  onPressed: () {
-                    // TODO: Implementar llamada
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Llamando al conductor...')),
-                    );
+                  onPressed: () async {
+                    final phone = trip.driverPhone;
+                    if (phone == null || phone.isEmpty) {
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Número de teléfono no disponible'),
+                            backgroundColor: AppTheme.errorColor,
+                          ),
+                        );
+                      }
+                      return;
+                    }
+
+                    final Uri phoneUri = Uri(scheme: 'tel', path: phone);
+                    if (await canLaunchUrl(phoneUri)) {
+                      await launchUrl(phoneUri);
+                    } else {
+                      if (context.mounted) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('No se puede realizar la llamada'),
+                            backgroundColor: AppTheme.errorColor,
+                          ),
+                        );
+                      }
+                    }
                   },
                 ),
               ],
@@ -853,6 +918,61 @@ class _TripTrackingPageState extends State<TripTrackingPage> {
             ],
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildChatButton() {
+    return FloatingActionButton(
+      onPressed: _openChat,
+      backgroundColor: AppTheme.primaryLightColor,
+      heroTag: 'chat',
+      child: const Icon(Icons.chat_bubble_outline, color: Colors.white),
+    );
+  }
+
+  void _openChat() {
+    if (_currentTrip == null) return;
+
+    // TODO: Obtener el ID del usuario actual del AuthBloc
+    const currentUserId = 'current_user_id';
+    const currentUserName = 'Pasajero';
+
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => TripChatPage(
+          tripId: widget.tripId,
+          currentUserId: currentUserId,
+          currentUserName: currentUserName,
+          otherUserId: _currentTrip!.driverId ?? 'driver_id',
+          otherUserName: _currentTrip!.driverName ?? 'Conductor',
+          otherUserPhoto: null,
+        ),
+      ),
+    );
+  }
+
+  void _showRatingPage() {
+    if (_currentTrip == null) return;
+
+    // TODO: Obtener el ID del usuario actual del AuthBloc
+    const currentUserId = 'current_user_id';
+
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => TripRatingPage(
+          tripId: widget.tripId,
+          passengerId: currentUserId,
+          driverId: _currentTrip!.driverId ?? 'driver_id',
+          driverName: _currentTrip!.driverName ?? 'Conductor',
+          driverPhoto: null,
+          onRatingSubmitted: () {
+            Navigator.of(context).popUntil((route) => route.isFirst);
+          },
+          onSkip: () {
+            Navigator.of(context).popUntil((route) => route.isFirst);
+          },
+        ),
       ),
     );
   }

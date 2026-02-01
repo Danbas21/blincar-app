@@ -30,6 +30,9 @@ sealed class AuthState with _$AuthState {
   /// Error de autenticacion
   const factory AuthState.error(String message) = AuthError;
 
+  /// Email de recuperación enviado
+  const factory AuthState.passwordResetEmailSent(String email) = PasswordResetEmailSent;
+
   // ========================================
   // ESTADOS DE EDICIÓN DE PERFIL
   // ========================================

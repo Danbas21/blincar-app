@@ -445,11 +445,14 @@ class _ActivityPageState extends State<ActivityPage> {
                 size: 14,
               ),
               const SizedBox(width: 4),
-              Text(
-                trip.serviceType,
-                style: const TextStyle(
-                  color: AppTheme.textSecondaryColor,
-                  fontSize: 12,
+              Flexible(
+                child: Text(
+                  trip.serviceType,
+                  style: const TextStyle(
+                    color: AppTheme.textSecondaryColor,
+                    fontSize: 12,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
               ),
               if (trip.driverName != null) ...[
@@ -479,11 +482,14 @@ class _ActivityPageState extends State<ActivityPage> {
                   size: 14,
                 ),
                 const SizedBox(width: 4),
-                Text(
-                  trip.vehiclePlate!,
-                  style: const TextStyle(
-                    color: AppTheme.textSecondaryColor,
-                    fontSize: 12,
+                Flexible(
+                  child: Text(
+                    trip.vehiclePlate!,
+                    style: const TextStyle(
+                      color: AppTheme.textSecondaryColor,
+                      fontSize: 12,
+                    ),
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ],

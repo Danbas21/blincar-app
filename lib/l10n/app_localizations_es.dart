@@ -436,4 +436,104 @@ class AppLocalizationsEs extends AppLocalizations {
   @override
   String get noEmergencyContactConfigured =>
       'No tienes un contacto de emergencia configurado';
+
+  @override
+  String get confirmDeactivation => 'Confirmar desactivación';
+
+  @override
+  String get typeToConfirm => 'Escribe: ESTOY SEGURO';
+
+  @override
+  String get verifyPhone => 'Verifica tu teléfono';
+
+  @override
+  String get enterPhoneToVerify =>
+      'Ingresa tu número de teléfono para recibir un código de verificación';
+
+  @override
+  String get sendCode => 'Enviar código';
+
+  @override
+  String get enterVerificationCode => 'Ingresa el código';
+
+  @override
+  String codeSentTo(String phone) {
+    return 'Enviamos un código SMS a $phone';
+  }
+
+  @override
+  String get verify => 'Verificar';
+
+  @override
+  String get resendCode => 'Reenviar código';
+
+  @override
+  String resendCodeIn(int seconds) {
+    return 'Reenviar código en ${seconds}s';
+  }
+
+  @override
+  String get changePhoneNumber => 'Cambiar número';
+
+  @override
+  String get phoneVerified => 'Teléfono verificado correctamente';
+
+  @override
+  String get invalidCode => 'Código incorrecto';
+
+  @override
+  String get chatWithDriver => 'Chat con conductor';
+
+  @override
+  String get typeMessage => 'Escribe un mensaje...';
+
+  @override
+  String get send => 'Enviar';
+
+  @override
+  String get noMessages => 'No hay mensajes aún';
+
+  @override
+  String get startConversation => 'Inicia la conversación';
+
+  @override
+  String get rateYourTrip => 'Califica tu viaje';
+
+  @override
+  String get howWasYourTrip => '¿Cómo estuvo tu viaje?';
+
+  @override
+  String get leaveComment => 'Deja un comentario (opcional)';
+
+  @override
+  String get commentPlaceholder => 'Cuéntanos sobre tu experiencia...';
+
+  @override
+  String get submitRating => 'Enviar calificación';
+
+  @override
+  String get skipRating => 'Omitir';
+
+  @override
+  String get thankYouForRating => 'Gracias por tu calificación';
+
+  @override
+  String get deleteAccount => 'Eliminar cuenta';
+
+  @override
+  String get deleteAccountWarning =>
+      'Esta acción es irreversible. Todos tus datos serán eliminados permanentemente.';
+
+  @override
+  String get confirmDeleteAccount =>
+      '¿Estás seguro de que quieres eliminar tu cuenta?';
+
+  @override
+  String get typeDeleteToConfirm => 'Escribe ELIMINAR para confirmar';
+
+  @override
+  String get accountDeleted => 'Tu cuenta ha sido eliminada';
+
+  @override
+  String get delete => 'Eliminar';
 }

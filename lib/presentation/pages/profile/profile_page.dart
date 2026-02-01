@@ -14,6 +14,11 @@ import 'edit_profile_page.dart';
 import 'emergency_contact_page.dart';
 import 'payment_methods_page.dart';
 import '../dev/dev_tools_page.dart';
+import '../settings/notification_settings_page.dart';
+import '../legal/privacy_policy_page.dart';
+import '../legal/terms_conditions_page.dart';
+import '../help/help_page.dart';
+import '../settings/delete_account_page.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -288,9 +293,13 @@ class _ProfilePageState extends State<ProfilePage> {
         _buildMenuItem(
           icon: Icons.notifications_outlined,
           title: l10n.notifications,
-          subtitle: l10n.notifications,
+          subtitle: 'Configurar alertas y sonidos',
           onTap: () {
-            // TODO: Navigate to notifications settings
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const NotificationSettingsPage(),
+              ),
+            );
           },
         ),
         // Sección de Idioma con BlocBuilder para mostrar idioma actual
@@ -313,25 +322,50 @@ class _ProfilePageState extends State<ProfilePage> {
         _buildMenuItem(
           icon: Icons.privacy_tip_outlined,
           title: l10n.privacyPolicy,
-          subtitle: l10n.privacyPolicy,
+          subtitle: 'Cómo protegemos tus datos',
           onTap: () {
-            // TODO: Show privacy policy
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const PrivacyPolicyPage(),
+              ),
+            );
           },
         ),
         _buildMenuItem(
           icon: Icons.description_outlined,
           title: l10n.termsAndConditions,
-          subtitle: l10n.termsAndConditions,
+          subtitle: 'Condiciones de uso del servicio',
           onTap: () {
-            // TODO: Show terms and conditions
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const TermsConditionsPage(),
+              ),
+            );
           },
         ),
         _buildMenuItem(
           icon: Icons.help_outline,
-          title: l10n.settings,
-          subtitle: l10n.settings,
+          title: 'Ayuda y Soporte',
+          subtitle: 'FAQ y contacto 24/7',
           onTap: () {
-            // TODO: Navigate to help
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const HelpPage(),
+              ),
+            );
+          },
+        ),
+        _buildMenuItem(
+          icon: Icons.delete_forever,
+          title: l10n.deleteAccount,
+          subtitle: 'Eliminar permanentemente tu cuenta',
+          trailing: const Icon(Icons.warning, color: AppTheme.errorColor),
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const DeleteAccountPage(),
+              ),
+            );
           },
         ),
       ],

@@ -2,7 +2,7 @@ name: blincar_app
 description: "Aplicación móvil Blincar - Transporte seguro"
 publish_to: "none"
 
-version: 1.0.1+2
+version: 1.0.1+4
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
@@ -12,6 +12,7 @@ dependencies:
   camera: ^0.10.5+9
   centered_singlechildscrollview: ^0.2.0
   cloud_firestore: 5.6.12
+  cloud_functions: ^5.2.0
   crypto: ^3.0.3
   cupertino_icons: ^1.0.8
   dartz: ^0.10.1
@@ -54,7 +55,9 @@ dependencies:
   shared_preferences: ^2.2.2
   sign_in_with_apple: ^6.1.0
   url_launcher: ^6.3.1
+  uuid: ^4.5.1
   video_player: ^2.9.1
+  local_auth: ^2.3.0
 
 dev_dependencies:
   bloc_test: ^9.1.5
@@ -106,6 +109,7 @@ flutter:
     - assets/images/
     - assets/icons/
     - assets/video/
+    - assets/vehicle/
     - firebase_seed_data.json
   fonts:
     - family: Montserrat

@@ -23,6 +23,7 @@ mixin _$AuthState {
     required TResult Function(User user) authenticated,
     required TResult Function() unauthenticated,
     required TResult Function(String message) error,
+    required TResult Function(String email) passwordResetEmailSent,
     required TResult Function() profileUpdating,
     required TResult Function(User user, String message) profileUpdated,
     required TResult Function(User user, String message) profileError,
@@ -37,6 +38,7 @@ mixin _$AuthState {
     TResult? Function(User user)? authenticated,
     TResult? Function()? unauthenticated,
     TResult? Function(String message)? error,
+    TResult? Function(String email)? passwordResetEmailSent,
     TResult? Function()? profileUpdating,
     TResult? Function(User user, String message)? profileUpdated,
     TResult? Function(User user, String message)? profileError,
@@ -51,6 +53,7 @@ mixin _$AuthState {
     TResult Function(User user)? authenticated,
     TResult Function()? unauthenticated,
     TResult Function(String message)? error,
+    TResult Function(String email)? passwordResetEmailSent,
     TResult Function()? profileUpdating,
     TResult Function(User user, String message)? profileUpdated,
     TResult Function(User user, String message)? profileError,
@@ -66,6 +69,8 @@ mixin _$AuthState {
     required TResult Function(AuthAuthenticated value) authenticated,
     required TResult Function(AuthUnauthenticated value) unauthenticated,
     required TResult Function(AuthError value) error,
+    required TResult Function(PasswordResetEmailSent value)
+        passwordResetEmailSent,
     required TResult Function(ProfileUpdating value) profileUpdating,
     required TResult Function(ProfileUpdated value) profileUpdated,
     required TResult Function(ProfileError value) profileError,
@@ -80,6 +85,7 @@ mixin _$AuthState {
     TResult? Function(AuthAuthenticated value)? authenticated,
     TResult? Function(AuthUnauthenticated value)? unauthenticated,
     TResult? Function(AuthError value)? error,
+    TResult? Function(PasswordResetEmailSent value)? passwordResetEmailSent,
     TResult? Function(ProfileUpdating value)? profileUpdating,
     TResult? Function(ProfileUpdated value)? profileUpdated,
     TResult? Function(ProfileError value)? profileError,
@@ -94,6 +100,7 @@ mixin _$AuthState {
     TResult Function(AuthAuthenticated value)? authenticated,
     TResult Function(AuthUnauthenticated value)? unauthenticated,
     TResult Function(AuthError value)? error,
+    TResult Function(PasswordResetEmailSent value)? passwordResetEmailSent,
     TResult Function(ProfileUpdating value)? profileUpdating,
     TResult Function(ProfileUpdated value)? profileUpdated,
     TResult Function(ProfileError value)? profileError,
@@ -170,6 +177,7 @@ class _$AuthInitialImpl implements AuthInitial {
     required TResult Function(User user) authenticated,
     required TResult Function() unauthenticated,
     required TResult Function(String message) error,
+    required TResult Function(String email) passwordResetEmailSent,
     required TResult Function() profileUpdating,
     required TResult Function(User user, String message) profileUpdated,
     required TResult Function(User user, String message) profileError,
@@ -187,6 +195,7 @@ class _$AuthInitialImpl implements AuthInitial {
     TResult? Function(User user)? authenticated,
     TResult? Function()? unauthenticated,
     TResult? Function(String message)? error,
+    TResult? Function(String email)? passwordResetEmailSent,
     TResult? Function()? profileUpdating,
     TResult? Function(User user, String message)? profileUpdated,
     TResult? Function(User user, String message)? profileError,
@@ -204,6 +213,7 @@ class _$AuthInitialImpl implements AuthInitial {
     TResult Function(User user)? authenticated,
     TResult Function()? unauthenticated,
     TResult Function(String message)? error,
+    TResult Function(String email)? passwordResetEmailSent,
     TResult Function()? profileUpdating,
     TResult Function(User user, String message)? profileUpdated,
     TResult Function(User user, String message)? profileError,
@@ -225,6 +235,8 @@ class _$AuthInitialImpl implements AuthInitial {
     required TResult Function(AuthAuthenticated value) authenticated,
     required TResult Function(AuthUnauthenticated value) unauthenticated,
     required TResult Function(AuthError value) error,
+    required TResult Function(PasswordResetEmailSent value)
+        passwordResetEmailSent,
     required TResult Function(ProfileUpdating value) profileUpdating,
     required TResult Function(ProfileUpdated value) profileUpdated,
     required TResult Function(ProfileError value) profileError,
@@ -242,6 +254,7 @@ class _$AuthInitialImpl implements AuthInitial {
     TResult? Function(AuthAuthenticated value)? authenticated,
     TResult? Function(AuthUnauthenticated value)? unauthenticated,
     TResult? Function(AuthError value)? error,
+    TResult? Function(PasswordResetEmailSent value)? passwordResetEmailSent,
     TResult? Function(ProfileUpdating value)? profileUpdating,
     TResult? Function(ProfileUpdated value)? profileUpdated,
     TResult? Function(ProfileError value)? profileError,
@@ -259,6 +272,7 @@ class _$AuthInitialImpl implements AuthInitial {
     TResult Function(AuthAuthenticated value)? authenticated,
     TResult Function(AuthUnauthenticated value)? unauthenticated,
     TResult Function(AuthError value)? error,
+    TResult Function(PasswordResetEmailSent value)? passwordResetEmailSent,
     TResult Function(ProfileUpdating value)? profileUpdating,
     TResult Function(ProfileUpdated value)? profileUpdated,
     TResult Function(ProfileError value)? profileError,
@@ -323,6 +337,7 @@ class _$AuthLoadingImpl implements AuthLoading {
     required TResult Function(User user) authenticated,
     required TResult Function() unauthenticated,
     required TResult Function(String message) error,
+    required TResult Function(String email) passwordResetEmailSent,
     required TResult Function() profileUpdating,
     required TResult Function(User user, String message) profileUpdated,
     required TResult Function(User user, String message) profileError,
@@ -340,6 +355,7 @@ class _$AuthLoadingImpl implements AuthLoading {
     TResult? Function(User user)? authenticated,
     TResult? Function()? unauthenticated,
     TResult? Function(String message)? error,
+    TResult? Function(String email)? passwordResetEmailSent,
     TResult? Function()? profileUpdating,
     TResult? Function(User user, String message)? profileUpdated,
     TResult? Function(User user, String message)? profileError,
@@ -357,6 +373,7 @@ class _$AuthLoadingImpl implements AuthLoading {
     TResult Function(User user)? authenticated,
     TResult Function()? unauthenticated,
     TResult Function(String message)? error,
+    TResult Function(String email)? passwordResetEmailSent,
     TResult Function()? profileUpdating,
     TResult Function(User user, String message)? profileUpdated,
     TResult Function(User user, String message)? profileError,
@@ -378,6 +395,8 @@ class _$AuthLoadingImpl implements AuthLoading {
     required TResult Function(AuthAuthenticated value) authenticated,
     required TResult Function(AuthUnauthenticated value) unauthenticated,
     required TResult Function(AuthError value) error,
+    required TResult Function(PasswordResetEmailSent value)
+        passwordResetEmailSent,
     required TResult Function(ProfileUpdating value) profileUpdating,
     required TResult Function(ProfileUpdated value) profileUpdated,
     required TResult Function(ProfileError value) profileError,
@@ -395,6 +414,7 @@ class _$AuthLoadingImpl implements AuthLoading {
     TResult? Function(AuthAuthenticated value)? authenticated,
     TResult? Function(AuthUnauthenticated value)? unauthenticated,
     TResult? Function(AuthError value)? error,
+    TResult? Function(PasswordResetEmailSent value)? passwordResetEmailSent,
     TResult? Function(ProfileUpdating value)? profileUpdating,
     TResult? Function(ProfileUpdated value)? profileUpdated,
     TResult? Function(ProfileError value)? profileError,
@@ -412,6 +432,7 @@ class _$AuthLoadingImpl implements AuthLoading {
     TResult Function(AuthAuthenticated value)? authenticated,
     TResult Function(AuthUnauthenticated value)? unauthenticated,
     TResult Function(AuthError value)? error,
+    TResult Function(PasswordResetEmailSent value)? passwordResetEmailSent,
     TResult Function(ProfileUpdating value)? profileUpdating,
     TResult Function(ProfileUpdated value)? profileUpdated,
     TResult Function(ProfileError value)? profileError,
@@ -516,6 +537,7 @@ class _$AuthAuthenticatedImpl implements AuthAuthenticated {
     required TResult Function(User user) authenticated,
     required TResult Function() unauthenticated,
     required TResult Function(String message) error,
+    required TResult Function(String email) passwordResetEmailSent,
     required TResult Function() profileUpdating,
     required TResult Function(User user, String message) profileUpdated,
     required TResult Function(User user, String message) profileError,
@@ -533,6 +555,7 @@ class _$AuthAuthenticatedImpl implements AuthAuthenticated {
     TResult? Function(User user)? authenticated,
     TResult? Function()? unauthenticated,
     TResult? Function(String message)? error,
+    TResult? Function(String email)? passwordResetEmailSent,
     TResult? Function()? profileUpdating,
     TResult? Function(User user, String message)? profileUpdated,
     TResult? Function(User user, String message)? profileError,
@@ -550,6 +573,7 @@ class _$AuthAuthenticatedImpl implements AuthAuthenticated {
     TResult Function(User user)? authenticated,
     TResult Function()? unauthenticated,
     TResult Function(String message)? error,
+    TResult Function(String email)? passwordResetEmailSent,
     TResult Function()? profileUpdating,
     TResult Function(User user, String message)? profileUpdated,
     TResult Function(User user, String message)? profileError,
@@ -571,6 +595,8 @@ class _$AuthAuthenticatedImpl implements AuthAuthenticated {
     required TResult Function(AuthAuthenticated value) authenticated,
     required TResult Function(AuthUnauthenticated value) unauthenticated,
     required TResult Function(AuthError value) error,
+    required TResult Function(PasswordResetEmailSent value)
+        passwordResetEmailSent,
     required TResult Function(ProfileUpdating value) profileUpdating,
     required TResult Function(ProfileUpdated value) profileUpdated,
     required TResult Function(ProfileError value) profileError,
@@ -588,6 +614,7 @@ class _$AuthAuthenticatedImpl implements AuthAuthenticated {
     TResult? Function(AuthAuthenticated value)? authenticated,
     TResult? Function(AuthUnauthenticated value)? unauthenticated,
     TResult? Function(AuthError value)? error,
+    TResult? Function(PasswordResetEmailSent value)? passwordResetEmailSent,
     TResult? Function(ProfileUpdating value)? profileUpdating,
     TResult? Function(ProfileUpdated value)? profileUpdated,
     TResult? Function(ProfileError value)? profileError,
@@ -605,6 +632,7 @@ class _$AuthAuthenticatedImpl implements AuthAuthenticated {
     TResult Function(AuthAuthenticated value)? authenticated,
     TResult Function(AuthUnauthenticated value)? unauthenticated,
     TResult Function(AuthError value)? error,
+    TResult Function(PasswordResetEmailSent value)? passwordResetEmailSent,
     TResult Function(ProfileUpdating value)? profileUpdating,
     TResult Function(ProfileUpdated value)? profileUpdated,
     TResult Function(ProfileError value)? profileError,
@@ -678,6 +706,7 @@ class _$AuthUnauthenticatedImpl implements AuthUnauthenticated {
     required TResult Function(User user) authenticated,
     required TResult Function() unauthenticated,
     required TResult Function(String message) error,
+    required TResult Function(String email) passwordResetEmailSent,
     required TResult Function() profileUpdating,
     required TResult Function(User user, String message) profileUpdated,
     required TResult Function(User user, String message) profileError,
@@ -695,6 +724,7 @@ class _$AuthUnauthenticatedImpl implements AuthUnauthenticated {
     TResult? Function(User user)? authenticated,
     TResult? Function()? unauthenticated,
     TResult? Function(String message)? error,
+    TResult? Function(String email)? passwordResetEmailSent,
     TResult? Function()? profileUpdating,
     TResult? Function(User user, String message)? profileUpdated,
     TResult? Function(User user, String message)? profileError,
@@ -712,6 +742,7 @@ class _$AuthUnauthenticatedImpl implements AuthUnauthenticated {
     TResult Function(User user)? authenticated,
     TResult Function()? unauthenticated,
     TResult Function(String message)? error,
+    TResult Function(String email)? passwordResetEmailSent,
     TResult Function()? profileUpdating,
     TResult Function(User user, String message)? profileUpdated,
     TResult Function(User user, String message)? profileError,
@@ -733,6 +764,8 @@ class _$AuthUnauthenticatedImpl implements AuthUnauthenticated {
     required TResult Function(AuthAuthenticated value) authenticated,
     required TResult Function(AuthUnauthenticated value) unauthenticated,
     required TResult Function(AuthError value) error,
+    required TResult Function(PasswordResetEmailSent value)
+        passwordResetEmailSent,
     required TResult Function(ProfileUpdating value) profileUpdating,
     required TResult Function(ProfileUpdated value) profileUpdated,
     required TResult Function(ProfileError value) profileError,
@@ -750,6 +783,7 @@ class _$AuthUnauthenticatedImpl implements AuthUnauthenticated {
     TResult? Function(AuthAuthenticated value)? authenticated,
     TResult? Function(AuthUnauthenticated value)? unauthenticated,
     TResult? Function(AuthError value)? error,
+    TResult? Function(PasswordResetEmailSent value)? passwordResetEmailSent,
     TResult? Function(ProfileUpdating value)? profileUpdating,
     TResult? Function(ProfileUpdated value)? profileUpdated,
     TResult? Function(ProfileError value)? profileError,
@@ -767,6 +801,7 @@ class _$AuthUnauthenticatedImpl implements AuthUnauthenticated {
     TResult Function(AuthAuthenticated value)? authenticated,
     TResult Function(AuthUnauthenticated value)? unauthenticated,
     TResult Function(AuthError value)? error,
+    TResult Function(PasswordResetEmailSent value)? passwordResetEmailSent,
     TResult Function(ProfileUpdating value)? profileUpdating,
     TResult Function(ProfileUpdated value)? profileUpdated,
     TResult Function(ProfileError value)? profileError,
@@ -858,6 +893,7 @@ class _$AuthErrorImpl implements AuthError {
     required TResult Function(User user) authenticated,
     required TResult Function() unauthenticated,
     required TResult Function(String message) error,
+    required TResult Function(String email) passwordResetEmailSent,
     required TResult Function() profileUpdating,
     required TResult Function(User user, String message) profileUpdated,
     required TResult Function(User user, String message) profileError,
@@ -875,6 +911,7 @@ class _$AuthErrorImpl implements AuthError {
     TResult? Function(User user)? authenticated,
     TResult? Function()? unauthenticated,
     TResult? Function(String message)? error,
+    TResult? Function(String email)? passwordResetEmailSent,
     TResult? Function()? profileUpdating,
     TResult? Function(User user, String message)? profileUpdated,
     TResult? Function(User user, String message)? profileError,
@@ -892,6 +929,7 @@ class _$AuthErrorImpl implements AuthError {
     TResult Function(User user)? authenticated,
     TResult Function()? unauthenticated,
     TResult Function(String message)? error,
+    TResult Function(String email)? passwordResetEmailSent,
     TResult Function()? profileUpdating,
     TResult Function(User user, String message)? profileUpdated,
     TResult Function(User user, String message)? profileError,
@@ -913,6 +951,8 @@ class _$AuthErrorImpl implements AuthError {
     required TResult Function(AuthAuthenticated value) authenticated,
     required TResult Function(AuthUnauthenticated value) unauthenticated,
     required TResult Function(AuthError value) error,
+    required TResult Function(PasswordResetEmailSent value)
+        passwordResetEmailSent,
     required TResult Function(ProfileUpdating value) profileUpdating,
     required TResult Function(ProfileUpdated value) profileUpdated,
     required TResult Function(ProfileError value) profileError,
@@ -930,6 +970,7 @@ class _$AuthErrorImpl implements AuthError {
     TResult? Function(AuthAuthenticated value)? authenticated,
     TResult? Function(AuthUnauthenticated value)? unauthenticated,
     TResult? Function(AuthError value)? error,
+    TResult? Function(PasswordResetEmailSent value)? passwordResetEmailSent,
     TResult? Function(ProfileUpdating value)? profileUpdating,
     TResult? Function(ProfileUpdated value)? profileUpdated,
     TResult? Function(ProfileError value)? profileError,
@@ -947,6 +988,7 @@ class _$AuthErrorImpl implements AuthError {
     TResult Function(AuthAuthenticated value)? authenticated,
     TResult Function(AuthUnauthenticated value)? unauthenticated,
     TResult Function(AuthError value)? error,
+    TResult Function(PasswordResetEmailSent value)? passwordResetEmailSent,
     TResult Function(ProfileUpdating value)? profileUpdating,
     TResult Function(ProfileUpdated value)? profileUpdated,
     TResult Function(ProfileError value)? profileError,
@@ -971,6 +1013,205 @@ abstract class AuthError implements AuthState {
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$AuthErrorImplCopyWith<_$AuthErrorImpl> get copyWith =>
       throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$PasswordResetEmailSentImplCopyWith<$Res> {
+  factory _$$PasswordResetEmailSentImplCopyWith(
+          _$PasswordResetEmailSentImpl value,
+          $Res Function(_$PasswordResetEmailSentImpl) then) =
+      __$$PasswordResetEmailSentImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String email});
+}
+
+/// @nodoc
+class __$$PasswordResetEmailSentImplCopyWithImpl<$Res>
+    extends _$AuthStateCopyWithImpl<$Res, _$PasswordResetEmailSentImpl>
+    implements _$$PasswordResetEmailSentImplCopyWith<$Res> {
+  __$$PasswordResetEmailSentImplCopyWithImpl(
+      _$PasswordResetEmailSentImpl _value,
+      $Res Function(_$PasswordResetEmailSentImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of AuthState
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? email = null,
+  }) {
+    return _then(_$PasswordResetEmailSentImpl(
+      null == email
+          ? _value.email
+          : email // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$PasswordResetEmailSentImpl implements PasswordResetEmailSent {
+  const _$PasswordResetEmailSentImpl(this.email);
+
+  @override
+  final String email;
+
+  @override
+  String toString() {
+    return 'AuthState.passwordResetEmailSent(email: $email)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$PasswordResetEmailSentImpl &&
+            (identical(other.email, email) || other.email == email));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, email);
+
+  /// Create a copy of AuthState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$PasswordResetEmailSentImplCopyWith<_$PasswordResetEmailSentImpl>
+      get copyWith => __$$PasswordResetEmailSentImplCopyWithImpl<
+          _$PasswordResetEmailSentImpl>(this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function(User user) authenticated,
+    required TResult Function() unauthenticated,
+    required TResult Function(String message) error,
+    required TResult Function(String email) passwordResetEmailSent,
+    required TResult Function() profileUpdating,
+    required TResult Function(User user, String message) profileUpdated,
+    required TResult Function(User user, String message) profileError,
+    required TResult Function() uploadingPhoto,
+    required TResult Function(User user) passwordUpdated,
+  }) {
+    return passwordResetEmailSent(email);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function(User user)? authenticated,
+    TResult? Function()? unauthenticated,
+    TResult? Function(String message)? error,
+    TResult? Function(String email)? passwordResetEmailSent,
+    TResult? Function()? profileUpdating,
+    TResult? Function(User user, String message)? profileUpdated,
+    TResult? Function(User user, String message)? profileError,
+    TResult? Function()? uploadingPhoto,
+    TResult? Function(User user)? passwordUpdated,
+  }) {
+    return passwordResetEmailSent?.call(email);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function(User user)? authenticated,
+    TResult Function()? unauthenticated,
+    TResult Function(String message)? error,
+    TResult Function(String email)? passwordResetEmailSent,
+    TResult Function()? profileUpdating,
+    TResult Function(User user, String message)? profileUpdated,
+    TResult Function(User user, String message)? profileError,
+    TResult Function()? uploadingPhoto,
+    TResult Function(User user)? passwordUpdated,
+    required TResult orElse(),
+  }) {
+    if (passwordResetEmailSent != null) {
+      return passwordResetEmailSent(email);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(AuthInitial value) initial,
+    required TResult Function(AuthLoading value) loading,
+    required TResult Function(AuthAuthenticated value) authenticated,
+    required TResult Function(AuthUnauthenticated value) unauthenticated,
+    required TResult Function(AuthError value) error,
+    required TResult Function(PasswordResetEmailSent value)
+        passwordResetEmailSent,
+    required TResult Function(ProfileUpdating value) profileUpdating,
+    required TResult Function(ProfileUpdated value) profileUpdated,
+    required TResult Function(ProfileError value) profileError,
+    required TResult Function(UploadingPhoto value) uploadingPhoto,
+    required TResult Function(PasswordUpdated value) passwordUpdated,
+  }) {
+    return passwordResetEmailSent(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(AuthInitial value)? initial,
+    TResult? Function(AuthLoading value)? loading,
+    TResult? Function(AuthAuthenticated value)? authenticated,
+    TResult? Function(AuthUnauthenticated value)? unauthenticated,
+    TResult? Function(AuthError value)? error,
+    TResult? Function(PasswordResetEmailSent value)? passwordResetEmailSent,
+    TResult? Function(ProfileUpdating value)? profileUpdating,
+    TResult? Function(ProfileUpdated value)? profileUpdated,
+    TResult? Function(ProfileError value)? profileError,
+    TResult? Function(UploadingPhoto value)? uploadingPhoto,
+    TResult? Function(PasswordUpdated value)? passwordUpdated,
+  }) {
+    return passwordResetEmailSent?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(AuthInitial value)? initial,
+    TResult Function(AuthLoading value)? loading,
+    TResult Function(AuthAuthenticated value)? authenticated,
+    TResult Function(AuthUnauthenticated value)? unauthenticated,
+    TResult Function(AuthError value)? error,
+    TResult Function(PasswordResetEmailSent value)? passwordResetEmailSent,
+    TResult Function(ProfileUpdating value)? profileUpdating,
+    TResult Function(ProfileUpdated value)? profileUpdated,
+    TResult Function(ProfileError value)? profileError,
+    TResult Function(UploadingPhoto value)? uploadingPhoto,
+    TResult Function(PasswordUpdated value)? passwordUpdated,
+    required TResult orElse(),
+  }) {
+    if (passwordResetEmailSent != null) {
+      return passwordResetEmailSent(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class PasswordResetEmailSent implements AuthState {
+  const factory PasswordResetEmailSent(final String email) =
+      _$PasswordResetEmailSentImpl;
+
+  String get email;
+
+  /// Create a copy of AuthState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$PasswordResetEmailSentImplCopyWith<_$PasswordResetEmailSentImpl>
+      get copyWith => throw _privateConstructorUsedError;
 }
 
 /// @nodoc
@@ -1019,6 +1260,7 @@ class _$ProfileUpdatingImpl implements ProfileUpdating {
     required TResult Function(User user) authenticated,
     required TResult Function() unauthenticated,
     required TResult Function(String message) error,
+    required TResult Function(String email) passwordResetEmailSent,
     required TResult Function() profileUpdating,
     required TResult Function(User user, String message) profileUpdated,
     required TResult Function(User user, String message) profileError,
@@ -1036,6 +1278,7 @@ class _$ProfileUpdatingImpl implements ProfileUpdating {
     TResult? Function(User user)? authenticated,
     TResult? Function()? unauthenticated,
     TResult? Function(String message)? error,
+    TResult? Function(String email)? passwordResetEmailSent,
     TResult? Function()? profileUpdating,
     TResult? Function(User user, String message)? profileUpdated,
     TResult? Function(User user, String message)? profileError,
@@ -1053,6 +1296,7 @@ class _$ProfileUpdatingImpl implements ProfileUpdating {
     TResult Function(User user)? authenticated,
     TResult Function()? unauthenticated,
     TResult Function(String message)? error,
+    TResult Function(String email)? passwordResetEmailSent,
     TResult Function()? profileUpdating,
     TResult Function(User user, String message)? profileUpdated,
     TResult Function(User user, String message)? profileError,
@@ -1074,6 +1318,8 @@ class _$ProfileUpdatingImpl implements ProfileUpdating {
     required TResult Function(AuthAuthenticated value) authenticated,
     required TResult Function(AuthUnauthenticated value) unauthenticated,
     required TResult Function(AuthError value) error,
+    required TResult Function(PasswordResetEmailSent value)
+        passwordResetEmailSent,
     required TResult Function(ProfileUpdating value) profileUpdating,
     required TResult Function(ProfileUpdated value) profileUpdated,
     required TResult Function(ProfileError value) profileError,
@@ -1091,6 +1337,7 @@ class _$ProfileUpdatingImpl implements ProfileUpdating {
     TResult? Function(AuthAuthenticated value)? authenticated,
     TResult? Function(AuthUnauthenticated value)? unauthenticated,
     TResult? Function(AuthError value)? error,
+    TResult? Function(PasswordResetEmailSent value)? passwordResetEmailSent,
     TResult? Function(ProfileUpdating value)? profileUpdating,
     TResult? Function(ProfileUpdated value)? profileUpdated,
     TResult? Function(ProfileError value)? profileError,
@@ -1108,6 +1355,7 @@ class _$ProfileUpdatingImpl implements ProfileUpdating {
     TResult Function(AuthAuthenticated value)? authenticated,
     TResult Function(AuthUnauthenticated value)? unauthenticated,
     TResult Function(AuthError value)? error,
+    TResult Function(PasswordResetEmailSent value)? passwordResetEmailSent,
     TResult Function(ProfileUpdating value)? profileUpdating,
     TResult Function(ProfileUpdated value)? profileUpdated,
     TResult Function(ProfileError value)? profileError,
@@ -1220,6 +1468,7 @@ class _$ProfileUpdatedImpl implements ProfileUpdated {
     required TResult Function(User user) authenticated,
     required TResult Function() unauthenticated,
     required TResult Function(String message) error,
+    required TResult Function(String email) passwordResetEmailSent,
     required TResult Function() profileUpdating,
     required TResult Function(User user, String message) profileUpdated,
     required TResult Function(User user, String message) profileError,
@@ -1237,6 +1486,7 @@ class _$ProfileUpdatedImpl implements ProfileUpdated {
     TResult? Function(User user)? authenticated,
     TResult? Function()? unauthenticated,
     TResult? Function(String message)? error,
+    TResult? Function(String email)? passwordResetEmailSent,
     TResult? Function()? profileUpdating,
     TResult? Function(User user, String message)? profileUpdated,
     TResult? Function(User user, String message)? profileError,
@@ -1254,6 +1504,7 @@ class _$ProfileUpdatedImpl implements ProfileUpdated {
     TResult Function(User user)? authenticated,
     TResult Function()? unauthenticated,
     TResult Function(String message)? error,
+    TResult Function(String email)? passwordResetEmailSent,
     TResult Function()? profileUpdating,
     TResult Function(User user, String message)? profileUpdated,
     TResult Function(User user, String message)? profileError,
@@ -1275,6 +1526,8 @@ class _$ProfileUpdatedImpl implements ProfileUpdated {
     required TResult Function(AuthAuthenticated value) authenticated,
     required TResult Function(AuthUnauthenticated value) unauthenticated,
     required TResult Function(AuthError value) error,
+    required TResult Function(PasswordResetEmailSent value)
+        passwordResetEmailSent,
     required TResult Function(ProfileUpdating value) profileUpdating,
     required TResult Function(ProfileUpdated value) profileUpdated,
     required TResult Function(ProfileError value) profileError,
@@ -1292,6 +1545,7 @@ class _$ProfileUpdatedImpl implements ProfileUpdated {
     TResult? Function(AuthAuthenticated value)? authenticated,
     TResult? Function(AuthUnauthenticated value)? unauthenticated,
     TResult? Function(AuthError value)? error,
+    TResult? Function(PasswordResetEmailSent value)? passwordResetEmailSent,
     TResult? Function(ProfileUpdating value)? profileUpdating,
     TResult? Function(ProfileUpdated value)? profileUpdated,
     TResult? Function(ProfileError value)? profileError,
@@ -1309,6 +1563,7 @@ class _$ProfileUpdatedImpl implements ProfileUpdated {
     TResult Function(AuthAuthenticated value)? authenticated,
     TResult Function(AuthUnauthenticated value)? unauthenticated,
     TResult Function(AuthError value)? error,
+    TResult Function(PasswordResetEmailSent value)? passwordResetEmailSent,
     TResult Function(ProfileUpdating value)? profileUpdating,
     TResult Function(ProfileUpdated value)? profileUpdated,
     TResult Function(ProfileError value)? profileError,
@@ -1430,6 +1685,7 @@ class _$ProfileErrorImpl implements ProfileError {
     required TResult Function(User user) authenticated,
     required TResult Function() unauthenticated,
     required TResult Function(String message) error,
+    required TResult Function(String email) passwordResetEmailSent,
     required TResult Function() profileUpdating,
     required TResult Function(User user, String message) profileUpdated,
     required TResult Function(User user, String message) profileError,
@@ -1447,6 +1703,7 @@ class _$ProfileErrorImpl implements ProfileError {
     TResult? Function(User user)? authenticated,
     TResult? Function()? unauthenticated,
     TResult? Function(String message)? error,
+    TResult? Function(String email)? passwordResetEmailSent,
     TResult? Function()? profileUpdating,
     TResult? Function(User user, String message)? profileUpdated,
     TResult? Function(User user, String message)? profileError,
@@ -1464,6 +1721,7 @@ class _$ProfileErrorImpl implements ProfileError {
     TResult Function(User user)? authenticated,
     TResult Function()? unauthenticated,
     TResult Function(String message)? error,
+    TResult Function(String email)? passwordResetEmailSent,
     TResult Function()? profileUpdating,
     TResult Function(User user, String message)? profileUpdated,
     TResult Function(User user, String message)? profileError,
@@ -1485,6 +1743,8 @@ class _$ProfileErrorImpl implements ProfileError {
     required TResult Function(AuthAuthenticated value) authenticated,
     required TResult Function(AuthUnauthenticated value) unauthenticated,
     required TResult Function(AuthError value) error,
+    required TResult Function(PasswordResetEmailSent value)
+        passwordResetEmailSent,
     required TResult Function(ProfileUpdating value) profileUpdating,
     required TResult Function(ProfileUpdated value) profileUpdated,
     required TResult Function(ProfileError value) profileError,
@@ -1502,6 +1762,7 @@ class _$ProfileErrorImpl implements ProfileError {
     TResult? Function(AuthAuthenticated value)? authenticated,
     TResult? Function(AuthUnauthenticated value)? unauthenticated,
     TResult? Function(AuthError value)? error,
+    TResult? Function(PasswordResetEmailSent value)? passwordResetEmailSent,
     TResult? Function(ProfileUpdating value)? profileUpdating,
     TResult? Function(ProfileUpdated value)? profileUpdated,
     TResult? Function(ProfileError value)? profileError,
@@ -1519,6 +1780,7 @@ class _$ProfileErrorImpl implements ProfileError {
     TResult Function(AuthAuthenticated value)? authenticated,
     TResult Function(AuthUnauthenticated value)? unauthenticated,
     TResult Function(AuthError value)? error,
+    TResult Function(PasswordResetEmailSent value)? passwordResetEmailSent,
     TResult Function(ProfileUpdating value)? profileUpdating,
     TResult Function(ProfileUpdated value)? profileUpdated,
     TResult Function(ProfileError value)? profileError,
@@ -1593,6 +1855,7 @@ class _$UploadingPhotoImpl implements UploadingPhoto {
     required TResult Function(User user) authenticated,
     required TResult Function() unauthenticated,
     required TResult Function(String message) error,
+    required TResult Function(String email) passwordResetEmailSent,
     required TResult Function() profileUpdating,
     required TResult Function(User user, String message) profileUpdated,
     required TResult Function(User user, String message) profileError,
@@ -1610,6 +1873,7 @@ class _$UploadingPhotoImpl implements UploadingPhoto {
     TResult? Function(User user)? authenticated,
     TResult? Function()? unauthenticated,
     TResult? Function(String message)? error,
+    TResult? Function(String email)? passwordResetEmailSent,
     TResult? Function()? profileUpdating,
     TResult? Function(User user, String message)? profileUpdated,
     TResult? Function(User user, String message)? profileError,
@@ -1627,6 +1891,7 @@ class _$UploadingPhotoImpl implements UploadingPhoto {
     TResult Function(User user)? authenticated,
     TResult Function()? unauthenticated,
     TResult Function(String message)? error,
+    TResult Function(String email)? passwordResetEmailSent,
     TResult Function()? profileUpdating,
     TResult Function(User user, String message)? profileUpdated,
     TResult Function(User user, String message)? profileError,
@@ -1648,6 +1913,8 @@ class _$UploadingPhotoImpl implements UploadingPhoto {
     required TResult Function(AuthAuthenticated value) authenticated,
     required TResult Function(AuthUnauthenticated value) unauthenticated,
     required TResult Function(AuthError value) error,
+    required TResult Function(PasswordResetEmailSent value)
+        passwordResetEmailSent,
     required TResult Function(ProfileUpdating value) profileUpdating,
     required TResult Function(ProfileUpdated value) profileUpdated,
     required TResult Function(ProfileError value) profileError,
@@ -1665,6 +1932,7 @@ class _$UploadingPhotoImpl implements UploadingPhoto {
     TResult? Function(AuthAuthenticated value)? authenticated,
     TResult? Function(AuthUnauthenticated value)? unauthenticated,
     TResult? Function(AuthError value)? error,
+    TResult? Function(PasswordResetEmailSent value)? passwordResetEmailSent,
     TResult? Function(ProfileUpdating value)? profileUpdating,
     TResult? Function(ProfileUpdated value)? profileUpdated,
     TResult? Function(ProfileError value)? profileError,
@@ -1682,6 +1950,7 @@ class _$UploadingPhotoImpl implements UploadingPhoto {
     TResult Function(AuthAuthenticated value)? authenticated,
     TResult Function(AuthUnauthenticated value)? unauthenticated,
     TResult Function(AuthError value)? error,
+    TResult Function(PasswordResetEmailSent value)? passwordResetEmailSent,
     TResult Function(ProfileUpdating value)? profileUpdating,
     TResult Function(ProfileUpdated value)? profileUpdated,
     TResult Function(ProfileError value)? profileError,
@@ -1786,6 +2055,7 @@ class _$PasswordUpdatedImpl implements PasswordUpdated {
     required TResult Function(User user) authenticated,
     required TResult Function() unauthenticated,
     required TResult Function(String message) error,
+    required TResult Function(String email) passwordResetEmailSent,
     required TResult Function() profileUpdating,
     required TResult Function(User user, String message) profileUpdated,
     required TResult Function(User user, String message) profileError,
@@ -1803,6 +2073,7 @@ class _$PasswordUpdatedImpl implements PasswordUpdated {
     TResult? Function(User user)? authenticated,
     TResult? Function()? unauthenticated,
     TResult? Function(String message)? error,
+    TResult? Function(String email)? passwordResetEmailSent,
     TResult? Function()? profileUpdating,
     TResult? Function(User user, String message)? profileUpdated,
     TResult? Function(User user, String message)? profileError,
@@ -1820,6 +2091,7 @@ class _$PasswordUpdatedImpl implements PasswordUpdated {
     TResult Function(User user)? authenticated,
     TResult Function()? unauthenticated,
     TResult Function(String message)? error,
+    TResult Function(String email)? passwordResetEmailSent,
     TResult Function()? profileUpdating,
     TResult Function(User user, String message)? profileUpdated,
     TResult Function(User user, String message)? profileError,
@@ -1841,6 +2113,8 @@ class _$PasswordUpdatedImpl implements PasswordUpdated {
     required TResult Function(AuthAuthenticated value) authenticated,
     required TResult Function(AuthUnauthenticated value) unauthenticated,
     required TResult Function(AuthError value) error,
+    required TResult Function(PasswordResetEmailSent value)
+        passwordResetEmailSent,
     required TResult Function(ProfileUpdating value) profileUpdating,
     required TResult Function(ProfileUpdated value) profileUpdated,
     required TResult Function(ProfileError value) profileError,
@@ -1858,6 +2132,7 @@ class _$PasswordUpdatedImpl implements PasswordUpdated {
     TResult? Function(AuthAuthenticated value)? authenticated,
     TResult? Function(AuthUnauthenticated value)? unauthenticated,
     TResult? Function(AuthError value)? error,
+    TResult? Function(PasswordResetEmailSent value)? passwordResetEmailSent,
     TResult? Function(ProfileUpdating value)? profileUpdating,
     TResult? Function(ProfileUpdated value)? profileUpdated,
     TResult? Function(ProfileError value)? profileError,
@@ -1875,6 +2150,7 @@ class _$PasswordUpdatedImpl implements PasswordUpdated {
     TResult Function(AuthAuthenticated value)? authenticated,
     TResult Function(AuthUnauthenticated value)? unauthenticated,
     TResult Function(AuthError value)? error,
+    TResult Function(PasswordResetEmailSent value)? passwordResetEmailSent,
     TResult Function(ProfileUpdating value)? profileUpdating,
     TResult Function(ProfileUpdated value)? profileUpdated,
     TResult Function(ProfileError value)? profileError,

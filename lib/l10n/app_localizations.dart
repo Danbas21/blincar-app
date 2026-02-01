@@ -937,6 +937,192 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'No tienes un contacto de emergencia configurado'**
   String get noEmergencyContactConfigured;
+
+  /// No description provided for @confirmDeactivation.
+  ///
+  /// In es, this message translates to:
+  /// **'Confirmar desactivación'**
+  String get confirmDeactivation;
+
+  /// No description provided for @typeToConfirm.
+  ///
+  /// In es, this message translates to:
+  /// **'Escribe: ESTOY SEGURO'**
+  String get typeToConfirm;
+
+  /// No description provided for @verifyPhone.
+  ///
+  /// In es, this message translates to:
+  /// **'Verifica tu teléfono'**
+  String get verifyPhone;
+
+  /// No description provided for @enterPhoneToVerify.
+  ///
+  /// In es, this message translates to:
+  /// **'Ingresa tu número de teléfono para recibir un código de verificación'**
+  String get enterPhoneToVerify;
+
+  /// No description provided for @sendCode.
+  ///
+  /// In es, this message translates to:
+  /// **'Enviar código'**
+  String get sendCode;
+
+  /// No description provided for @enterVerificationCode.
+  ///
+  /// In es, this message translates to:
+  /// **'Ingresa el código'**
+  String get enterVerificationCode;
+
+  /// No description provided for @codeSentTo.
+  ///
+  /// In es, this message translates to:
+  /// **'Enviamos un código SMS a {phone}'**
+  String codeSentTo(String phone);
+
+  /// No description provided for @verify.
+  ///
+  /// In es, this message translates to:
+  /// **'Verificar'**
+  String get verify;
+
+  /// No description provided for @resendCode.
+  ///
+  /// In es, this message translates to:
+  /// **'Reenviar código'**
+  String get resendCode;
+
+  /// No description provided for @resendCodeIn.
+  ///
+  /// In es, this message translates to:
+  /// **'Reenviar código en {seconds}s'**
+  String resendCodeIn(int seconds);
+
+  /// No description provided for @changePhoneNumber.
+  ///
+  /// In es, this message translates to:
+  /// **'Cambiar número'**
+  String get changePhoneNumber;
+
+  /// No description provided for @phoneVerified.
+  ///
+  /// In es, this message translates to:
+  /// **'Teléfono verificado correctamente'**
+  String get phoneVerified;
+
+  /// No description provided for @invalidCode.
+  ///
+  /// In es, this message translates to:
+  /// **'Código incorrecto'**
+  String get invalidCode;
+
+  /// No description provided for @chatWithDriver.
+  ///
+  /// In es, this message translates to:
+  /// **'Chat con conductor'**
+  String get chatWithDriver;
+
+  /// No description provided for @typeMessage.
+  ///
+  /// In es, this message translates to:
+  /// **'Escribe un mensaje...'**
+  String get typeMessage;
+
+  /// No description provided for @send.
+  ///
+  /// In es, this message translates to:
+  /// **'Enviar'**
+  String get send;
+
+  /// No description provided for @noMessages.
+  ///
+  /// In es, this message translates to:
+  /// **'No hay mensajes aún'**
+  String get noMessages;
+
+  /// No description provided for @startConversation.
+  ///
+  /// In es, this message translates to:
+  /// **'Inicia la conversación'**
+  String get startConversation;
+
+  /// No description provided for @rateYourTrip.
+  ///
+  /// In es, this message translates to:
+  /// **'Califica tu viaje'**
+  String get rateYourTrip;
+
+  /// No description provided for @howWasYourTrip.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Cómo estuvo tu viaje?'**
+  String get howWasYourTrip;
+
+  /// No description provided for @leaveComment.
+  ///
+  /// In es, this message translates to:
+  /// **'Deja un comentario (opcional)'**
+  String get leaveComment;
+
+  /// No description provided for @commentPlaceholder.
+  ///
+  /// In es, this message translates to:
+  /// **'Cuéntanos sobre tu experiencia...'**
+  String get commentPlaceholder;
+
+  /// No description provided for @submitRating.
+  ///
+  /// In es, this message translates to:
+  /// **'Enviar calificación'**
+  String get submitRating;
+
+  /// No description provided for @skipRating.
+  ///
+  /// In es, this message translates to:
+  /// **'Omitir'**
+  String get skipRating;
+
+  /// No description provided for @thankYouForRating.
+  ///
+  /// In es, this message translates to:
+  /// **'Gracias por tu calificación'**
+  String get thankYouForRating;
+
+  /// No description provided for @deleteAccount.
+  ///
+  /// In es, this message translates to:
+  /// **'Eliminar cuenta'**
+  String get deleteAccount;
+
+  /// No description provided for @deleteAccountWarning.
+  ///
+  /// In es, this message translates to:
+  /// **'Esta acción es irreversible. Todos tus datos serán eliminados permanentemente.'**
+  String get deleteAccountWarning;
+
+  /// No description provided for @confirmDeleteAccount.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Estás seguro de que quieres eliminar tu cuenta?'**
+  String get confirmDeleteAccount;
+
+  /// No description provided for @typeDeleteToConfirm.
+  ///
+  /// In es, this message translates to:
+  /// **'Escribe ELIMINAR para confirmar'**
+  String get typeDeleteToConfirm;
+
+  /// No description provided for @accountDeleted.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu cuenta ha sido eliminada'**
+  String get accountDeleted;
+
+  /// No description provided for @delete.
+  ///
+  /// In es, this message translates to:
+  /// **'Eliminar'**
+  String get delete;
 }
 
 class _AppLocalizationsDelegate

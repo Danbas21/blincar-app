@@ -204,14 +204,14 @@ class Validators {
     return value
         .trim()
         .toLowerCase()
-        .replaceAll(RegExp(r'[<>"\'\;]'), ''); // Remover caracteres peligrosos
+        .replaceAll(RegExp(r'[<>"' + r"'" + r'\;]'), ''); // Remover caracteres peligrosos
   }
 
   /// Sanitiza nombre removiendo caracteres peligrosos
   static String sanitizeName(String value) {
     return value
         .trim()
-        .replaceAll(RegExp(r'[<>"\'\;\{\}\[\]\\\/\|]'), '') // XSS/Injection chars
+        .replaceAll(RegExp(r'[<>"' + r"'" + r'\;\{\}\[\]\\\/\|]'), '') // XSS/Injection chars
         .replaceAll(RegExp(r'\s+'), ' '); // Múltiples espacios → uno
   }
 
@@ -220,7 +220,7 @@ class Validators {
     return value
         .trim()
         .replaceAll(RegExp(r'<[^>]*>'), '') // Remover tags HTML
-        .replaceAll(RegExp(r'[<>"\'\;]'), '') // Caracteres peligrosos
+        .replaceAll(RegExp(r'[<>"' + r"'" + r'\;]'), '') // Caracteres peligrosos
         .replaceAll(RegExp(r'\s+'), ' '); // Normalizar espacios
   }
 
@@ -241,7 +241,7 @@ class Validators {
   /// Detecta posibles intentos de SQL Injection
   static bool containsSqlInjection(String value) {
     final sqlPatterns = [
-      RegExp(r"('|\")\s*(or|and)\s*('|\")", caseSensitive: false),
+      RegExp(r"('|" + '"' + r")\s*(or|and)\s*('|" + '"' + r")", caseSensitive: false),
       RegExp(r";\s*(drop|delete|insert|update|select)\s+", caseSensitive: false),
       RegExp(r"union\s+select", caseSensitive: false),
       RegExp(r"--\s*$"),

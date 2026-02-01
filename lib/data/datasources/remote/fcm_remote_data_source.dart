@@ -44,18 +44,20 @@ class FcmRemoteDataSourceImpl implements FcmRemoteDataSource {
       );
 
       if (response.statusCode != 200) {
-        throw const ServerException('Error registrando token FCM');
+        throw ServerException(
+            message: 'Error registrando token FCM',
+            statusCode: response.statusCode ?? 500);
       }
     } on DioException catch (e) {
       if (e.response?.statusCode == 401) {
         throw const UnauthorizedException('No autenticado');
       }
       throw ServerException(
-        e.message ?? 'Error de conexión',
+        message: e.message ?? 'Error de conexión',
         statusCode: e.response?.statusCode ?? 500,
       );
     } catch (e) {
-      throw ServerException(e.toString());
+      throw ServerException(message: e.toString(), statusCode: 500);
     }
   }
 
@@ -68,13 +70,15 @@ class FcmRemoteDataSourceImpl implements FcmRemoteDataSource {
       );
 
       if (response.statusCode != 200) {
-        throw const ServerException('Error eliminando token FCM');
+        throw ServerException(
+            message: 'Error eliminando token FCM',
+            statusCode: response.statusCode ?? 500);
       }
-    } on DioException catch (e) {
+    } on DioException catch (_) {
       // No lanzar error si falla al eliminar token (logout puede continuar)
-      print('[FCM] Error eliminando token: ${e.message}');
-    } catch (e) {
-      print('[FCM] Error eliminando token: $e');
+      // Error silenciado intencionalmente
+    } catch (_) {
+      // Error silenciado intencionalmente
     }
   }
 
@@ -87,17 +91,19 @@ class FcmRemoteDataSourceImpl implements FcmRemoteDataSource {
         return response.data['stats'] as Map<String, dynamic>;
       }
 
-      throw const ServerException('Error obteniendo estadísticas');
+      throw ServerException(
+          message: 'Error obteniendo estadísticas',
+          statusCode: response.statusCode ?? 500);
     } on DioException catch (e) {
       if (e.response?.statusCode == 401) {
         throw const UnauthorizedException('No autenticado');
       }
       throw ServerException(
-        e.message ?? 'Error de conexión',
+        message: e.message ?? 'Error de conexión',
         statusCode: e.response?.statusCode ?? 500,
       );
     } catch (e) {
-      throw ServerException(e.toString());
+      throw ServerException(message: e.toString(), statusCode: 500);
     }
   }
 }

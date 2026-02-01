@@ -158,5 +158,54 @@
         }
     },
     "callFailed": "Could not make the call",
-    "noEmergencyContactConfigured": "You don't have an emergency contact configured"
+    "noEmergencyContactConfigured": "You don't have an emergency contact configured",
+    "confirmDeactivation": "Confirm deactivation",
+    "typeToConfirm": "Type: ESTOY SEGURO",
+
+    "verifyPhone": "Verify your phone",
+    "enterPhoneToVerify": "Enter your phone number to receive a verification code",
+    "sendCode": "Send code",
+    "enterVerificationCode": "Enter the code",
+    "codeSentTo": "We sent an SMS code to {phone}",
+    "@codeSentTo": {
+        "placeholders": {
+            "phone": {
+                "type": "String"
+            }
+        }
+    },
+    "verify": "Verify",
+    "resendCode": "Resend code",
+    "resendCodeIn": "Resend code in {seconds}s",
+    "@resendCodeIn": {
+        "placeholders": {
+            "seconds": {
+                "type": "int"
+            }
+        }
+    },
+    "changePhoneNumber": "Change number",
+    "phoneVerified": "Phone verified successfully",
+    "invalidCode": "Invalid code",
+
+    "chatWithDriver": "Chat with driver",
+    "typeMessage": "Type a message...",
+    "send": "Send",
+    "noMessages": "No messages yet",
+    "startConversation": "Start the conversation",
+
+    "rateYourTrip": "Rate your trip",
+    "howWasYourTrip": "How was your trip?",
+    "leaveComment": "Leave a comment (optional)",
+    "commentPlaceholder": "Tell us about your experience...",
+    "submitRating": "Submit rating",
+    "skipRating": "Skip",
+    "thankYouForRating": "Thank you for your rating",
+
+    "deleteAccount": "Delete account",
+    "deleteAccountWarning": "This action is irreversible. All your data will be permanently deleted.",
+    "confirmDeleteAccount": "Are you sure you want to delete your account?",
+    "typeDeleteToConfirm": "Type DELETE to confirm",
+    "accountDeleted": "Your account has been deleted",
+    "delete": "Delete"
 }

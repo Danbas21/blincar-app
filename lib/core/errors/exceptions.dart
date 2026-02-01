@@ -12,8 +12,8 @@ abstract class AppException extends Equatable implements Exception {
 class ServerException extends AppException {
   final int statusCode;
 
-  const ServerException(
-    String message, {
+  const ServerException({
+    required String message,
     this.statusCode = 500,
   }) : super(message);
 

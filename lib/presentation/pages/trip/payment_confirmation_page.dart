@@ -1,7 +1,9 @@
 // lib/presentation/pages/trip/payment_confirmation_page.dart
 
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:uuid/uuid.dart';
 import '../../../core/services/service_locator.dart';
 import '../../../core/services/stripe_backend_service.dart';
 import '../../../core/theme/app_theme.dart';
@@ -12,6 +14,15 @@ import '../../bloc/payment/payment_bloc.dart';
 import '../../bloc/payment/payment_event.dart';
 import '../../bloc/payment/payment_state.dart';
 import '../profile/payment_methods_page.dart';
+
+/// Estados posibles del proceso de pago
+enum PaymentProcessState {
+  idle,       // No hay pago en proceso
+  processing, // Procesando pago (llamando a backend)
+  pending,    // Esperando confirmacion del backend
+  completed,  // Pago completado exitosamente
+  failed,     // Pago fallido
+}
 
 /// Datos del viaje para mostrar en la pantalla de pago
 class TripPaymentData {
@@ -83,7 +94,12 @@ class _PaymentConfirmationView extends StatefulWidget {
 class _PaymentConfirmationViewState extends State<_PaymentConfirmationView> {
   String? _currentUserId;
   PaymentCard? _selectedCard;
-  bool _isProcessing = false;
+  PaymentProcessState _paymentState = PaymentProcessState.idle;
+  String? _idempotencyKey;
+  int _retryCount = 0;
+  static const int _maxRetries = 3;
+  static const Duration _paymentTimeout = Duration(seconds: 10);
+  final _uuid = const Uuid();
 
   @override
   void initState() {
@@ -124,7 +140,18 @@ class _PaymentConfirmationViewState extends State<_PaymentConfirmationView> {
     );
   }
 
-  void _processPayment() async {
+  /// Genera una clave de idempotencia unica para el pago
+  /// Previene cargos duplicados si el usuario presiona multiples veces
+  String _generateIdempotencyKey() {
+    if (_idempotencyKey != null) {
+      return _idempotencyKey!;
+    }
+    _idempotencyKey = _uuid.v4();
+    return _idempotencyKey!;
+  }
+
+  /// Procesa el pago con retry logic y timeout
+  Future<void> _processPayment() async {
     if (_selectedCard == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -135,17 +162,47 @@ class _PaymentConfirmationViewState extends State<_PaymentConfirmationView> {
       return;
     }
 
+    // Evitar multiples intentos simultaneos
+    if (_paymentState == PaymentProcessState.processing ||
+        _paymentState == PaymentProcessState.pending) {
+      debugPrint('[Payment] Ya hay un pago en proceso');
+      return;
+    }
+
     setState(() {
-      _isProcessing = true;
+      _paymentState = PaymentProcessState.processing;
+      _retryCount = 0;
     });
 
+    await _attemptPayment();
+  }
+
+  /// Intenta procesar el pago con retry logic
+  Future<void> _attemptPayment() async {
     try {
-      // Llamar al backend para procesar el pago real con Stripe
+      final idempotencyKey = _generateIdempotencyKey();
       final stripeService = getIt<StripeBackendService>();
+
+      debugPrint('[Payment] Intento ${_retryCount + 1}/$_maxRetries con idempotency key: $idempotencyKey');
+
+      // Actualizar estado a pending antes de la llamada
+      if (mounted) {
+        setState(() {
+          _paymentState = PaymentProcessState.pending;
+        });
+      }
+
+      // Llamar al backend con timeout
       final result = await stripeService.processPayment(
         amount: widget.tripData.totalPrice,
         paymentMethodId:
             _selectedCard!.stripePaymentMethodId ?? _selectedCard!.id,
+      ).timeout(
+        _paymentTimeout,
+        onTimeout: () {
+          debugPrint('[Payment] Timeout despues de ${_paymentTimeout.inSeconds}s');
+          throw TimeoutException('El pago tardo demasiado');
+        },
       );
 
       if (!mounted) return;
@@ -153,57 +210,85 @@ class _PaymentConfirmationViewState extends State<_PaymentConfirmationView> {
       if (result.isSuccess && result.data != null) {
         if (result.data!.requiresAction && result.data!.clientSecret != null) {
           // Requiere 3D Secure - manejar autenticacion adicional
+          setState(() {
+            _paymentState = PaymentProcessState.failed;
+          });
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text('Se requiere autenticacion adicional'),
               backgroundColor: AppTheme.warningColor,
             ),
           );
-          setState(() {
-            _isProcessing = false;
-          });
         } else if (result.data!.success) {
           // Pago exitoso
           setState(() {
-            _isProcessing = false;
+            _paymentState = PaymentProcessState.completed;
           });
           _showPaymentSuccessAndConfirm();
         } else {
-          // Pago fallido
-          setState(() {
-            _isProcessing = false;
-          });
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                  'Error en el pago: ${result.data!.status ?? "Desconocido"}'),
-              backgroundColor: AppTheme.errorColor,
-            ),
-          );
+          // Pago fallido - intentar retry
+          await _handlePaymentFailure('Pago rechazado: ${result.data!.status ?? "Desconocido"}');
         }
       } else {
-        // Error del servidor
-        setState(() {
-          _isProcessing = false;
-        });
+        // Error del servidor - intentar retry
+        await _handlePaymentFailure(result.error ?? 'Error procesando el pago');
+      }
+    } on TimeoutException catch (e) {
+      if (!mounted) return;
+      await _handlePaymentFailure('Timeout: ${e.message}');
+    } catch (e) {
+      if (!mounted) return;
+      await _handlePaymentFailure('Error: ${e.toString()}');
+    }
+  }
+
+  /// Maneja fallos de pago con retry logic exponencial
+  Future<void> _handlePaymentFailure(String errorMessage) async {
+    _retryCount++;
+
+    if (_retryCount < _maxRetries) {
+      // Calcular delay exponencial: 1s, 2s, 4s
+      final delaySeconds = (1 << (_retryCount - 1));
+      debugPrint('[Payment] Reintentando en ${delaySeconds}s...');
+
+      setState(() {
+        _paymentState = PaymentProcessState.processing;
+      });
+
+      // Mostrar mensaje de retry al usuario
+      if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(result.error ?? 'Error procesando el pago'),
-            backgroundColor: AppTheme.errorColor,
+            content: Text('Reintentando pago... (${_retryCount}/$_maxRetries)'),
+            backgroundColor: AppTheme.warningColor,
+            duration: Duration(seconds: delaySeconds),
           ),
         );
       }
-    } catch (e) {
-      if (!mounted) return;
+
+      // Esperar antes de reintentar
+      await Future.delayed(Duration(seconds: delaySeconds));
+
+      if (mounted) {
+        await _attemptPayment();
+      }
+    } else {
+      // Max retries alcanzado - marcar como fallido
+      debugPrint('[Payment] Max retries alcanzado');
       setState(() {
-        _isProcessing = false;
+        _paymentState = PaymentProcessState.failed;
+        _idempotencyKey = null; // Reset para permitir nuevo intento manual
       });
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Error: ${e.toString()}'),
-          backgroundColor: AppTheme.errorColor,
-        ),
-      );
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(errorMessage),
+            backgroundColor: AppTheme.errorColor,
+            duration: const Duration(seconds: 5),
+          ),
+        );
+      }
     }
   }
 
@@ -818,59 +903,131 @@ class _PaymentConfirmationViewState extends State<_PaymentConfirmationView> {
   }
 
   Widget _buildConfirmButton() {
+    final isProcessingOrPending = _paymentState == PaymentProcessState.processing ||
+        _paymentState == PaymentProcessState.pending;
+    final isFailed = _paymentState == PaymentProcessState.failed;
+    final canPay = _selectedCard != null && !isProcessingOrPending;
+
     return SizedBox(
       width: double.infinity,
       height: 56,
       child: ElevatedButton(
-        onPressed:
-            (_selectedCard != null && !_isProcessing) ? _processPayment : null,
+        onPressed: canPay ? _processPayment : null,
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppTheme.primaryLightColor,
+          backgroundColor: isFailed ? AppTheme.errorColor : AppTheme.primaryLightColor,
           disabledBackgroundColor: AppTheme.dividerColor,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(14),
           ),
         ),
-        child: _isProcessing
-            ? const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                      color: Colors.white,
-                      strokeWidth: 2,
-                    ),
-                  ),
-                  SizedBox(width: 12),
-                  Text(
-                    'Procesando pago...',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              )
-            : Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(Icons.lock, color: Colors.white, size: 20),
-                  const SizedBox(width: 8),
-                  Text(
-                    'Pagar \$${widget.tripData.totalPrice.toStringAsFixed(0)} MXN',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
+        child: _buildButtonContent(),
       ),
     );
+  }
+
+  Widget _buildButtonContent() {
+    switch (_paymentState) {
+      case PaymentProcessState.processing:
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const SizedBox(
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(
+                color: Colors.white,
+                strokeWidth: 2,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Text(
+              _retryCount > 0
+                  ? 'Reintentando... (${_retryCount}/$_maxRetries)'
+                  : 'Procesando pago...',
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        );
+
+      case PaymentProcessState.pending:
+        return const Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            SizedBox(
+              width: 20,
+              height: 20,
+              child: CircularProgressIndicator(
+                color: Colors.white,
+                strokeWidth: 2,
+              ),
+            ),
+            SizedBox(width: 12),
+            Text(
+              'Confirmando pago...',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        );
+
+      case PaymentProcessState.completed:
+        return const Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.check_circle, color: Colors.white, size: 20),
+            SizedBox(width: 8),
+            Text(
+              'Pago completado',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        );
+
+      case PaymentProcessState.failed:
+        return const Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.refresh, color: Colors.white, size: 20),
+            SizedBox(width: 8),
+            Text(
+              'Reintentar pago',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        );
+
+      case PaymentProcessState.idle:
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Icon(Icons.lock, color: Colors.white, size: 20),
+            const SizedBox(width: 8),
+            Text(
+              'Pagar \$${widget.tripData.totalPrice.toStringAsFixed(0)} MXN',
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        );
+    }
   }
 
   Widget _buildSecurityNote() {

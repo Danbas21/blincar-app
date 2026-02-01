@@ -19,10 +19,6 @@ abstract class Failure extends Equatable {
 
   @override
   String toString() => '$runtimeType: $message';
-
-  static payment({required String message, required String code}) {}
-
-  static cardDeclined({required String message, String? declineCode}) {}
 }
 
 // ============================================

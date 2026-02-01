@@ -9,6 +9,7 @@ import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import '../../core/errors/failures.dart';
@@ -26,16 +27,19 @@ class FirebaseAuthRepository implements AuthRepository {
   final firebase_auth.FirebaseAuth _firebaseAuth;
   final FirebaseStorage _firebaseStorage;
   final FirebaseDatabase _firebaseDatabase;
+  final FirebaseFunctions _firebaseFunctions;
   final GoogleSignIn _googleSignIn;
 
   FirebaseAuthRepository({
     firebase_auth.FirebaseAuth? firebaseAuth,
     FirebaseStorage? firebaseStorage,
     FirebaseDatabase? firebaseDatabase,
+    FirebaseFunctions? firebaseFunctions,
     GoogleSignIn? googleSignIn,
   })  : _firebaseAuth = firebaseAuth ?? firebase_auth.FirebaseAuth.instance,
         _firebaseStorage = firebaseStorage ?? FirebaseStorage.instance,
         _firebaseDatabase = firebaseDatabase ?? FirebaseDatabase.instance,
+        _firebaseFunctions = firebaseFunctions ?? FirebaseFunctions.instance,
         _googleSignIn = googleSignIn ?? GoogleSignIn();
 
   /// Referencia a la colección de usuarios en Realtime Database
@@ -444,6 +448,80 @@ class FirebaseAuthRepository implements AuthRepository {
     } catch (e) {
       return Left(
           ServerFailure('Error al iniciar sesión con Apple: ${e.toString()}'));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> sendPasswordResetEmail({
+    required String email,
+  }) async {
+    try {
+      await _firebaseAuth.sendPasswordResetEmail(email: email);
+      return const Right(null);
+    } on firebase_auth.FirebaseAuthException catch (e) {
+      return Left(_mapFirebaseAuthException(e));
+    } catch (e) {
+      return Left(
+        ServerFailure('Error al enviar email de recuperación: ${e.toString()}'),
+      );
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> sendPasswordResetEmailWithLocale({
+    required String email,
+    required String locale,
+  }) async {
+    try {
+      // Paso 1: Verificar que el usuario existe usando Cloud Function
+      final callable = _firebaseFunctions.httpsCallable(
+        'sendPasswordResetEmail',
+        options: HttpsCallableOptions(
+          timeout: const Duration(seconds: 30),
+        ),
+      );
+
+      final result = await callable.call({
+        'email': email,
+        'locale': locale,
+      });
+
+      final data = result.data as Map<String, dynamic>;
+
+      // Si el usuario no existe, retornar error
+      if (data['userExists'] == false) {
+        return Left(
+          AuthenticationFailure(
+            data['message'] ?? 'Usuario no encontrado',
+          ),
+        );
+      }
+
+      // Paso 2: Si el usuario existe, enviar email usando método nativo de Firebase
+      // Esto SÍ funciona y envía el email correctamente
+      if (data['success'] == true && data['userExists'] == true) {
+        // Configurar idioma antes de enviar
+        await _firebaseAuth.setLanguageCode(locale);
+
+        // Enviar email de reset usando el método nativo
+        await _firebaseAuth.sendPasswordResetEmail(email: email);
+
+        return const Right(null);
+      } else {
+        return Left(
+          ServerFailure(
+            data['message'] ?? 'Error al enviar email de recuperación',
+          ),
+        );
+      }
+    } on FirebaseFunctionsException catch (e) {
+      return Left(ServerFailure(e.message ?? 'Error en Cloud Function'));
+    } on firebase_auth.FirebaseAuthException catch (e) {
+      return Left(_mapFirebaseAuthException(e));
+    } catch (e) {
+      return Left(
+        ServerFailure('Error al enviar email de recuperación: ${e.toString()}'),
+      );
     }
   }
 

@@ -4,6 +4,7 @@ import 'dart:async';
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 /// Colores de vehículo disponibles
@@ -12,11 +13,20 @@ enum VehicleColor {
   black,
 }
 
-/// Servicio para generar marcadores de vehículo personalizados
+/// Tipo de vehículo
+enum VehicleType {
+  escalade,
+  explorer,
+  tahoe,
+  tahoeLs,
+  rangeRover,
+}
+
+/// Servicio para generar marcadores de vehículo personalizados desde imágenes PNG
 ///
-/// Genera íconos de camioneta tipo Suburban que pueden ser:
-/// - Blancas o negras
+/// Utiliza imágenes PNG de vista superior de vehículos reales que pueden ser:
 /// - Rotadas según el heading del GPS
+/// - Cacheadas para mejor rendimiento
 class VehicleMarkerService {
   static final VehicleMarkerService _instance = VehicleMarkerService._internal();
   factory VehicleMarkerService() => _instance;
@@ -25,265 +35,130 @@ class VehicleMarkerService {
   // Cache de marcadores para evitar regenerar constantemente
   final Map<String, BitmapDescriptor> _markerCache = {};
 
-  /// Genera un BitmapDescriptor para una camioneta
+  // Cache de imágenes base cargadas desde assets
+  final Map<String, ui.Image> _imageCache = {};
+
+  /// Mapa de tipos de vehículo a rutas de assets
+  static const Map<String, String> _vehicleAssets = {
+    'escalade_white': 'assets/vehicle/Cadillac Escalade_white.png',
+    'explorer_white': 'assets/vehicle/Ford Explorer SUV_white.png',
+    'tahoe_white': 'assets/vehicle/Chevrolet Tahoe SUV_white.png',
+    'tahoe_black': 'assets/vehicle/Chevrolet Tahoe LS SUV_black.png',
+    'rangerover_black': 'assets/vehicle/Land Rover Range Rover_black.png',
+  };
+
+  /// Obtiene el asset key según tipo y color de vehículo
+  String _getAssetKey(VehicleType type, VehicleColor color) {
+    switch (type) {
+      case VehicleType.escalade:
+        return 'escalade_white';
+      case VehicleType.explorer:
+        return 'explorer_white';
+      case VehicleType.tahoe:
+        return color == VehicleColor.white ? 'tahoe_white' : 'tahoe_black';
+      case VehicleType.tahoeLs:
+        return 'tahoe_black';
+      case VehicleType.rangeRover:
+        return 'rangerover_black';
+    }
+  }
+
+  /// Genera un BitmapDescriptor para un vehículo desde imagen PNG
   ///
+  /// [type] - Tipo de vehículo (Escalade, Explorer, Tahoe, etc.)
   /// [color] - Color del vehículo (blanco o negro)
   /// [heading] - Ángulo de rotación en grados (0-360, donde 0 es norte)
   /// [size] - Tamaño del marcador en píxeles
   Future<BitmapDescriptor> getVehicleMarker({
-    required VehicleColor color,
+    VehicleType type = VehicleType.tahoe,
+    VehicleColor color = VehicleColor.white,
     required double heading,
     double size = 80,
   }) async {
     // Redondear heading a múltiplos de 5 para mejorar caching
     final roundedHeading = (heading / 5).round() * 5;
-    final cacheKey = '${color.name}_${roundedHeading}_$size';
+    final assetKey = _getAssetKey(type, color);
+    final cacheKey = '${assetKey}_${roundedHeading}_$size';
 
     if (_markerCache.containsKey(cacheKey)) {
       return _markerCache[cacheKey]!;
     }
 
-    final marker = await _createVehicleMarker(color, roundedHeading.toDouble(), size);
+    // Cargar imagen base si no está en cache
+    if (!_imageCache.containsKey(assetKey)) {
+      await _loadImage(assetKey);
+    }
+
+    final marker = await _createRotatedMarker(
+      assetKey,
+      roundedHeading.toDouble(),
+      size,
+    );
+
     _markerCache[cacheKey] = marker;
     return marker;
   }
 
-  /// Crea el marcador dibujando una camioneta tipo SUV/Suburban
-  Future<BitmapDescriptor> _createVehicleMarker(
-    VehicleColor vehicleColor,
+  /// Carga una imagen desde assets al cache
+  Future<void> _loadImage(String assetKey) async {
+    final assetPath = _vehicleAssets[assetKey];
+    if (assetPath == null) {
+      debugPrint('[VehicleMarker] ❌ Asset not found for key: $assetKey');
+      throw Exception('Asset not found for key: $assetKey');
+    }
+
+    try {
+      debugPrint('[VehicleMarker] 🔄 Loading image: $assetPath');
+      final byteData = await rootBundle.load(assetPath);
+      final codec = await ui.instantiateImageCodec(byteData.buffer.asUint8List());
+      final frame = await codec.getNextFrame();
+      _imageCache[assetKey] = frame.image;
+      debugPrint('[VehicleMarker] ✅ Image loaded successfully: $assetPath');
+    } catch (e) {
+      debugPrint('[VehicleMarker] ❌ Error loading image $assetPath: $e');
+      rethrow;
+    }
+  }
+
+  /// Crea un marcador rotado desde la imagen base
+  Future<BitmapDescriptor> _createRotatedMarker(
+    String assetKey,
     double heading,
     double size,
   ) async {
+    final baseImage = _imageCache[assetKey];
+    if (baseImage == null) {
+      throw Exception('Image not loaded for key: $assetKey');
+    }
+
     final pictureRecorder = ui.PictureRecorder();
     final canvas = Canvas(pictureRecorder);
-    final paint = Paint();
+    final paint = Paint()
+      ..isAntiAlias = true
+      ..filterQuality = FilterQuality.high;
 
-    // Colores base según el color del vehículo
-    final Color bodyColor;
-    final Color windowColor;
-    final Color accentColor;
-    final Color shadowColor;
-
-    if (vehicleColor == VehicleColor.white) {
-      bodyColor = const Color(0xFFF5F5F5);
-      windowColor = const Color(0xFF1A237E).withValues(alpha: 0.7);
-      accentColor = const Color(0xFFE0E0E0);
-      shadowColor = const Color(0xFFBDBDBD);
-    } else {
-      bodyColor = const Color(0xFF1A1A1A);
-      windowColor = const Color(0xFF37474F).withValues(alpha: 0.8);
-      accentColor = const Color(0xFF333333);
-      shadowColor = const Color(0xFF0D0D0D);
-    }
-
-    // Guardar estado del canvas y aplicar rotación
+    // Aplicar rotación desde el centro
     canvas.save();
     canvas.translate(size / 2, size / 2);
-    canvas.rotate((heading - 90) * math.pi / 180); // -90 porque el dibujo apunta a la derecha
+    // Convertir heading a radianes
+    // heading 0 = Norte (arriba), necesitamos rotar
+    // La imagen base apunta hacia arriba (0 grados)
+    canvas.rotate(heading * math.pi / 180);
     canvas.translate(-size / 2, -size / 2);
 
-    // Escala para el dibujo
-    final scale = size / 100;
-
-    // ===== DIBUJAR LA CAMIONETA (vista superior) =====
-
-    // Sombra del vehículo
-    paint.color = Colors.black.withValues(alpha: 0.3);
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(12 * scale, 22 * scale, 76 * scale, 58 * scale),
-        Radius.circular(10 * scale),
-      ),
-      paint,
+    // Dibujar la imagen escalada al tamaño deseado
+    final srcRect = Rect.fromLTWH(
+      0,
+      0,
+      baseImage.width.toDouble(),
+      baseImage.height.toDouble(),
     );
+    final dstRect = Rect.fromLTWH(0, 0, size, size);
 
-    // Cuerpo principal de la camioneta
-    paint.color = bodyColor;
-    final bodyPath = Path();
-
-    // Forma del cuerpo (vista superior de SUV)
-    bodyPath.moveTo(20 * scale, 20 * scale);
-    // Frente redondeado
-    bodyPath.quadraticBezierTo(10 * scale, 25 * scale, 10 * scale, 35 * scale);
-    bodyPath.lineTo(10 * scale, 65 * scale);
-    bodyPath.quadraticBezierTo(10 * scale, 75 * scale, 20 * scale, 80 * scale);
-    // Parte trasera
-    bodyPath.lineTo(80 * scale, 80 * scale);
-    bodyPath.quadraticBezierTo(90 * scale, 75 * scale, 90 * scale, 65 * scale);
-    bodyPath.lineTo(90 * scale, 35 * scale);
-    bodyPath.quadraticBezierTo(90 * scale, 25 * scale, 80 * scale, 20 * scale);
-    bodyPath.close();
-
-    canvas.drawPath(bodyPath, paint);
-
-    // Línea de acento lateral
-    paint.color = accentColor;
-    paint.style = PaintingStyle.stroke;
-    paint.strokeWidth = 2 * scale;
-    canvas.drawLine(
-      Offset(15 * scale, 50 * scale),
-      Offset(85 * scale, 50 * scale),
-      paint,
-    );
-    paint.style = PaintingStyle.fill;
-
-    // Parabrisas frontal
-    paint.color = windowColor;
-    final windshieldPath = Path();
-    windshieldPath.moveTo(75 * scale, 30 * scale);
-    windshieldPath.quadraticBezierTo(82 * scale, 32 * scale, 82 * scale, 40 * scale);
-    windshieldPath.lineTo(82 * scale, 60 * scale);
-    windshieldPath.quadraticBezierTo(82 * scale, 68 * scale, 75 * scale, 70 * scale);
-    windshieldPath.lineTo(70 * scale, 70 * scale);
-    windshieldPath.lineTo(70 * scale, 30 * scale);
-    windshieldPath.close();
-    canvas.drawPath(windshieldPath, paint);
-
-    // Ventanas laterales
-    // Ventana lateral izquierda
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(25 * scale, 22 * scale, 40 * scale, 8 * scale),
-        Radius.circular(2 * scale),
-      ),
-      paint,
-    );
-    // Ventana lateral derecha
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(25 * scale, 70 * scale, 40 * scale, 8 * scale),
-        Radius.circular(2 * scale),
-      ),
-      paint,
-    );
-
-    // Vidrio trasero
-    final rearWindowPath = Path();
-    rearWindowPath.moveTo(20 * scale, 32 * scale);
-    rearWindowPath.quadraticBezierTo(14 * scale, 35 * scale, 14 * scale, 42 * scale);
-    rearWindowPath.lineTo(14 * scale, 58 * scale);
-    rearWindowPath.quadraticBezierTo(14 * scale, 65 * scale, 20 * scale, 68 * scale);
-    rearWindowPath.lineTo(25 * scale, 68 * scale);
-    rearWindowPath.lineTo(25 * scale, 32 * scale);
-    rearWindowPath.close();
-    canvas.drawPath(rearWindowPath, paint);
-
-    // Llantas (4 ruedas)
-    paint.color = const Color(0xFF212121);
-    // Llanta trasera izquierda
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(18 * scale, 14 * scale, 16 * scale, 8 * scale),
-        Radius.circular(2 * scale),
-      ),
-      paint,
-    );
-    // Llanta trasera derecha
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(18 * scale, 78 * scale, 16 * scale, 8 * scale),
-        Radius.circular(2 * scale),
-      ),
-      paint,
-    );
-    // Llanta delantera izquierda
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(66 * scale, 14 * scale, 16 * scale, 8 * scale),
-        Radius.circular(2 * scale),
-      ),
-      paint,
-    );
-    // Llanta delantera derecha
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(66 * scale, 78 * scale, 16 * scale, 8 * scale),
-        Radius.circular(2 * scale),
-      ),
-      paint,
-    );
-
-    // Rines de las llantas
-    paint.color = const Color(0xFF424242);
-    // Rin trasero izquierdo
-    canvas.drawCircle(Offset(26 * scale, 18 * scale), 3 * scale, paint);
-    // Rin trasero derecho
-    canvas.drawCircle(Offset(26 * scale, 82 * scale), 3 * scale, paint);
-    // Rin delantero izquierdo
-    canvas.drawCircle(Offset(74 * scale, 18 * scale), 3 * scale, paint);
-    // Rin delantero derecho
-    canvas.drawCircle(Offset(74 * scale, 82 * scale), 3 * scale, paint);
-
-    // Faros delanteros
-    paint.color = const Color(0xFFFFEB3B);
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(84 * scale, 28 * scale, 4 * scale, 10 * scale),
-        Radius.circular(2 * scale),
-      ),
-      paint,
-    );
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(84 * scale, 62 * scale, 4 * scale, 10 * scale),
-        Radius.circular(2 * scale),
-      ),
-      paint,
-    );
-
-    // Luces traseras
-    paint.color = const Color(0xFFE53935);
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(12 * scale, 28 * scale, 3 * scale, 8 * scale),
-        Radius.circular(1 * scale),
-      ),
-      paint,
-    );
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(12 * scale, 64 * scale, 3 * scale, 8 * scale),
-        Radius.circular(1 * scale),
-      ),
-      paint,
-    );
-
-    // Espejos retrovisores
-    paint.color = shadowColor;
-    // Espejo izquierdo
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(68 * scale, 10 * scale, 6 * scale, 4 * scale),
-        Radius.circular(1 * scale),
-      ),
-      paint,
-    );
-    // Espejo derecho
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(68 * scale, 86 * scale, 6 * scale, 4 * scale),
-        Radius.circular(1 * scale),
-      ),
-      paint,
-    );
-
-    // Parrilla frontal (para camioneta ejecutiva)
-    if (vehicleColor == VehicleColor.black) {
-      paint.color = const Color(0xFF616161);
-    } else {
-      paint.color = const Color(0xFFBDBDBD);
-    }
-    canvas.drawRRect(
-      RRect.fromRectAndRadius(
-        Rect.fromLTWH(86 * scale, 42 * scale, 3 * scale, 16 * scale),
-        Radius.circular(1 * scale),
-      ),
-      paint,
-    );
-
+    canvas.drawImageRect(baseImage, srcRect, dstRect, paint);
     canvas.restore();
 
-    // Convertir a imagen
+    // Convertir a BitmapDescriptor
     final picture = pictureRecorder.endRecording();
     final image = await picture.toImage(size.toInt(), size.toInt());
     final byteData = await image.toByteData(format: ui.ImageByteFormat.png);
@@ -292,9 +167,24 @@ class VehicleMarkerService {
     return BitmapDescriptor.bytes(bytes);
   }
 
-  /// Limpia el cache de marcadores
-  void clearCache() {
+  /// Pre-carga todas las imágenes de vehículos para mejor rendimiento
+  Future<void> preloadAllImages() async {
+    for (final assetKey in _vehicleAssets.keys) {
+      if (!_imageCache.containsKey(assetKey)) {
+        await _loadImage(assetKey);
+      }
+    }
+  }
+
+  /// Limpia el cache de marcadores (mantiene las imágenes base)
+  void clearMarkerCache() {
     _markerCache.clear();
+  }
+
+  /// Limpia todo el cache incluyendo imágenes base
+  void clearAllCache() {
+    _markerCache.clear();
+    _imageCache.clear();
   }
 }
 

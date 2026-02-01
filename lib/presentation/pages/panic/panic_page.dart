@@ -3,9 +3,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:local_auth/local_auth.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:async';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/services/service_locator.dart';
+import '../../../core/services/panic_alert_service.dart';
 import '../../../domain/entities/user.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../bloc/auth/auth_bloc.dart';
@@ -32,10 +35,15 @@ class _PanicPageState extends State<PanicPage> with TickerProviderStateMixin {
   late AnimationController _countdownController;
   late Animation<double> _pulseAnimation;
 
+  final PanicAlertService _panicAlertService = getIt<PanicAlertService>();
+  final LocalAuthentication _localAuth = LocalAuthentication();
+
   bool _isPanicActivated = false;
   bool _isCountingDown = false;
   int _countdown = 5;
   Timer? _countdownTimer;
+  Timer? _locationUpdateTimer;
+  String? _activeAlertId;
 
   User? _currentUser;
 
@@ -82,6 +90,7 @@ class _PanicPageState extends State<PanicPage> with TickerProviderStateMixin {
     _pulseController.dispose();
     _countdownController.dispose();
     _countdownTimer?.cancel();
+    _locationUpdateTimer?.cancel();
     super.dispose();
   }
 
@@ -110,7 +119,7 @@ class _PanicPageState extends State<PanicPage> with TickerProviderStateMixin {
     });
   }
 
-  void _activatePanic() {
+  Future<void> _activatePanic() async {
     setState(() {
       _isPanicActivated = true;
       _isCountingDown = false;
@@ -119,33 +128,87 @@ class _PanicPageState extends State<PanicPage> with TickerProviderStateMixin {
     // Vibración de alerta
     HapticFeedback.heavyImpact();
 
-    // Enviar alerta y llamar al contacto de emergencia
-    _sendPanicAlert();
-    _callEmergencyContact();
+    // Enviar alerta a Firebase y llamar al contacto de emergencia
+    await _sendPanicAlert();
+    await _callEmergencyContact();
   }
 
-  void _sendPanicAlert() {
+  Future<void> _sendPanicAlert() async {
     final l10n = AppLocalizations.of(context)!;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            const Icon(Icons.warning, color: Colors.white),
-            const SizedBox(width: 12),
-            Expanded(child: Text(l10n.alertSent)),
-          ],
+    if (_currentUser == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Error: Usuario no autenticado'),
+          backgroundColor: AppTheme.errorColor,
         ),
-        backgroundColor: AppTheme.errorColor,
-        duration: const Duration(seconds: 3),
-      ),
+      );
+      return;
+    }
+
+    // Enviar alerta real a Firebase
+    final result = await _panicAlertService.activatePanicAlert(
+      user: _currentUser!,
     );
 
-    // TODO: Implementar envío real de alerta a:
-    // - Autoridades locales
-    // - Centro de monitoreo Blincar
-    // - Compartir ubicación GPS en tiempo real
-    // - Iniciar grabación de audio/video
+    if (result.isSuccess) {
+      _activeAlertId = result.alertId;
+
+      // Iniciar actualizaciones de ubicación cada 10 segundos
+      _startLocationUpdates();
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                const Icon(Icons.warning, color: Colors.white),
+                const SizedBox(width: 12),
+                Expanded(child: Text(l10n.alertSent)),
+              ],
+            ),
+            backgroundColor: AppTheme.errorColor,
+            duration: const Duration(seconds: 3),
+          ),
+        );
+
+        // Mostrar ubicación si está disponible
+        if (result.latitude != null && result.longitude != null) {
+          debugPrint(
+              '[PanicPage] Alert sent with location: ${result.latitude}, ${result.longitude}');
+        }
+      }
+    } else {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                const Icon(Icons.error, color: Colors.white),
+                const SizedBox(width: 12),
+                Expanded(
+                    child:
+                        Text(result.errorMessage ?? 'Error al enviar alerta')),
+              ],
+            ),
+            backgroundColor: AppTheme.errorColor,
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+    }
+  }
+
+  void _startLocationUpdates() {
+    _locationUpdateTimer?.cancel();
+    _locationUpdateTimer =
+        Timer.periodic(const Duration(seconds: 10), (timer) async {
+      if (_activeAlertId != null && _isPanicActivated) {
+        await _panicAlertService.updateAlertLocation(alertId: _activeAlertId!);
+      } else {
+        timer.cancel();
+      }
+    });
   }
 
   Future<void> _callEmergencyContact() async {
@@ -247,9 +310,123 @@ class _PanicPageState extends State<PanicPage> with TickerProviderStateMixin {
     });
   }
 
-  void _deactivatePanic() {
+  Future<void> _deactivatePanicWithAuth() async {
+    // Verificar si hay biometría disponible
+    final canAuthenticate = await _localAuth.canCheckBiometrics ||
+        await _localAuth.isDeviceSupported();
+
+    if (canAuthenticate) {
+      try {
+        final authenticated = await _localAuth.authenticate(
+          localizedReason: 'Confirma tu identidad para desactivar la alerta',
+          options: const AuthenticationOptions(
+            stickyAuth: true,
+            biometricOnly: false, // Permite PIN/patrón también
+          ),
+        );
+
+        if (authenticated) {
+          await _deactivatePanic();
+        }
+      } catch (e) {
+        // Fallback: pedir escribir texto
+        await _showTextConfirmationDialog();
+      }
+    } else {
+      // Sin biometría: pedir escribir texto
+      await _showTextConfirmationDialog();
+    }
+  }
+
+  Future<void> _showTextConfirmationDialog() async {
+    String confirmText = '';
+    final l10n = AppLocalizations.of(context)!;
+
+    final confirmed = await showDialog<bool>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          backgroundColor: AppTheme.surfaceColor,
+          title: Text(
+            l10n.confirmDeactivation,
+            style: const TextStyle(color: AppTheme.textPrimaryColor),
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                l10n.deactivateOnlySafe,
+                style: const TextStyle(color: AppTheme.textSecondaryColor),
+              ),
+              const SizedBox(height: 16),
+              TextField(
+                onChanged: (v) => setState(() => confirmText = v),
+                decoration: InputDecoration(
+                  hintText: l10n.typeToConfirm,
+                  hintStyle: const TextStyle(color: AppTheme.textSecondaryColor),
+                  border: const OutlineInputBorder(),
+                  enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(
+                      color: AppTheme.textSecondaryColor.withValues(alpha: 0.3),
+                    ),
+                  ),
+                  focusedBorder: const OutlineInputBorder(
+                    borderSide: BorderSide(color: AppTheme.primaryLightColor),
+                  ),
+                ),
+                style: const TextStyle(color: AppTheme.textPrimaryColor),
+                textCapitalization: TextCapitalization.characters,
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: Text(
+                l10n.cancel,
+                style: const TextStyle(color: AppTheme.textSecondaryColor),
+              ),
+            ),
+            TextButton(
+              onPressed: confirmText.toUpperCase() == 'ESTOY SEGURO'
+                  ? () => Navigator.pop(context, true)
+                  : null,
+              child: Text(
+                l10n.deactivateAlert,
+                style: TextStyle(
+                  color: confirmText.toUpperCase() == 'ESTOY SEGURO'
+                      ? AppTheme.errorColor
+                      : AppTheme.textSecondaryColor.withValues(alpha: 0.5),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    if (confirmed == true) {
+      await _deactivatePanic();
+    }
+  }
+
+  Future<void> _deactivatePanic() async {
+    // Detener actualizaciones de ubicación
+    _locationUpdateTimer?.cancel();
+
+    // Desactivar alerta en Firebase
+    if (_activeAlertId != null) {
+      await _panicAlertService.deactivatePanicAlert(
+        alertId: _activeAlertId!,
+        resolvedBy: 'user',
+        notes: 'Desactivada por el usuario',
+      );
+    }
+
     setState(() {
       _isPanicActivated = false;
+      _activeAlertId = null;
     });
   }
 
@@ -294,32 +471,45 @@ class _PanicPageState extends State<PanicPage> with TickerProviderStateMixin {
     final hasEmergencyContact = _currentUser?.emergencyContactPhone != null &&
         _currentUser!.emergencyContactPhone!.isNotEmpty;
 
-    return Padding(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        children: [
-          const SizedBox(height: 20),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+              minHeight: constraints.maxHeight - 48, // 24 padding * 2
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Column(
+                  children: [
+                    const SizedBox(height: 20),
 
-          // Información de seguridad
-          _buildSecurityInfoCard(l10n),
-          const SizedBox(height: 24),
+                    // Información de seguridad
+                    _buildSecurityInfoCard(l10n),
+                    const SizedBox(height: 24),
 
-          // Advertencia si no hay contacto de emergencia
-          if (!hasEmergencyContact) _buildNoContactWarning(l10n),
+                    // Advertencia si no hay contacto de emergencia
+                    if (!hasEmergencyContact) _buildNoContactWarning(l10n),
+                  ],
+                ),
 
-          const Spacer(),
+                // Botón de pánico o cuenta regresiva
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 20),
+                  child: _isCountingDown
+                      ? _buildCountdownView(l10n)
+                      : _buildPanicButton(),
+                ),
 
-          if (_isCountingDown)
-            _buildCountdownView(l10n)
-          else
-            _buildPanicButton(),
-
-          const SizedBox(height: 40),
-
-          // Contactos de emergencia
-          _buildEmergencyContactsCard(l10n),
-        ],
-      ),
+                // Contactos de emergencia
+                _buildEmergencyContactsCard(l10n),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -830,7 +1020,7 @@ class _PanicPageState extends State<PanicPage> with TickerProviderStateMixin {
 
           CustomButton(
             text: l10n.deactivateAlert,
-            onPressed: _deactivatePanic,
+            onPressed: _deactivatePanicWithAuth,
             type: ButtonType.secondary,
           ),
 

@@ -1,6 +1,12 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/theme/app_theme.dart';
+import '../../../core/services/service_locator.dart';
+import '../../../core/services/document_service.dart';
 import '../../../data/mock/mock_data.dart';
+import '../../bloc/auth/auth_bloc.dart';
+import '../../bloc/auth/auth_state.dart';
 import '../../widgets/common/custom_button.dart';
 
 class DocumentationPage extends StatefulWidget {
@@ -13,11 +19,21 @@ class DocumentationPage extends StatefulWidget {
 class _DocumentationPageState extends State<DocumentationPage>
     with SingleTickerProviderStateMixin {
   late TabController _tabController;
+  final DocumentService _documentService = getIt<DocumentService>();
+  String? _userId;
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 4, vsync: this);
+    _loadUserId();
+  }
+
+  void _loadUserId() {
+    final authState = context.read<AuthBloc>().state;
+    if (authState is AuthAuthenticated) {
+      _userId = authState.user.id;
+    }
   }
 
   @override
@@ -651,7 +667,7 @@ class _DocumentationPageState extends State<DocumentationPage>
   void _showUploadDialog(String type) {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
         backgroundColor: AppTheme.surfaceColor,
         title: const Text(
           'Subir Documento',
@@ -668,28 +684,26 @@ class _DocumentationPageState extends State<DocumentationPage>
             CustomButton(
               text: 'Tomar Foto',
               onPressed: () {
-                Navigator.of(context).pop();
-                // TODO: Implementar cámara
-                _simulateUpload();
+                Navigator.of(dialogContext).pop();
+                _captureAndUpload(type, useCamera: true);
               },
               icon: Icons.camera_alt,
             ),
             const SizedBox(height: 12),
             CustomButton(
-              text: 'Seleccionar Archivo',
+              text: 'Seleccionar de Galería',
               onPressed: () {
-                Navigator.of(context).pop();
-                // TODO: Implementar selector de archivos
-                _simulateUpload();
+                Navigator.of(dialogContext).pop();
+                _captureAndUpload(type, useCamera: false);
               },
               type: ButtonType.outline,
-              icon: Icons.folder,
+              icon: Icons.photo_library,
             ),
           ],
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(context).pop(),
+            onPressed: () => Navigator.of(dialogContext).pop(),
             child: const Text('Cancelar'),
           ),
         ],
@@ -697,21 +711,318 @@ class _DocumentationPageState extends State<DocumentationPage>
     );
   }
 
-  void _viewDocument(DocumentItem doc) {
-    // TODO: Implementar visor de documentos
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Abriendo documento: ${doc.name}'),
+  Future<void> _captureAndUpload(String documentType,
+      {required bool useCamera}) async {
+    if (_userId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Error: Usuario no autenticado'),
+          backgroundColor: AppTheme.errorColor,
+        ),
+      );
+      return;
+    }
+
+    // Obtener imagen
+    File? imageFile;
+    if (useCamera) {
+      imageFile = await _documentService.takePhoto();
+    } else {
+      imageFile = await _documentService.pickImageFromGallery();
+    }
+
+    if (imageFile == null) {
+      return; // Usuario canceló
+    }
+
+    // Mostrar dialog de carga
+    _showUploadingDialog();
+
+    // Subir documento
+    final result = await _documentService.uploadDocument(
+      file: imageFile,
+      userId: _userId!,
+      documentType: documentType,
+      documentName: _getDocumentNameForType(documentType),
+    );
+
+    // Cerrar dialog de carga
+    if (mounted) {
+      Navigator.of(context).pop();
+    }
+
+    // Mostrar resultado
+    if (mounted) {
+      if (result.isSuccess) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Row(
+              children: [
+                Icon(Icons.check_circle, color: Colors.white),
+                SizedBox(width: 12),
+                Text('Documento subido exitosamente'),
+              ],
+            ),
+            backgroundColor: AppTheme.successColor,
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Row(
+              children: [
+                const Icon(Icons.error, color: Colors.white),
+                const SizedBox(width: 12),
+                Expanded(
+                    child:
+                        Text(result.errorMessage ?? 'Error al subir documento')),
+              ],
+            ),
+            backgroundColor: AppTheme.errorColor,
+          ),
+        );
+      }
+    }
+  }
+
+  void _showUploadingDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        backgroundColor: AppTheme.surfaceColor,
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation(AppTheme.primaryLightColor),
+            ),
+            const SizedBox(height: 20),
+            const Text(
+              'Subiendo documento...',
+              style: TextStyle(color: AppTheme.textPrimaryColor),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Por favor espera',
+              style: TextStyle(
+                color: AppTheme.textSecondaryColor,
+                fontSize: 12,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
-  void _simulateUpload() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('📄 Documento subido exitosamente'),
-        backgroundColor: AppTheme.successColor,
+  String _getDocumentNameForType(String type) {
+    switch (type) {
+      case 'personal':
+        return 'Documento_Personal';
+      case 'license':
+        return 'Licencia';
+      case 'vehicle':
+        return 'Documento_Vehicular';
+      case 'insurance':
+        return 'Poliza_Seguro';
+      default:
+        return 'Documento';
+    }
+  }
+
+  void _viewDocument(DocumentItem doc) {
+    // Mostrar diálogo con opciones de visualización
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppTheme.surfaceColor,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
+      builder: (context) => Container(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Center(
+              child: Container(
+                width: 40,
+                height: 4,
+                decoration: BoxDecoration(
+                  color: AppTheme.dividerColor,
+                  borderRadius: BorderRadius.circular(2),
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: _getStatusColor(doc.status).withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Icon(
+                    _getDocumentIcon(doc.type),
+                    color: _getStatusColor(doc.status),
+                    size: 32,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        doc.name,
+                        style: const TextStyle(
+                          color: AppTheme.textPrimaryColor,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 4),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 2,
+                        ),
+                        decoration: BoxDecoration(
+                          color:
+                              _getStatusColor(doc.status).withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          _getStatusText(doc.status),
+                          style: TextStyle(
+                            color: _getStatusColor(doc.status),
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
+            Text(
+              doc.description,
+              style: const TextStyle(
+                color: AppTheme.textSecondaryColor,
+                fontSize: 14,
+              ),
+            ),
+            if (doc.uploadDate != null) ...[
+              const SizedBox(height: 12),
+              _buildDocumentInfoRow(
+                Icons.calendar_today,
+                'Subido',
+                '${doc.uploadDate!.day}/${doc.uploadDate!.month}/${doc.uploadDate!.year}',
+              ),
+            ],
+            if (doc.expiryDate != null) ...[
+              const SizedBox(height: 8),
+              _buildDocumentInfoRow(
+                Icons.event,
+                'Vence',
+                '${doc.expiryDate!.day}/${doc.expiryDate!.month}/${doc.expiryDate!.year}',
+                isWarning: _isExpiringSoon(doc.expiryDate!),
+              ),
+            ],
+            if (doc.comments != null && doc.comments!.isNotEmpty) ...[
+              const SizedBox(height: 16),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: AppTheme.cardColor,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Icon(
+                      Icons.comment,
+                      color: AppTheme.warningColor,
+                      size: 18,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        doc.comments!,
+                        style: const TextStyle(
+                          color: AppTheme.textSecondaryColor,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+            const SizedBox(height: 24),
+            Row(
+              children: [
+                if (doc.status == DocumentStatus.rejected ||
+                    doc.status == DocumentStatus.expired) ...[
+                  Expanded(
+                    child: CustomButton(
+                      text: 'Resubir',
+                      onPressed: () {
+                        Navigator.pop(context);
+                        _showUploadDialog(doc.type);
+                      },
+                      icon: Icons.upload,
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                ],
+                Expanded(
+                  child: CustomButton(
+                    text: 'Cerrar',
+                    onPressed: () => Navigator.pop(context),
+                    type: ButtonType.outline,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDocumentInfoRow(IconData icon, String label, String value,
+      {bool isWarning = false}) {
+    return Row(
+      children: [
+        Icon(
+          icon,
+          color: isWarning ? AppTheme.warningColor : AppTheme.textSecondaryColor,
+          size: 16,
+        ),
+        const SizedBox(width: 8),
+        Text(
+          '$label: ',
+          style: const TextStyle(
+            color: AppTheme.textSecondaryColor,
+            fontSize: 13,
+          ),
+        ),
+        Text(
+          value,
+          style: TextStyle(
+            color:
+                isWarning ? AppTheme.warningColor : AppTheme.textPrimaryColor,
+            fontSize: 13,
+            fontWeight: isWarning ? FontWeight.w600 : FontWeight.normal,
+          ),
+        ),
+      ],
     );
   }
 }

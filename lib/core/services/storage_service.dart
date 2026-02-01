@@ -37,6 +37,15 @@ class StorageService {
     await _migrateToSecureStorage();
   }
 
+  Future<bool> setInt(String key, int value) async {
+    return await _prefs.setInt(key, value);
+  }
+
+  /// Obtiene un int (null si no existe)
+  int? getInt(String key) {
+    return _prefs.getInt(key);
+  }
+
   /// Migra datos sensibles de SharedPreferences a SecureStorage
   Future<void> _migrateToSecureStorage() async {
     // Obtener datos legacy
@@ -168,7 +177,8 @@ class StorageService {
     await _prefs.setBool(_onboardingCompleteKey, complete);
   }
 
-  bool isOnboardingComplete() => _prefs.getBool(_onboardingCompleteKey) ?? false;
+  bool isOnboardingComplete() =>
+      _prefs.getBool(_onboardingCompleteKey) ?? false;
 
   // ========================================
   // STRIPE (SENSIBLE - SecureStorage)

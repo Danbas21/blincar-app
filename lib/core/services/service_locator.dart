@@ -43,6 +43,9 @@ import 'stripe_backend_service.dart';
 import 'google_directions_service.dart';
 import 'fcm_manager.dart';
 import 'auth_fcm_listener.dart';
+import 'panic_alert_service.dart';
+import 'document_service.dart';
+import 'chat_service.dart';
 
 final GetIt getIt = GetIt.instance;
 
@@ -129,6 +132,21 @@ Future<void> setupServiceLocator() async {
 
   getIt.registerLazySingleton<GoogleDirectionsService>(
     () => GoogleDirectionsService(),
+  );
+
+  // Panic Alert Service (maneja alertas de pánico)
+  getIt.registerLazySingleton<PanicAlertService>(
+    () => PanicAlertService(database: getIt<FirebaseDatabase>()),
+  );
+
+  // Document Service (maneja documentos del usuario)
+  getIt.registerLazySingleton<DocumentService>(
+    () => DocumentService(storage: getIt<FirebaseStorage>()),
+  );
+
+  // Chat Service (chat en tiempo real durante viajes)
+  getIt.registerLazySingleton<ChatService>(
+    () => ChatService(database: getIt<FirebaseDatabase>()),
   );
 
   // Auth FCM Listener (registra tokens cuando el usuario se autentica)

@@ -11,6 +11,7 @@ class CustomButton extends StatelessWidget {
   final IconData? icon;
   final double? width;
   final double height;
+  final ButtonType variant = ButtonType.outline;
 
   const CustomButton({
     super.key,

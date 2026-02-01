@@ -46,6 +46,17 @@ sealed class AuthEvent with _$AuthEvent {
   /// Evento para iniciar sesión con Apple
   const factory AuthEvent.signInWithApple() = SignInWithAppleEvent;
 
+  /// Evento para recuperar contraseña
+  const factory AuthEvent.forgotPassword({
+    required String email,
+  }) = ForgotPasswordEvent;
+
+  /// Evento para recuperar contraseña con idioma personalizado
+  const factory AuthEvent.forgotPasswordWithLocale({
+    required String email,
+    required String locale,
+  }) = ForgotPasswordWithLocaleEvent;
+
   // ========================================
   // EVENTOS DE EDICIÓN DE PERFIL
   // ========================================

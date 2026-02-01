@@ -94,7 +94,7 @@ class ApiService {
       return response.data;
     } else {
       throw ServerException(
-        'Server returned ${response.statusCode}',
+        message: 'Server returned ${response.statusCode}',
         statusCode: response.statusCode!,
       );
     }
@@ -106,7 +106,7 @@ class ApiService {
       case DioExceptionType.sendTimeout:
       case DioExceptionType.receiveTimeout:
         return const ServerException(
-          'Tiempo de conexión agotado',
+          message: 'Tiempo de conexión agotado',
           statusCode: 408,
         );
       case DioExceptionType.badResponse:
@@ -114,17 +114,17 @@ class ApiService {
         final message =
             error.response?.data?['message'] ?? 'Error del servidor';
         return ServerException(
-          message,
+          message: message,
           statusCode: statusCode,
         );
       case DioExceptionType.cancel:
         return const ServerException(
-          'Solicitud cancelada',
+          message: 'Solicitud cancelada',
           statusCode: 0,
         );
       default:
         return const ServerException(
-          'Error de conexión',
+          message: 'Error de conexión',
           statusCode: 500,
         );
     }

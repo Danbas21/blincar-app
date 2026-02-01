@@ -1,6 +1,7 @@
 // lib/presentation/pages/auth/login_page.dart
 
 import 'package:blincar_app/presentation/pages/auth/register_page.dart';
+import 'package:blincar_app/presentation/pages/auth/forgot_password_page.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -147,7 +148,11 @@ class _LoginPageState extends State<LoginPage> {
                       alignment: Alignment.centerLeft,
                       child: TextButton(
                         onPressed: () {
-                          // TODO: Implement forgot password
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => const ForgotPasswordPage(),
+                            ),
+                          );
                         },
                         style: TextButton.styleFrom(
                           padding: EdgeInsets.zero,
@@ -155,7 +160,7 @@ class _LoginPageState extends State<LoginPage> {
                           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         ),
                         child: const Text(
-                          '?Has olvidado tu contrasena?',
+                          'Has olvidado tu contrasena?',
                           style: TextStyle(
                             color: AppTheme.textPrimaryColor,
                             fontSize: 14,
@@ -186,14 +191,14 @@ class _LoginPageState extends State<LoginPage> {
                       },
                       child: const Text.rich(
                         TextSpan(
-                          text: '?Eres nuevo en BlinCar? ',
+                          text: 'Eres nuevo en BlinCar? ',
                           style: TextStyle(
                             color: AppTheme.textPrimaryColor,
                             fontSize: 14,
                           ),
                           children: [
                             TextSpan(
-                              text: '!Inscribete!',
+                              text: 'Inscribete!',
                               style: TextStyle(
                                 color: AppTheme.textPrimaryColor,
                                 fontWeight: FontWeight.w600,

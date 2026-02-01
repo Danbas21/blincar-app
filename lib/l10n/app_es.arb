@@ -158,5 +158,54 @@
         }
     },
     "callFailed": "No se pudo realizar la llamada",
-    "noEmergencyContactConfigured": "No tienes un contacto de emergencia configurado"
+    "noEmergencyContactConfigured": "No tienes un contacto de emergencia configurado",
+    "confirmDeactivation": "Confirmar desactivación",
+    "typeToConfirm": "Escribe: ESTOY SEGURO",
+
+    "verifyPhone": "Verifica tu teléfono",
+    "enterPhoneToVerify": "Ingresa tu número de teléfono para recibir un código de verificación",
+    "sendCode": "Enviar código",
+    "enterVerificationCode": "Ingresa el código",
+    "codeSentTo": "Enviamos un código SMS a {phone}",
+    "@codeSentTo": {
+        "placeholders": {
+            "phone": {
+                "type": "String"
+            }
+        }
+    },
+    "verify": "Verificar",
+    "resendCode": "Reenviar código",
+    "resendCodeIn": "Reenviar código en {seconds}s",
+    "@resendCodeIn": {
+        "placeholders": {
+            "seconds": {
+                "type": "int"
+            }
+        }
+    },
+    "changePhoneNumber": "Cambiar número",
+    "phoneVerified": "Teléfono verificado correctamente",
+    "invalidCode": "Código incorrecto",
+
+    "chatWithDriver": "Chat con conductor",
+    "typeMessage": "Escribe un mensaje...",
+    "send": "Enviar",
+    "noMessages": "No hay mensajes aún",
+    "startConversation": "Inicia la conversación",
+
+    "rateYourTrip": "Califica tu viaje",
+    "howWasYourTrip": "¿Cómo estuvo tu viaje?",
+    "leaveComment": "Deja un comentario (opcional)",
+    "commentPlaceholder": "Cuéntanos sobre tu experiencia...",
+    "submitRating": "Enviar calificación",
+    "skipRating": "Omitir",
+    "thankYouForRating": "Gracias por tu calificación",
+
+    "deleteAccount": "Eliminar cuenta",
+    "deleteAccountWarning": "Esta acción es irreversible. Todos tus datos serán eliminados permanentemente.",
+    "confirmDeleteAccount": "¿Estás seguro de que quieres eliminar tu cuenta?",
+    "typeDeleteToConfirm": "Escribe ELIMINAR para confirmar",
+    "accountDeleted": "Tu cuenta ha sido eliminada",
+    "delete": "Eliminar"
 }

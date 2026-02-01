@@ -73,4 +73,16 @@ abstract class AuthRepository {
 
   /// Inicia sesión con Apple
   Future<Either<Failure, User>> signInWithApple();
+
+  /// Envía email de recuperación de contraseña
+  Future<Either<Failure, void>> sendPasswordResetEmail({
+    required String email,
+  });
+
+  /// Envía email de recuperación de contraseña personalizado por idioma
+  /// usando Cloud Function
+  Future<Either<Failure, void>> sendPasswordResetEmailWithLocale({
+    required String email,
+    required String locale,
+  });
 }

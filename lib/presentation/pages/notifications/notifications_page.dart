@@ -1,6 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import '../../../core/theme/app_theme.dart';
-import '../../../data/mock/mock_data.dart';
 
 class NotificationsPage extends StatefulWidget {
   const NotificationsPage({super.key});
@@ -10,10 +11,148 @@ class NotificationsPage extends StatefulWidget {
 }
 
 class _NotificationsPageState extends State<NotificationsPage> {
+  List<NotificationItem> _notifications = [];
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadNotifications();
+  }
+
+  Future<void> _loadNotifications() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      setState(() => _isLoading = false);
+      return;
+    }
+
+    try {
+      final database = FirebaseDatabase.instance;
+      final snapshot = await database
+          .ref('blincar/notifications/${user.uid}')
+          .orderByChild('createdAt')
+          .limitToLast(50)
+          .get();
+
+      if (snapshot.exists) {
+        final data = snapshot.value as Map<dynamic, dynamic>;
+        final notifications = <NotificationItem>[];
+
+        data.forEach((key, value) {
+          if (value is Map) {
+            notifications.add(NotificationItem(
+              id: key.toString(),
+              title: value['title']?.toString() ?? 'Notificación',
+              message: value['body']?.toString() ?? '',
+              type: _parseType(value['type']?.toString()),
+              timestamp: DateTime.fromMillisecondsSinceEpoch(
+                (value['createdAt'] as int?) ?? DateTime.now().millisecondsSinceEpoch,
+              ),
+              isRead: value['read'] == true,
+              tripId: value['tripId']?.toString(),
+            ));
+          }
+        });
+
+        // Ordenar por fecha descendente (más recientes primero)
+        notifications.sort((a, b) => b.timestamp.compareTo(a.timestamp));
+
+        setState(() {
+          _notifications = notifications;
+          _isLoading = false;
+        });
+      } else {
+        setState(() => _isLoading = false);
+      }
+    } catch (e) {
+      debugPrint('Error cargando notificaciones: $e');
+      setState(() => _isLoading = false);
+    }
+  }
+
+  NotificationType _parseType(String? type) {
+    switch (type) {
+      case 'assigned':
+      case 'driver_arrived':
+      case 'in_progress':
+      case 'completed':
+      case 'driver_nearby':
+        return NotificationType.trip;
+      case 'cancelled':
+        return NotificationType.security;
+      case 'payment':
+        return NotificationType.payment;
+      default:
+        return NotificationType.system;
+    }
+  }
+
+  Future<void> _markAllAsRead() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    try {
+      final database = FirebaseDatabase.instance;
+      final updates = <String, dynamic>{};
+
+      for (final notification in _notifications) {
+        if (!notification.isRead) {
+          updates['blincar/notifications/${user.uid}/${notification.id}/read'] = true;
+        }
+      }
+
+      if (updates.isNotEmpty) {
+        await database.ref().update(updates);
+        setState(() {
+          _notifications = _notifications.map((n) => NotificationItem(
+            id: n.id,
+            title: n.title,
+            message: n.message,
+            type: n.type,
+            timestamp: n.timestamp,
+            isRead: true,
+            tripId: n.tripId,
+          )).toList();
+        });
+      }
+    } catch (e) {
+      debugPrint('Error marcando notificaciones: $e');
+    }
+  }
+
+  Future<void> _markAsRead(NotificationItem notification) async {
+    if (notification.isRead) return;
+
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    try {
+      await FirebaseDatabase.instance
+          .ref('blincar/notifications/${user.uid}/${notification.id}/read')
+          .set(true);
+
+      setState(() {
+        final index = _notifications.indexWhere((n) => n.id == notification.id);
+        if (index != -1) {
+          _notifications[index] = NotificationItem(
+            id: notification.id,
+            title: notification.title,
+            message: notification.message,
+            type: notification.type,
+            timestamp: notification.timestamp,
+            isRead: true,
+            tripId: notification.tripId,
+          );
+        }
+      });
+    } catch (e) {
+      debugPrint('Error marcando notificación: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final notifications = MockData.getNotifications();
-
     return Scaffold(
       backgroundColor: AppTheme.backgroundColor,
       appBar: AppBar(
@@ -22,42 +161,54 @@ class _NotificationsPageState extends State<NotificationsPage> {
         foregroundColor: AppTheme.textPrimaryColor,
         elevation: 0,
         actions: [
-          TextButton(
-            onPressed: () {
-              // Marcar todas como leídas
-            },
-            child: const Text('Marcar todas'),
-          ),
+          if (_notifications.any((n) => !n.isRead))
+            TextButton(
+              onPressed: _markAllAsRead,
+              child: const Text('Marcar todas'),
+            ),
         ],
       ),
-      body: notifications.isEmpty
-          ? const Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.notifications_off,
-                    size: 64,
-                    color: AppTheme.textSecondaryColor,
-                  ),
-                  SizedBox(height: 16),
-                  Text(
-                    'No tienes notificaciones',
-                    style: TextStyle(
-                      color: AppTheme.textSecondaryColor,
-                      fontSize: 16,
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : RefreshIndicator(
+              onRefresh: _loadNotifications,
+              child: _notifications.isEmpty
+                  ? ListView(
+                      children: const [
+                        SizedBox(height: 200),
+                        Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.notifications_off,
+                                size: 64,
+                                color: AppTheme.textSecondaryColor,
+                              ),
+                              SizedBox(height: 16),
+                              Text(
+                                'No tienes notificaciones',
+                                style: TextStyle(
+                                  color: AppTheme.textSecondaryColor,
+                                  fontSize: 16,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    )
+                  : ListView.builder(
+                      padding: const EdgeInsets.all(24),
+                      itemCount: _notifications.length,
+                      itemBuilder: (context, index) {
+                        final notification = _notifications[index];
+                        return GestureDetector(
+                          onTap: () => _markAsRead(notification),
+                          child: _buildNotificationCard(notification),
+                        );
+                      },
                     ),
-                  ),
-                ],
-              ),
-            )
-          : ListView.builder(
-              padding: const EdgeInsets.all(24),
-              itemCount: notifications.length,
-              itemBuilder: (context, index) {
-                final notification = notifications[index];
-                return _buildNotificationCard(notification);
-              },
             ),
     );
   }
@@ -179,4 +330,32 @@ class _NotificationsPageState extends State<NotificationsPage> {
       return '${timestamp.day}/${timestamp.month}/${timestamp.year}';
     }
   }
+}
+
+/// Modelo de notificación
+class NotificationItem {
+  final String id;
+  final String title;
+  final String message;
+  final NotificationType type;
+  final DateTime timestamp;
+  final bool isRead;
+  final String? tripId;
+
+  NotificationItem({
+    required this.id,
+    required this.title,
+    required this.message,
+    required this.type,
+    required this.timestamp,
+    required this.isRead,
+    this.tripId,
+  });
+}
+
+enum NotificationType {
+  trip,
+  payment,
+  security,
+  system,
 }
