@@ -19,6 +19,7 @@ import '../legal/privacy_policy_page.dart';
 import '../legal/terms_conditions_page.dart';
 import '../help/help_page.dart';
 import '../settings/delete_account_page.dart';
+import 'documentation_page.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -222,6 +223,18 @@ class _ProfilePageState extends State<ProfilePage> {
             Navigator.of(context).push(
               MaterialPageRoute(
                 builder: (context) => const PaymentMethodsPage(),
+              ),
+            );
+          },
+        ),
+        _buildMenuItem(
+          icon: Icons.badge_outlined,
+          title: 'Documentos de Identidad',
+          subtitle: 'Sube tu INE o identificación oficial',
+          onTap: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const DocumentationPage(),
               ),
             );
           },
@@ -516,7 +529,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 // Opción Inglés
                 _buildLanguageOption(
                   locale: const Locale('en', 'US'),
-                  name: l10n.english,
+                  name: 'English',
                   flag: '\u{1F1FA}\u{1F1F8}',
                   isSelected: currentLocale.languageCode == 'en',
                   onTap: () {
@@ -592,6 +605,64 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildLanguageOptionDisabled({
+    required String name,
+    required String flag,
+  }) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: AppTheme.cardColor.withValues(alpha: 0.5),
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: AppTheme.dividerColor,
+          width: 1,
+        ),
+      ),
+      child: Row(
+        children: [
+          Opacity(
+            opacity: 0.5,
+            child: Text(
+              flag,
+              style: const TextStyle(fontSize: 28),
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  name,
+                  style: const TextStyle(
+                    color: AppTheme.textSecondaryColor,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+                const SizedBox(height: 2),
+                const Text(
+                  'Próximamente',
+                  style: TextStyle(
+                    color: AppTheme.primaryLightColor,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          const Icon(
+            Icons.lock_outline,
+            color: AppTheme.textSecondaryColor,
+            size: 18,
+          ),
+        ],
       ),
     );
   }

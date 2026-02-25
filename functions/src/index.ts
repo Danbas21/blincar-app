@@ -5,7 +5,7 @@
  */
 
 import { setGlobalOptions } from "firebase-functions";
-import { onValueUpdated } from "firebase-functions/v2/database";
+import { onValueUpdated, onValueCreated } from "firebase-functions/v2/database";
 import { onCall } from "firebase-functions/v2/https";
 import * as admin from "firebase-admin";
 import * as logger from "firebase-functions/logger";
@@ -440,6 +440,315 @@ export const sendPasswordResetEmail = onCall(
           ? "Error al verificar usuario"
           : "Error verifying user"
       );
+    }
+  }
+);
+
+/**
+ * Notifica a conductores disponibles cuando se crea un nuevo viaje
+ *
+ * Trigger: Cuando se crea un nuevo viaje en /blincar/trips/{tripId}
+ * Envía push notifications a todos los conductores disponibles
+ */
+export const onNewTripCreated = onValueCreated(
+  {
+    ref: "/blincar/trips/{tripId}",
+    region: "us-central1",
+  },
+  async (event) => {
+    const tripId = event.params.tripId;
+    const tripData = event.data.val();
+
+    if (!tripData) {
+      logger.warn(`No hay datos del viaje ${tripId}`);
+      return;
+    }
+
+    // Solo notificar si el viaje está en estado pending
+    if (tripData.status !== "pending") {
+      logger.info(`Viaje ${tripId} no está pendiente, ignorando`);
+      return;
+    }
+
+    logger.info(`Nuevo viaje creado: ${tripId}`);
+
+    // Obtener información del viaje para la notificación
+    const originName = tripData.route?.origin?.name || "Origen";
+    const destinationName = tripData.route?.destination?.name || "Destino";
+    const estimatedPrice = tripData.totalPrice
+      ? `$${tripData.totalPrice.toFixed(0)} MXN`
+      : "Precio a calcular";
+    const distanceKm = tripData.route?.distanceKm
+      ? `${tripData.route.distanceKm.toFixed(1)} km`
+      : "";
+
+    // Obtener todos los conductores disponibles
+    const driversSnapshot = await admin
+      .database()
+      .ref("blincar/drivers")
+      .orderByChild("isAvailable")
+      .equalTo(true)
+      .get();
+
+    if (!driversSnapshot.exists()) {
+      logger.warn("No hay conductores disponibles para notificar");
+      return;
+    }
+
+    const drivers = driversSnapshot.val();
+    const driverIds = Object.keys(drivers);
+    logger.info(`Encontrados ${driverIds.length} conductores disponibles`);
+
+    // Preparar notificación
+    const notification = {
+      title: "🚖 Nuevo Viaje Disponible",
+      body: `${originName} → ${destinationName}${distanceKm ? ` (${distanceKm})` : ""} - ${estimatedPrice}`,
+    };
+
+    const data: Record<string, string> = {
+      tripId,
+      type: "new_trip",
+      originName,
+      destinationName,
+      estimatedPrice,
+    };
+
+    if (tripData.route?.distanceKm) {
+      data.distanceKm = String(tripData.route.distanceKm);
+    }
+
+    // Enviar notificación a cada conductor disponible
+    const sendPromises: Promise<void>[] = [];
+
+    for (const driverId of driverIds) {
+      const driver = drivers[driverId];
+
+      // Verificar que el conductor esté activo y tenga token FCM
+      if (!driver.isActive) {
+        continue;
+      }
+
+      const fcmToken = driver.fcmToken;
+      if (!fcmToken) {
+        logger.warn(`Conductor ${driverId} sin token FCM`);
+        continue;
+      }
+
+      const sendPromise = admin
+        .messaging()
+        .send({
+          token: fcmToken,
+          notification: {
+            title: notification.title,
+            body: notification.body,
+          },
+          data,
+          android: {
+            priority: "high",
+            notification: {
+              channelId: "new_trips",
+              priority: "high",
+              defaultSound: true,
+              defaultVibrateTimings: true,
+            },
+          },
+          apns: {
+            payload: {
+              aps: {
+                sound: "default",
+                badge: 1,
+              },
+            },
+          },
+        })
+        .then(() => {
+          logger.info(`Notificación de nuevo viaje enviada a conductor ${driverId}`);
+        })
+        .catch((error) => {
+          logger.error(`Error enviando a conductor ${driverId}:`, error);
+        });
+
+      sendPromises.push(sendPromise);
+    }
+
+    // Esperar a que se envíen todas las notificaciones
+    await Promise.all(sendPromises);
+
+    logger.info(
+      `Notificaciones de nuevo viaje enviadas a ${sendPromises.length} conductores`
+    );
+  }
+);
+
+/**
+ * Notifica al receptor cuando se envía un nuevo mensaje de chat
+ *
+ * Trigger: Cuando se crea un mensaje en /blincar/chats/{tripId}/messages/{messageId}
+ * Envía push notification al usuario o conductor según corresponda
+ */
+export const onChatMessage = onValueCreated(
+  {
+    ref: "/blincar/chats/{tripId}/messages/{messageId}",
+    region: "us-central1",
+  },
+  async (event) => {
+    const tripId = event.params.tripId;
+    const messageId = event.params.messageId;
+    const messageData = event.data.val();
+
+    if (!messageData) {
+      logger.warn(`No hay datos del mensaje ${messageId}`);
+      return;
+    }
+
+    const senderId = messageData.senderId;
+    const senderName = messageData.senderName || "Usuario";
+    const messageText = messageData.text || "";
+
+    logger.info(`Nuevo mensaje en trip ${tripId} de ${senderName}`);
+
+    // Obtener datos del viaje para saber quién es el receptor
+    const tripSnapshot = await admin
+      .database()
+      .ref(`blincar/trips/${tripId}`)
+      .get();
+
+    if (!tripSnapshot.exists()) {
+      logger.warn(`Viaje ${tripId} no encontrado`);
+      return;
+    }
+
+    const tripData = tripSnapshot.val();
+    const userId = tripData.userId;
+    const driverId = tripData.driverId;
+
+    if (!userId || !driverId) {
+      logger.warn(`Viaje ${tripId} sin userId o driverId`);
+      return;
+    }
+
+    // Determinar quién es el receptor basado en quién envió el mensaje
+    let recipientToken: string | null = null;
+    let recipientType: "user" | "driver";
+    let recipientId: string;
+
+    if (senderId === userId) {
+      // El usuario envió el mensaje, notificar al conductor
+      recipientType = "driver";
+      recipientId = driverId;
+
+      // Obtener token del conductor
+      const driverSnapshot = await admin
+        .database()
+        .ref(`blincar/drivers/${driverId}/fcmToken`)
+        .get();
+
+      recipientToken = driverSnapshot.val();
+    } else if (senderId === driverId) {
+      // El conductor envió el mensaje, notificar al usuario
+      recipientType = "user";
+      recipientId = userId;
+
+      // Obtener token del usuario
+      const userTokenSnapshot = await admin
+        .database()
+        .ref(`blincar/users/${userId}/fcmToken`)
+        .get();
+
+      recipientToken = userTokenSnapshot.val();
+
+      // Si no está en users, buscar en fcm_tokens
+      if (!recipientToken) {
+        const tokensSnapshot = await admin
+          .database()
+          .ref("fcm_tokens")
+          .orderByChild("userId")
+          .equalTo(userId)
+          .limitToFirst(1)
+          .get();
+
+        if (tokensSnapshot.exists()) {
+          const tokens = tokensSnapshot.val();
+          const firstKey = Object.keys(tokens)[0];
+          recipientToken = tokens[firstKey]?.token;
+        }
+      }
+    } else {
+      // El senderId no coincide con ninguno, podría ser un error
+      logger.warn(
+        `SenderId ${senderId} no coincide con userId ${userId} ni driverId ${driverId}`
+      );
+      return;
+    }
+
+    if (!recipientToken) {
+      logger.warn(`No se encontró token FCM para ${recipientType} ${recipientId}`);
+      return;
+    }
+
+    // Truncar mensaje si es muy largo
+    const previewText =
+      messageText.length > 100
+        ? messageText.substring(0, 100) + "..."
+        : messageText;
+
+    // Preparar notificación
+    const notification = {
+      title: `💬 ${senderName}`,
+      body: previewText,
+    };
+
+    const data: Record<string, string> = {
+      tripId,
+      messageId,
+      type: "chat_message",
+      senderId,
+      senderName,
+    };
+
+    try {
+      await admin.messaging().send({
+        token: recipientToken,
+        notification: {
+          title: notification.title,
+          body: notification.body,
+        },
+        data,
+        android: {
+          priority: "high",
+          notification: {
+            channelId: "chat_messages",
+            priority: "high",
+            defaultSound: true,
+          },
+        },
+        apns: {
+          payload: {
+            aps: {
+              sound: "default",
+              badge: 1,
+            },
+          },
+        },
+      });
+
+      logger.info(
+        `Notificación de chat enviada a ${recipientType} ${recipientId}`
+      );
+
+      // Guardar notificación en la base de datos del receptor
+      await admin.database().ref(`blincar/notifications/${recipientId}`).push({
+        title: notification.title,
+        body: notification.body,
+        type: "chat_message",
+        tripId,
+        messageId,
+        senderId,
+        read: false,
+        createdAt: admin.database.ServerValue.TIMESTAMP,
+      });
+    } catch (error) {
+      logger.error("Error enviando notificación de chat:", error);
     }
   }
 );

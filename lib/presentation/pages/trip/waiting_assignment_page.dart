@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:blincar_app/l10n/app_localizations.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../domain/entities/trip/trip_entity.dart';
 import '../../../domain/repositories/trip_repository.dart';
@@ -72,6 +73,7 @@ class _WaitingAssignmentPageState extends State<WaitingAssignmentPage>
   }
 
   void _showAssignedDialog(TripEntity trip) {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -84,7 +86,7 @@ class _WaitingAssignmentPageState extends State<WaitingAssignmentPage>
             const SizedBox(width: 12),
             Flexible(
               child: Text(
-                '¡Conductor asignado!',
+                l10n.driverAssignedTitle,
                 style: const TextStyle(color: AppTheme.textPrimaryColor),
                 overflow: TextOverflow.ellipsis,
               ),
@@ -96,18 +98,18 @@ class _WaitingAssignmentPageState extends State<WaitingAssignmentPage>
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Tu conductor está en camino',
+              l10n.driverOnWay,
               style: const TextStyle(
                 color: AppTheme.textSecondaryColor,
                 fontSize: 16,
               ),
             ),
             const SizedBox(height: 20),
-            _buildInfoRow('Conductor', trip.driverName ?? 'N/A'),
+            _buildInfoRow(l10n.driverLabel, trip.driverName ?? 'N/A'),
             const SizedBox(height: 8),
-            _buildInfoRow('Teléfono', trip.driverPhone ?? 'N/A'),
+            _buildInfoRow(l10n.phone, trip.driverPhone ?? 'N/A'),
             const SizedBox(height: 8),
-            _buildInfoRow('Vehículo', trip.vehiclePlate ?? 'N/A'),
+            _buildInfoRow(l10n.vehicleLabel, trip.vehiclePlate ?? 'N/A'),
           ],
         ),
         actions: [
@@ -121,7 +123,10 @@ class _WaitingAssignmentPageState extends State<WaitingAssignmentPage>
                 ),
               );
             },
-            child: const Text('Ver viaje'),
+            child: Text(
+              l10n.viewTrip,
+              style: const TextStyle(color: AppTheme.textSecondaryColor),
+            ),
           ),
         ],
       ),
@@ -129,6 +134,7 @@ class _WaitingAssignmentPageState extends State<WaitingAssignmentPage>
   }
 
   void _showCancelledDialog() {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       barrierDismissible: false,
@@ -140,16 +146,16 @@ class _WaitingAssignmentPageState extends State<WaitingAssignmentPage>
             const SizedBox(width: 12),
             Flexible(
               child: Text(
-                'Viaje cancelado',
+                l10n.tripCancelledTitle,
                 style: const TextStyle(color: AppTheme.textPrimaryColor),
                 overflow: TextOverflow.ellipsis,
               ),
             ),
           ],
         ),
-        content: const Text(
-          'Tu viaje ha sido cancelado.',
-          style: TextStyle(color: AppTheme.textSecondaryColor),
+        content: Text(
+          l10n.tripCancelledMessage,
+          style: const TextStyle(color: AppTheme.textSecondaryColor),
         ),
         actions: [
           TextButton(
@@ -157,7 +163,7 @@ class _WaitingAssignmentPageState extends State<WaitingAssignmentPage>
               Navigator.of(context).pop(); // Cerrar diálogo
               Navigator.of(context).pop(); // Volver a home
             },
-            child: const Text('Entendido'),
+            child: Text(l10n.understood),
           ),
         ],
       ),
@@ -166,6 +172,7 @@ class _WaitingAssignmentPageState extends State<WaitingAssignmentPage>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, result) async {
@@ -191,9 +198,11 @@ class _WaitingAssignmentPageState extends State<WaitingAssignmentPage>
               }
             },
           ),
-          title: const Text(
-            'Esperando asignación',
-            style: TextStyle(color: AppTheme.textPrimaryColor),
+          title: Builder(
+            builder: (ctx) => Text(
+              AppLocalizations.of(ctx)!.waitingTitle,
+              style: const TextStyle(color: AppTheme.textPrimaryColor),
+            ),
           ),
         ),
         body: _currentTrip == null
@@ -219,7 +228,8 @@ class _WaitingAssignmentPageState extends State<WaitingAssignmentPage>
                               gradient: LinearGradient(
                                 colors: [
                                   AppTheme.primaryLightColor,
-                                  AppTheme.primaryLightColor.withValues(alpha: 0.6),
+                                  AppTheme.primaryLightColor
+                                      .withValues(alpha: 0.6),
                                 ],
                               ),
                               boxShadow: [
@@ -278,27 +288,27 @@ class _WaitingAssignmentPageState extends State<WaitingAssignmentPage>
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
-                            'Detalles del viaje',
-                            style: TextStyle(
+                          Text(
+                            l10n.tripDetails,
+                            style: const TextStyle(
                               color: AppTheme.textPrimaryColor,
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           const SizedBox(height: 20),
-                          _buildInfoRow('Ruta', _currentTrip!.route.name),
+                          _buildInfoRow(l10n.routeLabel, _currentTrip!.route.name),
                           const Divider(height: 24),
-                          _buildInfoRow('Servicio', _currentTrip!.serviceType),
+                          _buildInfoRow(l10n.serviceLabel, _currentTrip!.serviceType),
                           const Divider(height: 24),
                           _buildInfoRow(
-                            'Precio',
+                            l10n.priceLabel,
                             '\$${_currentTrip!.totalPrice.toStringAsFixed(0)} MXN',
                           ),
                           const Divider(height: 24),
                           _buildInfoRow(
-                            'Solicitado',
-                            _formatTime(_currentTrip!.requestedAt),
+                            l10n.requestedLabel,
+                            _formatTime(_currentTrip!.requestedAt, l10n),
                           ),
                         ],
                       ),
@@ -308,7 +318,7 @@ class _WaitingAssignmentPageState extends State<WaitingAssignmentPage>
 
                     // Botón cancelar
                     CustomButton(
-                      text: 'Cancelar viaje',
+                      text: l10n.cancelTrip,
                       onPressed: () => _showCancelConfirmation(),
                     ),
                   ],
@@ -344,40 +354,41 @@ class _WaitingAssignmentPageState extends State<WaitingAssignmentPage>
     );
   }
 
-  String _formatTime(DateTime dateTime) {
+  String _formatTime(DateTime dateTime, AppLocalizations l10n) {
     final now = DateTime.now();
     final difference = now.difference(dateTime);
 
     if (difference.inMinutes < 1) {
-      return 'Hace un momento';
+      return l10n.justNow;
     } else if (difference.inMinutes < 60) {
-      return 'Hace ${difference.inMinutes} min';
+      return l10n.minutesAgo(difference.inMinutes);
     } else {
       return '${dateTime.hour}:${dateTime.minute.toString().padLeft(2, '0')}';
     }
   }
 
   Future<bool?> _showExitConfirmation() {
+    final l10n = AppLocalizations.of(context)!;
     return showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: AppTheme.surfaceColor,
-        title: const Text(
-          'Salir',
-          style: TextStyle(color: AppTheme.textPrimaryColor),
+        title: Text(
+          l10n.exitTitle,
+          style: const TextStyle(color: AppTheme.textPrimaryColor),
         ),
-        content: const Text(
-          'Tu viaje sigue en proceso de asignación. ¿Deseas salir?',
-          style: TextStyle(color: AppTheme.textSecondaryColor),
+        content: Text(
+          l10n.exitAssignmentMessage,
+          style: const TextStyle(color: AppTheme.textSecondaryColor),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('Quedarme'),
+            child: Text(l10n.stayButton),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
-            child: const Text('Salir'),
+            child: Text(l10n.exitButton),
           ),
         ],
       ),
@@ -385,29 +396,30 @@ class _WaitingAssignmentPageState extends State<WaitingAssignmentPage>
   }
 
   Future<void> _showCancelConfirmation() async {
+    final l10n = AppLocalizations.of(context)!;
     final shouldCancel = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: AppTheme.surfaceColor,
-        title: const Text(
-          'Cancelar viaje',
-          style: TextStyle(color: AppTheme.textPrimaryColor),
+        title: Text(
+          l10n.cancelTrip,
+          style: const TextStyle(color: AppTheme.textPrimaryColor),
         ),
-        content: const Text(
-          '¿Estás seguro de que deseas cancelar este viaje?',
-          style: TextStyle(color: AppTheme.textSecondaryColor),
+        content: Text(
+          l10n.cancelTripConfirmMessage,
+          style: const TextStyle(color: AppTheme.textSecondaryColor),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(false),
-            child: const Text('No'),
+            child: Text(l10n.noButton),
           ),
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             style: TextButton.styleFrom(
               foregroundColor: AppTheme.errorColor,
             ),
-            child: const Text('Sí, cancelar'),
+            child: Text(l10n.yesCancelButton),
           ),
         ],
       ),

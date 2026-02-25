@@ -54,11 +54,21 @@ class PushNotificationService {
     return _localNotifications!;
   }
 
-  /// Canal de notificaciones para Android (alta prioridad)
-  static const AndroidNotificationChannel _channel = AndroidNotificationChannel(
-    'blincar_high_importance',
-    'Blincar Notificaciones',
-    description: 'Notificaciones importantes de viajes y pagos',
+  /// Canal de notificaciones para viajes (alta prioridad)
+  static const AndroidNotificationChannel _tripChannel = AndroidNotificationChannel(
+    'trip_updates',
+    'Actualizaciones de Viaje',
+    description: 'Notificaciones de estado del viaje',
+    importance: Importance.high,
+    playSound: true,
+    enableVibration: true,
+  );
+
+  /// Canal de notificaciones para chat
+  static const AndroidNotificationChannel _chatChannel = AndroidNotificationChannel(
+    'chat_messages',
+    'Mensajes de Chat',
+    description: 'Mensajes del conductor',
     importance: Importance.high,
     playSound: true,
     enableVibration: true,
@@ -123,13 +133,14 @@ class PushNotificationService {
     );
   }
 
-  /// Crea el canal de notificaciones en Android
+  /// Crea los canales de notificaciones en Android
   static Future<void> _createNotificationChannel() async {
     final androidPlugin = localNotifications
         .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
 
     if (androidPlugin != null) {
-      await androidPlugin.createNotificationChannel(_channel);
+      await androidPlugin.createNotificationChannel(_tripChannel);
+      await androidPlugin.createNotificationChannel(_chatChannel);
     }
   }
 
@@ -148,13 +159,23 @@ class PushNotificationService {
   /// Maneja mensajes en foreground
   static Future<void> _handleForegroundMessage(RemoteMessage message) async {
     _debugLog('Foreground message: ${message.notification?.title}');
+    _debugLog('Data: ${message.data}');
 
     final notification = message.notification;
+    final type = message.data['type'] as String?;
+
+    // Determinar canal según tipo de notificación
+    String channelId = _tripChannel.id;
+    if (type == 'chat_message') {
+      channelId = _chatChannel.id;
+    }
+
     if (notification != null) {
       await _showLocalNotification(
         title: notification.title ?? 'Blincar',
         body: notification.body ?? '',
         payload: jsonEncode(message.data),
+        channelId: channelId,
       );
     }
   }
@@ -182,11 +203,14 @@ class PushNotificationService {
     required String title,
     required String body,
     String? payload,
+    String? channelId,
   }) async {
-    const androidDetails = AndroidNotificationDetails(
-      'blincar_high_importance',
-      'Blincar Notificaciones',
-      channelDescription: 'Notificaciones importantes de viajes y pagos',
+    final androidDetails = AndroidNotificationDetails(
+      channelId ?? _tripChannel.id,
+      channelId == _chatChannel.id ? _chatChannel.name : _tripChannel.name,
+      channelDescription: channelId == _chatChannel.id
+          ? _chatChannel.description
+          : _tripChannel.description,
       importance: Importance.high,
       priority: Priority.high,
       icon: '@mipmap/launcher_icon',
@@ -200,7 +224,7 @@ class PushNotificationService {
       presentSound: true,
     );
 
-    const details = NotificationDetails(
+    final details = NotificationDetails(
       android: androidDetails,
       iOS: iosDetails,
     );

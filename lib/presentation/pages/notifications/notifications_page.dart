@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
+import 'package:blincar_app/l10n/app_localizations.dart';
 import '../../../core/theme/app_theme.dart';
 
 class NotificationsPage extends StatefulWidget {
@@ -75,7 +76,8 @@ class _NotificationsPageState extends State<NotificationsPage> {
     switch (type) {
       case 'assigned':
       case 'driver_arrived':
-      case 'in_progress':
+      case 'inProgress':  // Current format
+      case 'in_progress': // Legacy format
       case 'completed':
       case 'driver_nearby':
         return NotificationType.trip;
@@ -153,10 +155,11 @@ class _NotificationsPageState extends State<NotificationsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppTheme.backgroundColor,
       appBar: AppBar(
-        title: const Text('Notificaciones'),
+        title: Text(l10n.notifications),
         backgroundColor: AppTheme.backgroundColor,
         foregroundColor: AppTheme.textPrimaryColor,
         elevation: 0,
@@ -164,7 +167,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
           if (_notifications.any((n) => !n.isRead))
             TextButton(
               onPressed: _markAllAsRead,
-              child: const Text('Marcar todas'),
+              child: Text(l10n.markAllRead),
             ),
         ],
       ),
@@ -174,21 +177,21 @@ class _NotificationsPageState extends State<NotificationsPage> {
               onRefresh: _loadNotifications,
               child: _notifications.isEmpty
                   ? ListView(
-                      children: const [
-                        SizedBox(height: 200),
+                      children: [
+                        const SizedBox(height: 200),
                         Center(
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Icon(
+                              const Icon(
                                 Icons.notifications_off,
                                 size: 64,
                                 color: AppTheme.textSecondaryColor,
                               ),
-                              SizedBox(height: 16),
+                              const SizedBox(height: 16),
                               Text(
-                                'No tienes notificaciones',
-                                style: TextStyle(
+                                l10n.noNotifications,
+                                style: const TextStyle(
                                   color: AppTheme.textSecondaryColor,
                                   fontSize: 16,
                                 ),
@@ -205,7 +208,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
                         final notification = _notifications[index];
                         return GestureDetector(
                           onTap: () => _markAsRead(notification),
-                          child: _buildNotificationCard(notification),
+                          child: _buildNotificationCard(notification, l10n),
                         );
                       },
                     ),
@@ -213,7 +216,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
     );
   }
 
-  Widget _buildNotificationCard(NotificationItem notification) {
+  Widget _buildNotificationCard(NotificationItem notification, AppLocalizations l10n) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
@@ -267,7 +270,7 @@ class _NotificationsPageState extends State<NotificationsPage> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  _formatTime(notification.timestamp),
+                  _formatTime(notification.timestamp, l10n),
                   style: const TextStyle(
                     color: AppTheme.textSecondaryColor,
                     fontSize: 12,
@@ -316,12 +319,12 @@ class _NotificationsPageState extends State<NotificationsPage> {
     }
   }
 
-  String _formatTime(DateTime timestamp) {
+  String _formatTime(DateTime timestamp, AppLocalizations l10n) {
     final now = DateTime.now();
     final difference = now.difference(timestamp);
 
     if (difference.inMinutes < 1) {
-      return 'Hace un momento';
+      return l10n.justNow;
     } else if (difference.inHours < 1) {
       return 'Hace ${difference.inMinutes} min';
     } else if (difference.inDays < 1) {

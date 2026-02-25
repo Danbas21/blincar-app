@@ -1123,6 +1123,1920 @@ abstract class AppLocalizations {
   /// In es, this message translates to:
   /// **'Eliminar'**
   String get delete;
+
+  /// No description provided for @activityTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Mi Actividad'**
+  String get activityTitle;
+
+  /// No description provided for @noTripsYet.
+  ///
+  /// In es, this message translates to:
+  /// **'Sin viajes aún'**
+  String get noTripsYet;
+
+  /// No description provided for @noTripsDescription.
+  ///
+  /// In es, this message translates to:
+  /// **'Cuando completes tu primer viaje, aparecerá aquí'**
+  String get noTripsDescription;
+
+  /// No description provided for @tripStatusCompleted.
+  ///
+  /// In es, this message translates to:
+  /// **'Completado'**
+  String get tripStatusCompleted;
+
+  /// No description provided for @tripStatusCancelled.
+  ///
+  /// In es, this message translates to:
+  /// **'Cancelado'**
+  String get tripStatusCancelled;
+
+  /// No description provided for @tripStatusPending.
+  ///
+  /// In es, this message translates to:
+  /// **'Pendiente'**
+  String get tripStatusPending;
+
+  /// No description provided for @tripStatusAssigned.
+  ///
+  /// In es, this message translates to:
+  /// **'Asignado'**
+  String get tripStatusAssigned;
+
+  /// No description provided for @tripStatusInProgress.
+  ///
+  /// In es, this message translates to:
+  /// **'En progreso'**
+  String get tripStatusInProgress;
+
+  /// No description provided for @tripStatusAccepted.
+  ///
+  /// In es, this message translates to:
+  /// **'Aceptado'**
+  String get tripStatusAccepted;
+
+  /// No description provided for @tripStatusRequested.
+  ///
+  /// In es, this message translates to:
+  /// **'Solicitado'**
+  String get tripStatusRequested;
+
+  /// No description provided for @forgotPasswordTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'RECUPERAR CONTRASEÑA'**
+  String get forgotPasswordTitle;
+
+  /// No description provided for @forgotPasswordEmailHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Ingresa tu correo electrónico...'**
+  String get forgotPasswordEmailHint;
+
+  /// No description provided for @sendLink.
+  ///
+  /// In es, this message translates to:
+  /// **'Enviar Enlace'**
+  String get sendLink;
+
+  /// No description provided for @backToLogin.
+  ///
+  /// In es, this message translates to:
+  /// **'Volver a Iniciar Sesión'**
+  String get backToLogin;
+
+  /// No description provided for @emailSentTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'¡CORREO ENVIADO!'**
+  String get emailSentTitle;
+
+  /// No description provided for @emailSentMessage.
+  ///
+  /// In es, this message translates to:
+  /// **'Hemos enviado un enlace de recuperación a:'**
+  String get emailSentMessage;
+
+  /// No description provided for @checkInboxMessage.
+  ///
+  /// In es, this message translates to:
+  /// **'Revisa tu bandeja de entrada...'**
+  String get checkInboxMessage;
+
+  /// No description provided for @resendEmailLink.
+  ///
+  /// In es, this message translates to:
+  /// **'¿No recibiste el correo? Intentar de nuevo'**
+  String get resendEmailLink;
+
+  /// No description provided for @loginHeroText.
+  ///
+  /// In es, this message translates to:
+  /// **'MOVILIDAD DE ALTO NIVEL\nCON SEGURIDAD TOTAL.'**
+  String get loginHeroText;
+
+  /// No description provided for @loginTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'INICIA SESIÓN'**
+  String get loginTitle;
+
+  /// No description provided for @loginEmailLabel.
+  ///
+  /// In es, this message translates to:
+  /// **'Correo Electrónico Corporativo o Personal*'**
+  String get loginEmailLabel;
+
+  /// No description provided for @loginPasswordLabel.
+  ///
+  /// In es, this message translates to:
+  /// **'Contraseña*'**
+  String get loginPasswordLabel;
+
+  /// No description provided for @forgotPasswordLink.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Has olvidado tu contraseña?'**
+  String get forgotPasswordLink;
+
+  /// No description provided for @loginButton.
+  ///
+  /// In es, this message translates to:
+  /// **'Iniciar Sesión'**
+  String get loginButton;
+
+  /// No description provided for @registerLink.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Eres nuevo en BlinCar? ¡Inscríbete!'**
+  String get registerLink;
+
+  /// No description provided for @orDivider.
+  ///
+  /// In es, this message translates to:
+  /// **'o'**
+  String get orDivider;
+
+  /// No description provided for @continueWithApple.
+  ///
+  /// In es, this message translates to:
+  /// **'Continuar con Apple'**
+  String get continueWithApple;
+
+  /// No description provided for @continueWithGoogle.
+  ///
+  /// In es, this message translates to:
+  /// **'Continuar con Google'**
+  String get continueWithGoogle;
+
+  /// No description provided for @continueWithFacebook.
+  ///
+  /// In es, this message translates to:
+  /// **'Continuar con Facebook'**
+  String get continueWithFacebook;
+
+  /// No description provided for @facebookComingSoon.
+  ///
+  /// In es, this message translates to:
+  /// **'Facebook Sign In próximamente'**
+  String get facebookComingSoon;
+
+  /// No description provided for @registerTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Crear cuenta'**
+  String get registerTitle;
+
+  /// No description provided for @registerSubtitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Completa la información para registrarte'**
+  String get registerSubtitle;
+
+  /// No description provided for @accountTypeLabel.
+  ///
+  /// In es, this message translates to:
+  /// **'Tipo de cuenta'**
+  String get accountTypeLabel;
+
+  /// No description provided for @passengerType.
+  ///
+  /// In es, this message translates to:
+  /// **'Pasajero'**
+  String get passengerType;
+
+  /// No description provided for @driverType.
+  ///
+  /// In es, this message translates to:
+  /// **'Conductor'**
+  String get driverType;
+
+  /// No description provided for @nameHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu nombre'**
+  String get nameHint;
+
+  /// No description provided for @lastNameHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Tus apellidos'**
+  String get lastNameHint;
+
+  /// No description provided for @emailHint.
+  ///
+  /// In es, this message translates to:
+  /// **'tu@email.com'**
+  String get emailHint;
+
+  /// No description provided for @termsRequiredError.
+  ///
+  /// In es, this message translates to:
+  /// **'Debes aceptar los términos y condiciones'**
+  String get termsRequiredError;
+
+  /// No description provided for @privacyRequiredError.
+  ///
+  /// In es, this message translates to:
+  /// **'Debes aceptar la política de privacidad'**
+  String get privacyRequiredError;
+
+  /// No description provided for @ineRequiredError.
+  ///
+  /// In es, this message translates to:
+  /// **'Debes cargar ambos lados de tu INE'**
+  String get ineRequiredError;
+
+  /// No description provided for @documentsUploaded.
+  ///
+  /// In es, this message translates to:
+  /// **'Documentos subidos correctamente'**
+  String get documentsUploaded;
+
+  /// No description provided for @ineLabel.
+  ///
+  /// In es, this message translates to:
+  /// **'Identificación Oficial (INE)'**
+  String get ineLabel;
+
+  /// No description provided for @ineDescription.
+  ///
+  /// In es, this message translates to:
+  /// **'Sube fotos claras de tu INE'**
+  String get ineDescription;
+
+  /// No description provided for @ineFront.
+  ///
+  /// In es, this message translates to:
+  /// **'Anverso (Frente)'**
+  String get ineFront;
+
+  /// No description provided for @ineFrontDescription.
+  ///
+  /// In es, this message translates to:
+  /// **'Foto con tu nombre y fotografía'**
+  String get ineFrontDescription;
+
+  /// No description provided for @ineBack.
+  ///
+  /// In es, this message translates to:
+  /// **'Reverso (Atrás)'**
+  String get ineBack;
+
+  /// No description provided for @ineBackDescription.
+  ///
+  /// In es, this message translates to:
+  /// **'Foto con el código de barras'**
+  String get ineBackDescription;
+
+  /// No description provided for @securityNotice.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu información está protegida y encriptada'**
+  String get securityNotice;
+
+  /// No description provided for @uploadingDocuments.
+  ///
+  /// In es, this message translates to:
+  /// **'Subiendo documentos...'**
+  String get uploadingDocuments;
+
+  /// No description provided for @createAccountButton.
+  ///
+  /// In es, this message translates to:
+  /// **'Crear Cuenta'**
+  String get createAccountButton;
+
+  /// No description provided for @helpTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Ayuda y Soporte'**
+  String get helpTitle;
+
+  /// No description provided for @faqSearchHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Buscar en preguntas frecuentes...'**
+  String get faqSearchHint;
+
+  /// No description provided for @faqTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Preguntas Frecuentes'**
+  String get faqTitle;
+
+  /// No description provided for @noSearchResults.
+  ///
+  /// In es, this message translates to:
+  /// **'No se encontraron resultados'**
+  String get noSearchResults;
+
+  /// No description provided for @contactSupport.
+  ///
+  /// In es, this message translates to:
+  /// **'Contactar soporte'**
+  String get contactSupport;
+
+  /// No description provided for @helloName.
+  ///
+  /// In es, this message translates to:
+  /// **'Hola, {name}'**
+  String helloName(String name);
+
+  /// No description provided for @transportServices.
+  ///
+  /// In es, this message translates to:
+  /// **'Servicios de Transporte'**
+  String get transportServices;
+
+  /// No description provided for @byRoute.
+  ///
+  /// In es, this message translates to:
+  /// **'Por Ruta'**
+  String get byRoute;
+
+  /// No description provided for @predefinedRoutes.
+  ///
+  /// In es, this message translates to:
+  /// **'Rutas predefinidas'**
+  String get predefinedRoutes;
+
+  /// No description provided for @byDay.
+  ///
+  /// In es, this message translates to:
+  /// **'Por Día'**
+  String get byDay;
+
+  /// No description provided for @fullService.
+  ///
+  /// In es, this message translates to:
+  /// **'Servicio completo'**
+  String get fullService;
+
+  /// No description provided for @customizeTrip.
+  ///
+  /// In es, this message translates to:
+  /// **'Personaliza tu Viaje'**
+  String get customizeTrip;
+
+  /// No description provided for @originDestinationManual.
+  ///
+  /// In es, this message translates to:
+  /// **'Ingresa origen y destino manualmente'**
+  String get originDestinationManual;
+
+  /// No description provided for @quickTrip.
+  ///
+  /// In es, this message translates to:
+  /// **'Viaje Rápido'**
+  String get quickTrip;
+
+  /// No description provided for @wherePickup.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Dónde te recogemos?'**
+  String get wherePickup;
+
+  /// No description provided for @whereGoing.
+  ///
+  /// In es, this message translates to:
+  /// **'¿A dónde vas?'**
+  String get whereGoing;
+
+  /// No description provided for @serviceTypeLabel.
+  ///
+  /// In es, this message translates to:
+  /// **'Tipo de servicio'**
+  String get serviceTypeLabel;
+
+  /// No description provided for @scheduleLater.
+  ///
+  /// In es, this message translates to:
+  /// **'Programar para más tarde'**
+  String get scheduleLater;
+
+  /// No description provided for @changeButton.
+  ///
+  /// In es, this message translates to:
+  /// **'Cambiar'**
+  String get changeButton;
+
+  /// No description provided for @panicActivateConfirm.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Estás seguro de activar el botón de pánico? Se enviará una alerta inmediata.'**
+  String get panicActivateConfirm;
+
+  /// No description provided for @activateButton.
+  ///
+  /// In es, this message translates to:
+  /// **'Activar'**
+  String get activateButton;
+
+  /// No description provided for @byDayServiceTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Servicio Por Día'**
+  String get byDayServiceTitle;
+
+  /// No description provided for @comingSoon.
+  ///
+  /// In es, this message translates to:
+  /// **'Próximamente disponible'**
+  String get comingSoon;
+
+  /// No description provided for @byDayDescription.
+  ///
+  /// In es, this message translates to:
+  /// **'El servicio por día te permitirá contratar un conductor por tiempo completo'**
+  String get byDayDescription;
+
+  /// No description provided for @hoursService.
+  ///
+  /// In es, this message translates to:
+  /// **'8 horas de servicio'**
+  String get hoursService;
+
+  /// No description provided for @multipleDestinations.
+  ///
+  /// In es, this message translates to:
+  /// **'Múltiples destinos'**
+  String get multipleDestinations;
+
+  /// No description provided for @dedicatedDriver.
+  ///
+  /// In es, this message translates to:
+  /// **'Conductor dedicado'**
+  String get dedicatedDriver;
+
+  /// No description provided for @understood.
+  ///
+  /// In es, this message translates to:
+  /// **'Entendido'**
+  String get understood;
+
+  /// No description provided for @selectOrigin.
+  ///
+  /// In es, this message translates to:
+  /// **'Seleccionar origen'**
+  String get selectOrigin;
+
+  /// No description provided for @selectDestination.
+  ///
+  /// In es, this message translates to:
+  /// **'Seleccionar destino'**
+  String get selectDestination;
+
+  /// No description provided for @calculatingRoute.
+  ///
+  /// In es, this message translates to:
+  /// **'Calculando ruta...'**
+  String get calculatingRoute;
+
+  /// No description provided for @totalToPay.
+  ///
+  /// In es, this message translates to:
+  /// **'Total a pagar'**
+  String get totalToPay;
+
+  /// No description provided for @continuePayment.
+  ///
+  /// In es, this message translates to:
+  /// **'Continuar al pago'**
+  String get continuePayment;
+
+  /// No description provided for @todayAt.
+  ///
+  /// In es, this message translates to:
+  /// **'Hoy a las {time}'**
+  String todayAt(String time);
+
+  /// No description provided for @tomorrowAt.
+  ///
+  /// In es, this message translates to:
+  /// **'Mañana a las {time}'**
+  String tomorrowAt(String time);
+
+  /// No description provided for @minimumScheduling.
+  ///
+  /// In es, this message translates to:
+  /// **'El viaje debe agendarse con al menos 30 minutos de anticipación'**
+  String get minimumScheduling;
+
+  /// No description provided for @activityTab.
+  ///
+  /// In es, this message translates to:
+  /// **'Actividad'**
+  String get activityTab;
+
+  /// No description provided for @profileTab.
+  ///
+  /// In es, this message translates to:
+  /// **'Perfil'**
+  String get profileTab;
+
+  /// No description provided for @passengerLabel.
+  ///
+  /// In es, this message translates to:
+  /// **'Pasajero'**
+  String get passengerLabel;
+
+  /// No description provided for @mexicoOnly.
+  ///
+  /// In es, this message translates to:
+  /// **'Solo se permiten destinos dentro de México'**
+  String get mexicoOnly;
+
+  /// No description provided for @searching.
+  ///
+  /// In es, this message translates to:
+  /// **'Buscando...'**
+  String get searching;
+
+  /// No description provided for @loadingAddress.
+  ///
+  /// In es, this message translates to:
+  /// **'Cargando dirección...'**
+  String get loadingAddress;
+
+  /// No description provided for @originPoint.
+  ///
+  /// In es, this message translates to:
+  /// **'Punto de origen'**
+  String get originPoint;
+
+  /// No description provided for @destinationPoint.
+  ///
+  /// In es, this message translates to:
+  /// **'Punto de destino'**
+  String get destinationPoint;
+
+  /// No description provided for @tapMap.
+  ///
+  /// In es, this message translates to:
+  /// **'Toca el mapa para seleccionar'**
+  String get tapMap;
+
+  /// No description provided for @confirmOrigin.
+  ///
+  /// In es, this message translates to:
+  /// **'Confirmar origen'**
+  String get confirmOrigin;
+
+  /// No description provided for @confirmDestination.
+  ///
+  /// In es, this message translates to:
+  /// **'Confirmar destino'**
+  String get confirmDestination;
+
+  /// No description provided for @whereFrom.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Desde dónde sales?'**
+  String get whereFrom;
+
+  /// No description provided for @selectLocationTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Seleccionar ubicación'**
+  String get selectLocationTitle;
+
+  /// No description provided for @markAllRead.
+  ///
+  /// In es, this message translates to:
+  /// **'Marcar todas'**
+  String get markAllRead;
+
+  /// No description provided for @noNotifications.
+  ///
+  /// In es, this message translates to:
+  /// **'No tienes notificaciones'**
+  String get noNotifications;
+
+  /// No description provided for @justNow.
+  ///
+  /// In es, this message translates to:
+  /// **'Hace un momento'**
+  String get justNow;
+
+  /// No description provided for @paymentHistoryTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Historial de Pagos'**
+  String get paymentHistoryTitle;
+
+  /// No description provided for @totalPaid.
+  ///
+  /// In es, this message translates to:
+  /// **'Total pagado'**
+  String get totalPaid;
+
+  /// No description provided for @completedTransactions.
+  ///
+  /// In es, this message translates to:
+  /// **'transacciones completadas'**
+  String get completedTransactions;
+
+  /// No description provided for @allFilter.
+  ///
+  /// In es, this message translates to:
+  /// **'Todos'**
+  String get allFilter;
+
+  /// No description provided for @refundsFilter.
+  ///
+  /// In es, this message translates to:
+  /// **'Reembolsos'**
+  String get refundsFilter;
+
+  /// No description provided for @pendingFilter.
+  ///
+  /// In es, this message translates to:
+  /// **'Pendientes'**
+  String get pendingFilter;
+
+  /// No description provided for @noTransactions.
+  ///
+  /// In es, this message translates to:
+  /// **'No hay transacciones'**
+  String get noTransactions;
+
+  /// No description provided for @errorLoadingHistory.
+  ///
+  /// In es, this message translates to:
+  /// **'Error al cargar historial'**
+  String get errorLoadingHistory;
+
+  /// No description provided for @statusFailed.
+  ///
+  /// In es, this message translates to:
+  /// **'Fallido'**
+  String get statusFailed;
+
+  /// No description provided for @statusRefunded.
+  ///
+  /// In es, this message translates to:
+  /// **'Reembolsado'**
+  String get statusRefunded;
+
+  /// No description provided for @refreshButton.
+  ///
+  /// In es, this message translates to:
+  /// **'Actualizar'**
+  String get refreshButton;
+
+  /// No description provided for @personalDocs.
+  ///
+  /// In es, this message translates to:
+  /// **'Personal'**
+  String get personalDocs;
+
+  /// No description provided for @licenseDocs.
+  ///
+  /// In es, this message translates to:
+  /// **'Licencia'**
+  String get licenseDocs;
+
+  /// No description provided for @vehicleDocs.
+  ///
+  /// In es, this message translates to:
+  /// **'Vehículo'**
+  String get vehicleDocs;
+
+  /// No description provided for @insuranceDocs.
+  ///
+  /// In es, this message translates to:
+  /// **'Seguros'**
+  String get insuranceDocs;
+
+  /// No description provided for @docApproved.
+  ///
+  /// In es, this message translates to:
+  /// **'Aprobado'**
+  String get docApproved;
+
+  /// No description provided for @docRejected.
+  ///
+  /// In es, this message translates to:
+  /// **'Rechazado'**
+  String get docRejected;
+
+  /// No description provided for @docExpired.
+  ///
+  /// In es, this message translates to:
+  /// **'Vencido'**
+  String get docExpired;
+
+  /// No description provided for @docMissing.
+  ///
+  /// In es, this message translates to:
+  /// **'Faltante'**
+  String get docMissing;
+
+  /// No description provided for @docPending.
+  ///
+  /// In es, this message translates to:
+  /// **'Pendiente'**
+  String get docPending;
+
+  /// No description provided for @reupload.
+  ///
+  /// In es, this message translates to:
+  /// **'Resubir'**
+  String get reupload;
+
+  /// No description provided for @viewDocument.
+  ///
+  /// In es, this message translates to:
+  /// **'Ver Documento'**
+  String get viewDocument;
+
+  /// No description provided for @uploadNewDocument.
+  ///
+  /// In es, this message translates to:
+  /// **'Subir Nuevo Documento'**
+  String get uploadNewDocument;
+
+  /// No description provided for @chooseUploadMethod.
+  ///
+  /// In es, this message translates to:
+  /// **'Selecciona cómo quieres subir tu documento:'**
+  String get chooseUploadMethod;
+
+  /// No description provided for @selectFromGallery.
+  ///
+  /// In es, this message translates to:
+  /// **'Seleccionar de Galería'**
+  String get selectFromGallery;
+
+  /// No description provided for @personalInformation.
+  ///
+  /// In es, this message translates to:
+  /// **'Información Personal'**
+  String get personalInformation;
+
+  /// No description provided for @changeProfilePhoto.
+  ///
+  /// In es, this message translates to:
+  /// **'Cambiar foto de perfil'**
+  String get changeProfilePhoto;
+
+  /// No description provided for @takePhotoOption.
+  ///
+  /// In es, this message translates to:
+  /// **'Tomar foto'**
+  String get takePhotoOption;
+
+  /// No description provided for @chooseGallery.
+  ///
+  /// In es, this message translates to:
+  /// **'Elegir de galería'**
+  String get chooseGallery;
+
+  /// No description provided for @fullNameHint.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu nombre completo'**
+  String get fullNameHint;
+
+  /// No description provided for @phone10Digits.
+  ///
+  /// In es, this message translates to:
+  /// **'10 dígitos'**
+  String get phone10Digits;
+
+  /// No description provided for @changeEmailSection.
+  ///
+  /// In es, this message translates to:
+  /// **'Cambiar correo electrónico'**
+  String get changeEmailSection;
+
+  /// No description provided for @emailVerificationNotice.
+  ///
+  /// In es, this message translates to:
+  /// **'Se enviará un correo de verificación...'**
+  String get emailVerificationNotice;
+
+  /// No description provided for @newEmail.
+  ///
+  /// In es, this message translates to:
+  /// **'Nuevo correo electrónico'**
+  String get newEmail;
+
+  /// No description provided for @updateEmailButton.
+  ///
+  /// In es, this message translates to:
+  /// **'Actualizar correo'**
+  String get updateEmailButton;
+
+  /// No description provided for @changePasswordSection.
+  ///
+  /// In es, this message translates to:
+  /// **'Cambiar contraseña'**
+  String get changePasswordSection;
+
+  /// No description provided for @min8Chars.
+  ///
+  /// In es, this message translates to:
+  /// **'Mínimo 8 caracteres'**
+  String get min8Chars;
+
+  /// No description provided for @repeatNewPassword.
+  ///
+  /// In es, this message translates to:
+  /// **'Repite la nueva contraseña'**
+  String get repeatNewPassword;
+
+  /// No description provided for @passwordsMismatch.
+  ///
+  /// In es, this message translates to:
+  /// **'Las contraseñas no coinciden'**
+  String get passwordsMismatch;
+
+  /// No description provided for @myReservations.
+  ///
+  /// In es, this message translates to:
+  /// **'Mis Reservaciones'**
+  String get myReservations;
+
+  /// No description provided for @activeFilter.
+  ///
+  /// In es, this message translates to:
+  /// **'Activas'**
+  String get activeFilter;
+
+  /// No description provided for @pastFilter.
+  ///
+  /// In es, this message translates to:
+  /// **'Pasadas'**
+  String get pastFilter;
+
+  /// No description provided for @cancelledFilter.
+  ///
+  /// In es, this message translates to:
+  /// **'Canceladas'**
+  String get cancelledFilter;
+
+  /// No description provided for @noReservations.
+  ///
+  /// In es, this message translates to:
+  /// **'No tienes reservaciones'**
+  String get noReservations;
+
+  /// No description provided for @reservationDetails.
+  ///
+  /// In es, this message translates to:
+  /// **'Detalles de Reservación'**
+  String get reservationDetails;
+
+  /// No description provided for @reservationId.
+  ///
+  /// In es, this message translates to:
+  /// **'ID:'**
+  String get reservationId;
+
+  /// No description provided for @reservationConfirmed.
+  ///
+  /// In es, this message translates to:
+  /// **'Confirmada'**
+  String get reservationConfirmed;
+
+  /// No description provided for @reservationCompleted.
+  ///
+  /// In es, this message translates to:
+  /// **'Completada'**
+  String get reservationCompleted;
+
+  /// No description provided for @reservationCancelled.
+  ///
+  /// In es, this message translates to:
+  /// **'Cancelada'**
+  String get reservationCancelled;
+
+  /// No description provided for @modifyButton.
+  ///
+  /// In es, this message translates to:
+  /// **'Modificar'**
+  String get modifyButton;
+
+  /// No description provided for @cancelReservation.
+  ///
+  /// In es, this message translates to:
+  /// **'Cancelar'**
+  String get cancelReservation;
+
+  /// No description provided for @notificationTypes.
+  ///
+  /// In es, this message translates to:
+  /// **'Tipos de notificaciones'**
+  String get notificationTypes;
+
+  /// No description provided for @notifTrips.
+  ///
+  /// In es, this message translates to:
+  /// **'Viajes'**
+  String get notifTrips;
+
+  /// No description provided for @notifPayments.
+  ///
+  /// In es, this message translates to:
+  /// **'Pagos'**
+  String get notifPayments;
+
+  /// No description provided for @notifSecurity.
+  ///
+  /// In es, this message translates to:
+  /// **'Seguridad'**
+  String get notifSecurity;
+
+  /// No description provided for @notifPromotions.
+  ///
+  /// In es, this message translates to:
+  /// **'Promociones'**
+  String get notifPromotions;
+
+  /// No description provided for @soundVibration.
+  ///
+  /// In es, this message translates to:
+  /// **'Sonido y vibración'**
+  String get soundVibration;
+
+  /// No description provided for @soundLabel.
+  ///
+  /// In es, this message translates to:
+  /// **'Sonido'**
+  String get soundLabel;
+
+  /// No description provided for @soundDescription.
+  ///
+  /// In es, this message translates to:
+  /// **'Reproducir sonido con las notificaciones'**
+  String get soundDescription;
+
+  /// No description provided for @vibrationLabel.
+  ///
+  /// In es, this message translates to:
+  /// **'Vibración'**
+  String get vibrationLabel;
+
+  /// No description provided for @vibrationDescription.
+  ///
+  /// In es, this message translates to:
+  /// **'Vibrar con las notificaciones'**
+  String get vibrationDescription;
+
+  /// No description provided for @doNotDisturb.
+  ///
+  /// In es, this message translates to:
+  /// **'No molestar'**
+  String get doNotDisturb;
+
+  /// No description provided for @quietHours.
+  ///
+  /// In es, this message translates to:
+  /// **'Horario de silencio'**
+  String get quietHours;
+
+  /// No description provided for @quietHoursDescription.
+  ///
+  /// In es, this message translates to:
+  /// **'Silenciar notificaciones durante un horario'**
+  String get quietHoursDescription;
+
+  /// No description provided for @startTime.
+  ///
+  /// In es, this message translates to:
+  /// **'Inicio'**
+  String get startTime;
+
+  /// No description provided for @endTime.
+  ///
+  /// In es, this message translates to:
+  /// **'Fin'**
+  String get endTime;
+
+  /// No description provided for @securityAlertsAlways.
+  ///
+  /// In es, this message translates to:
+  /// **'Las alertas de seguridad siempre se mostrarán'**
+  String get securityAlertsAlways;
+
+  /// No description provided for @notificationsEnabled.
+  ///
+  /// In es, this message translates to:
+  /// **'Notificaciones activas'**
+  String get notificationsEnabled;
+
+  /// No description provided for @notificationsDisabled.
+  ///
+  /// In es, this message translates to:
+  /// **'Notificaciones desactivadas'**
+  String get notificationsDisabled;
+
+  /// No description provided for @enableSystemNotifications.
+  ///
+  /// In es, this message translates to:
+  /// **'Por favor habilita notificaciones en configuración del sistema'**
+  String get enableSystemNotifications;
+
+  /// No description provided for @importantLabel.
+  ///
+  /// In es, this message translates to:
+  /// **'Importante'**
+  String get importantLabel;
+
+  /// No description provided for @enableButton.
+  ///
+  /// In es, this message translates to:
+  /// **'Activar'**
+  String get enableButton;
+
+  /// No description provided for @confirmPaymentTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Confirmar pago'**
+  String get confirmPaymentTitle;
+
+  /// No description provided for @selectPaymentMethod.
+  ///
+  /// In es, this message translates to:
+  /// **'Selecciona un método de pago'**
+  String get selectPaymentMethod;
+
+  /// No description provided for @paymentInProgress.
+  ///
+  /// In es, this message translates to:
+  /// **'Ya hay un pago en proceso'**
+  String get paymentInProgress;
+
+  /// No description provided for @additionalAuthRequired.
+  ///
+  /// In es, this message translates to:
+  /// **'Se requiere autenticación adicional'**
+  String get additionalAuthRequired;
+
+  /// No description provided for @paymentRejected.
+  ///
+  /// In es, this message translates to:
+  /// **'Pago rechazado:'**
+  String get paymentRejected;
+
+  /// No description provided for @paymentProcessingError.
+  ///
+  /// In es, this message translates to:
+  /// **'Error procesando el pago'**
+  String get paymentProcessingError;
+
+  /// No description provided for @paymentConfirmedStatus.
+  ///
+  /// In es, this message translates to:
+  /// **'Pago confirmado'**
+  String get paymentConfirmedStatus;
+
+  /// No description provided for @paymentProcessed.
+  ///
+  /// In es, this message translates to:
+  /// **'Se ha procesado el pago de'**
+  String get paymentProcessed;
+
+  /// No description provided for @lookingForDriver.
+  ///
+  /// In es, this message translates to:
+  /// **'Buscar conductor'**
+  String get lookingForDriver;
+
+  /// No description provided for @addNewCard.
+  ///
+  /// In es, this message translates to:
+  /// **'Agregar nueva tarjeta'**
+  String get addNewCard;
+
+  /// No description provided for @estimatedTime.
+  ///
+  /// In es, this message translates to:
+  /// **'Tiempo estimado'**
+  String get estimatedTime;
+
+  /// No description provided for @paymentSecurityNotice.
+  ///
+  /// In es, this message translates to:
+  /// **'Pago seguro. Tu información está protegida con encriptación de nivel bancario.'**
+  String get paymentSecurityNotice;
+
+  /// No description provided for @originLabel.
+  ///
+  /// In es, this message translates to:
+  /// **'Origen'**
+  String get originLabel;
+
+  /// No description provided for @destinationLabel.
+  ///
+  /// In es, this message translates to:
+  /// **'Destino'**
+  String get destinationLabel;
+
+  /// No description provided for @serviceLabel.
+  ///
+  /// In es, this message translates to:
+  /// **'Servicio'**
+  String get serviceLabel;
+
+  /// No description provided for @allTrips.
+  ///
+  /// In es, this message translates to:
+  /// **'Todos'**
+  String get allTrips;
+
+  /// No description provided for @completedTrips.
+  ///
+  /// In es, this message translates to:
+  /// **'Completados'**
+  String get completedTrips;
+
+  /// No description provided for @cancelledTrips.
+  ///
+  /// In es, this message translates to:
+  /// **'Cancelados'**
+  String get cancelledTrips;
+
+  /// No description provided for @noTripsDisplay.
+  ///
+  /// In es, this message translates to:
+  /// **'No hay viajes para mostrar'**
+  String get noTripsDisplay;
+
+  /// No description provided for @selectRoute.
+  ///
+  /// In es, this message translates to:
+  /// **'Selecciona tu ruta'**
+  String get selectRoute;
+
+  /// No description provided for @noRoutes.
+  ///
+  /// In es, this message translates to:
+  /// **'No hay rutas disponibles'**
+  String get noRoutes;
+
+  /// No description provided for @reloadRoutes.
+  ///
+  /// In es, this message translates to:
+  /// **'Recargar rutas'**
+  String get reloadRoutes;
+
+  /// No description provided for @changeRoute.
+  ///
+  /// In es, this message translates to:
+  /// **'Cambiar ruta'**
+  String get changeRoute;
+
+  /// No description provided for @distanceLabel.
+  ///
+  /// In es, this message translates to:
+  /// **'Distancia'**
+  String get distanceLabel;
+
+  /// No description provided for @servicePtp.
+  ///
+  /// In es, this message translates to:
+  /// **'Punto a Punto'**
+  String get servicePtp;
+
+  /// No description provided for @serviceArmedEscort.
+  ///
+  /// In es, this message translates to:
+  /// **'Con Escolta Armado'**
+  String get serviceArmedEscort;
+
+  /// No description provided for @serviceUnarmedEscort.
+  ///
+  /// In es, this message translates to:
+  /// **'Con Escolta Desarmado'**
+  String get serviceUnarmedEscort;
+
+  /// No description provided for @serviceArmoredEscort.
+  ///
+  /// In es, this message translates to:
+  /// **'Auto Blindado + Escolta'**
+  String get serviceArmoredEscort;
+
+  /// No description provided for @requestTripButton.
+  ///
+  /// In es, this message translates to:
+  /// **'Solicitar viaje'**
+  String get requestTripButton;
+
+  /// No description provided for @includesTolls.
+  ///
+  /// In es, this message translates to:
+  /// **'(incluye casetas)'**
+  String get includesTolls;
+
+  /// No description provided for @tripInProgressTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Viaje en Curso'**
+  String get tripInProgressTitle;
+
+  /// No description provided for @tripCompletedTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Viaje Completado'**
+  String get tripCompletedTitle;
+
+  /// No description provided for @tripSuccessMessage.
+  ///
+  /// In es, this message translates to:
+  /// **'¡Tu viaje ha finalizado con éxito!'**
+  String get tripSuccessMessage;
+
+  /// No description provided for @totalLabel.
+  ///
+  /// In es, this message translates to:
+  /// **'Total'**
+  String get totalLabel;
+
+  /// No description provided for @durationLabel.
+  ///
+  /// In es, this message translates to:
+  /// **'Duración'**
+  String get durationLabel;
+
+  /// No description provided for @skipButton.
+  ///
+  /// In es, this message translates to:
+  /// **'Omitir'**
+  String get skipButton;
+
+  /// No description provided for @rateTripButton.
+  ///
+  /// In es, this message translates to:
+  /// **'Calificar viaje'**
+  String get rateTripButton;
+
+  /// No description provided for @exitTripTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Salir del viaje?'**
+  String get exitTripTitle;
+
+  /// No description provided for @exitTripMessage.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu viaje está en curso. ¿Estás seguro de que quieres salir? Podrás regresar desde la página principal.'**
+  String get exitTripMessage;
+
+  /// No description provided for @exitButton.
+  ///
+  /// In es, this message translates to:
+  /// **'Salir'**
+  String get exitButton;
+
+  /// No description provided for @phoneNotAvailable.
+  ///
+  /// In es, this message translates to:
+  /// **'Número de teléfono no disponible'**
+  String get phoneNotAvailable;
+
+  /// No description provided for @cannotMakeCall.
+  ///
+  /// In es, this message translates to:
+  /// **'No se puede realizar la llamada'**
+  String get cannotMakeCall;
+
+  /// No description provided for @errorLoadingTrip.
+  ///
+  /// In es, this message translates to:
+  /// **'Error al cargar el viaje'**
+  String get errorLoadingTrip;
+
+  /// No description provided for @onlyDriverFinish.
+  ///
+  /// In es, this message translates to:
+  /// **'Solo el conductor puede finalizar el viaje'**
+  String get onlyDriverFinish;
+
+  /// No description provided for @waitingFinish.
+  ///
+  /// In es, this message translates to:
+  /// **'Esperando finalización'**
+  String get waitingFinish;
+
+  /// No description provided for @panicButtonLabel.
+  ///
+  /// In es, this message translates to:
+  /// **'PÁNICO'**
+  String get panicButtonLabel;
+
+  /// No description provided for @vehicleTypeLabel.
+  ///
+  /// In es, this message translates to:
+  /// **'Suburban Ejecutiva'**
+  String get vehicleTypeLabel;
+
+  /// No description provided for @waitingTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Esperando asignación'**
+  String get waitingTitle;
+
+  /// No description provided for @driverAssignedTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'¡Conductor asignado!'**
+  String get driverAssignedTitle;
+
+  /// No description provided for @driverOnWay.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu conductor está en camino'**
+  String get driverOnWay;
+
+  /// No description provided for @vehicleLabel.
+  ///
+  /// In es, this message translates to:
+  /// **'Vehículo'**
+  String get vehicleLabel;
+
+  /// No description provided for @viewTrip.
+  ///
+  /// In es, this message translates to:
+  /// **'Ver viaje'**
+  String get viewTrip;
+
+  /// No description provided for @tripCancelledTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Viaje cancelado'**
+  String get tripCancelledTitle;
+
+  /// No description provided for @tripCancelledMessage.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu viaje ha sido cancelado.'**
+  String get tripCancelledMessage;
+
+  /// No description provided for @tripDetails.
+  ///
+  /// In es, this message translates to:
+  /// **'Detalles del viaje'**
+  String get tripDetails;
+
+  /// No description provided for @routeLabel.
+  ///
+  /// In es, this message translates to:
+  /// **'Ruta'**
+  String get routeLabel;
+
+  /// No description provided for @priceLabel.
+  ///
+  /// In es, this message translates to:
+  /// **'Precio'**
+  String get priceLabel;
+
+  /// No description provided for @requestedLabel.
+  ///
+  /// In es, this message translates to:
+  /// **'Solicitado'**
+  String get requestedLabel;
+
+  /// No description provided for @cancelTripButton.
+  ///
+  /// In es, this message translates to:
+  /// **'Cancelar viaje'**
+  String get cancelTripButton;
+
+  /// No description provided for @stayButton.
+  ///
+  /// In es, this message translates to:
+  /// **'Quedarme'**
+  String get stayButton;
+
+  /// No description provided for @exitAssignmentMessage.
+  ///
+  /// In es, this message translates to:
+  /// **'Tu viaje sigue en proceso de asignación. ¿Deseas salir?'**
+  String get exitAssignmentMessage;
+
+  /// No description provided for @cancelTripConfirm.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Estás seguro de que deseas cancelar este viaje?'**
+  String get cancelTripConfirm;
+
+  /// No description provided for @yesCancel.
+  ///
+  /// In es, this message translates to:
+  /// **'Sí, cancelar'**
+  String get yesCancel;
+
+  /// No description provided for @driverLabel.
+  ///
+  /// In es, this message translates to:
+  /// **'Conductor'**
+  String get driverLabel;
+
+  /// No description provided for @useDeviceCamera.
+  ///
+  /// In es, this message translates to:
+  /// **'Usar la cámara del dispositivo'**
+  String get useDeviceCamera;
+
+  /// No description provided for @acceptTermsPrefix.
+  ///
+  /// In es, this message translates to:
+  /// **'Acepto los '**
+  String get acceptTermsPrefix;
+
+  /// No description provided for @termsLink.
+  ///
+  /// In es, this message translates to:
+  /// **'términos y condiciones'**
+  String get termsLink;
+
+  /// No description provided for @acceptPrivacyPrefix.
+  ///
+  /// In es, this message translates to:
+  /// **'Acepto la '**
+  String get acceptPrivacyPrefix;
+
+  /// No description provided for @privacyLink.
+  ///
+  /// In es, this message translates to:
+  /// **'política de privacidad'**
+  String get privacyLink;
+
+  /// No description provided for @errorUploadingDocs.
+  ///
+  /// In es, this message translates to:
+  /// **'Error subiendo documentos: {error}'**
+  String errorUploadingDocs(String error);
+
+  /// No description provided for @paymentConfirmed.
+  ///
+  /// In es, this message translates to:
+  /// **'Pago confirmado'**
+  String get paymentConfirmed;
+
+  /// No description provided for @paymentProcessedMessage.
+  ///
+  /// In es, this message translates to:
+  /// **'Se ha procesado el pago de {amount}'**
+  String paymentProcessedMessage(String amount);
+
+  /// No description provided for @confirmPayment.
+  ///
+  /// In es, this message translates to:
+  /// **'Confirmar pago'**
+  String get confirmPayment;
+
+  /// No description provided for @noSavedCards.
+  ///
+  /// In es, this message translates to:
+  /// **'Sin tarjetas guardadas'**
+  String get noSavedCards;
+
+  /// No description provided for @addCardToContinue.
+  ///
+  /// In es, this message translates to:
+  /// **'Agrega una tarjeta para continuar'**
+  String get addCardToContinue;
+
+  /// No description provided for @processingPayment.
+  ///
+  /// In es, this message translates to:
+  /// **'Procesando pago...'**
+  String get processingPayment;
+
+  /// No description provided for @retryingPayment.
+  ///
+  /// In es, this message translates to:
+  /// **'Reintentando...'**
+  String get retryingPayment;
+
+  /// No description provided for @confirmingPayment.
+  ///
+  /// In es, this message translates to:
+  /// **'Confirmando pago...'**
+  String get confirmingPayment;
+
+  /// No description provided for @paymentCompleted.
+  ///
+  /// In es, this message translates to:
+  /// **'Pago completado'**
+  String get paymentCompleted;
+
+  /// No description provided for @retryPayment.
+  ///
+  /// In es, this message translates to:
+  /// **'Reintentar pago'**
+  String get retryPayment;
+
+  /// No description provided for @payAmount.
+  ///
+  /// In es, this message translates to:
+  /// **'Pagar \${amount}'**
+  String payAmount(String amount);
+
+  /// No description provided for @securePaymentNote.
+  ///
+  /// In es, this message translates to:
+  /// **'Pago seguro. Tu información está protegida con encriptación de nivel bancario.'**
+  String get securePaymentNote;
+
+  /// No description provided for @cardExpires.
+  ///
+  /// In es, this message translates to:
+  /// **'Vence {date}'**
+  String cardExpires(String date);
+
+  /// No description provided for @defaultCard.
+  ///
+  /// In es, this message translates to:
+  /// **'Principal'**
+  String get defaultCard;
+
+  /// No description provided for @minutesAgo.
+  ///
+  /// In es, this message translates to:
+  /// **'Hace {minutes} min'**
+  String minutesAgo(int minutes);
+
+  /// No description provided for @exitTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Salir'**
+  String get exitTitle;
+
+  /// No description provided for @cancelTripConfirmMessage.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Estás seguro de que deseas cancelar este viaje?'**
+  String get cancelTripConfirmMessage;
+
+  /// No description provided for @noButton.
+  ///
+  /// In es, this message translates to:
+  /// **'No'**
+  String get noButton;
+
+  /// No description provided for @yesCancelButton.
+  ///
+  /// In es, this message translates to:
+  /// **'Sí, cancelar'**
+  String get yesCancelButton;
+
+  /// No description provided for @tripCompletedMessage.
+  ///
+  /// In es, this message translates to:
+  /// **'¡Tu viaje ha finalizado con éxito!'**
+  String get tripCompletedMessage;
+
+  /// No description provided for @onlyDriverCanEnd.
+  ///
+  /// In es, this message translates to:
+  /// **'Solo el conductor puede finalizar el viaje'**
+  String get onlyDriverCanEnd;
+
+  /// No description provided for @waitingCompletion.
+  ///
+  /// In es, this message translates to:
+  /// **'Esperando finalización'**
+  String get waitingCompletion;
+
+  /// No description provided for @statusInProgress.
+  ///
+  /// In es, this message translates to:
+  /// **'En Curso'**
+  String get statusInProgress;
+
+  /// No description provided for @statusPending.
+  ///
+  /// In es, this message translates to:
+  /// **'Pendiente'**
+  String get statusPending;
+
+  /// No description provided for @statusAssigned.
+  ///
+  /// In es, this message translates to:
+  /// **'Asignado'**
+  String get statusAssigned;
+
+  /// No description provided for @availableRoutes.
+  ///
+  /// In es, this message translates to:
+  /// **'Rutas Disponibles ({count})'**
+  String availableRoutes(int count);
+
+  /// No description provided for @selectYourRoute.
+  ///
+  /// In es, this message translates to:
+  /// **'Selecciona tu ruta'**
+  String get selectYourRoute;
+
+  /// No description provided for @noRoutesAvailable.
+  ///
+  /// In es, this message translates to:
+  /// **'No hay rutas disponibles'**
+  String get noRoutesAvailable;
+
+  /// No description provided for @checkConsoleDetails.
+  ///
+  /// In es, this message translates to:
+  /// **'Revisa la consola para más detalles'**
+  String get checkConsoleDetails;
+
+  /// No description provided for @minutes.
+  ///
+  /// In es, this message translates to:
+  /// **'minutos'**
+  String get minutes;
+
+  /// No description provided for @serviceType.
+  ///
+  /// In es, this message translates to:
+  /// **'Tipo de servicio'**
+  String get serviceType;
+
+  /// No description provided for @mustLogin.
+  ///
+  /// In es, this message translates to:
+  /// **'Debes iniciar sesión'**
+  String get mustLogin;
+
+  /// No description provided for @byRouteTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Por Ruta'**
+  String get byRouteTitle;
+
+  /// No description provided for @byRouteSubtitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Rutas predefinidas'**
+  String get byRouteSubtitle;
+
+  /// No description provided for @byDayTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Por Día'**
+  String get byDayTitle;
+
+  /// No description provided for @byDaySubtitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Servicio completo'**
+  String get byDaySubtitle;
+
+  /// No description provided for @customTripTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Personaliza tu Viaje'**
+  String get customTripTitle;
+
+  /// No description provided for @customTripSubtitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Ingresa origen y destino manualmente'**
+  String get customTripSubtitle;
+
+  /// No description provided for @navHome.
+  ///
+  /// In es, this message translates to:
+  /// **'Inicio'**
+  String get navHome;
+
+  /// No description provided for @navRoutes.
+  ///
+  /// In es, this message translates to:
+  /// **'Rutas'**
+  String get navRoutes;
+
+  /// No description provided for @navActivity.
+  ///
+  /// In es, this message translates to:
+  /// **'Actividad'**
+  String get navActivity;
+
+  /// No description provided for @navProfile.
+  ///
+  /// In es, this message translates to:
+  /// **'Perfil'**
+  String get navProfile;
+
+  /// No description provided for @scheduleForLater.
+  ///
+  /// In es, this message translates to:
+  /// **'Programar para más tarde'**
+  String get scheduleForLater;
+
+  /// No description provided for @selectOriginDestination.
+  ///
+  /// In es, this message translates to:
+  /// **'Selecciona origen y destino'**
+  String get selectOriginDestination;
+
+  /// No description provided for @errorPrefix.
+  ///
+  /// In es, this message translates to:
+  /// **'Error'**
+  String get errorPrefix;
+
+  /// No description provided for @scheduleMinTime.
+  ///
+  /// In es, this message translates to:
+  /// **'El viaje debe agendarse con al menos 30 minutos de anticipación'**
+  String get scheduleMinTime;
+
+  /// No description provided for @panicDialogTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Botón de Pánico'**
+  String get panicDialogTitle;
+
+  /// No description provided for @panicDialogMessage.
+  ///
+  /// In es, this message translates to:
+  /// **'¿Estás seguro de activar el botón de pánico? Se enviará una alerta inmediata.'**
+  String get panicDialogMessage;
+
+  /// No description provided for @continueToPay.
+  ///
+  /// In es, this message translates to:
+  /// **'Continuar al pago'**
+  String get continueToPay;
+
+  /// No description provided for @passengerRole.
+  ///
+  /// In es, this message translates to:
+  /// **'Pasajero'**
+  String get passengerRole;
+
+  /// No description provided for @onlyMexicoDestinations.
+  ///
+  /// In es, this message translates to:
+  /// **'Solo se permiten destinos dentro de México'**
+  String get onlyMexicoDestinations;
+
+  /// No description provided for @tapMapToSelect.
+  ///
+  /// In es, this message translates to:
+  /// **'Toca el mapa para seleccionar'**
+  String get tapMapToSelect;
+
+  /// No description provided for @personalDocsTitle.
+  ///
+  /// In es, this message translates to:
+  /// **'Documentos Personales'**
+  String get personalDocsTitle;
+
+  /// No description provided for @personalDocsDescription.
+  ///
+  /// In es, this message translates to:
+  /// **'Identificación oficial vigente requerida para el servicio'**
+  String get personalDocsDescription;
+
+  /// No description provided for @notifTripsDescription.
+  ///
+  /// In es, this message translates to:
+  /// **'Actualizaciones sobre el estado de tus viajes'**
+  String get notifTripsDescription;
+
+  /// No description provided for @notifPaymentsDescription.
+  ///
+  /// In es, this message translates to:
+  /// **'Confirmaciones y recibos de pago'**
+  String get notifPaymentsDescription;
+
+  /// No description provided for @notifSecurityDescription.
+  ///
+  /// In es, this message translates to:
+  /// **'Alertas importantes de seguridad y cuenta'**
+  String get notifSecurityDescription;
+
+  /// No description provided for @notifPromotionsDescription.
+  ///
+  /// In es, this message translates to:
+  /// **'Ofertas y descuentos especiales'**
+  String get notifPromotionsDescription;
+
+  /// No description provided for @notificationsEnabledDesc.
+  ///
+  /// In es, this message translates to:
+  /// **'Recibirás notificaciones de Blincar'**
+  String get notificationsEnabledDesc;
+
+  /// No description provided for @changeLabel.
+  ///
+  /// In es, this message translates to:
+  /// **'Cambiar'**
+  String get changeLabel;
+
+  /// No description provided for @scheduleMinimumTime.
+  ///
+  /// In es, this message translates to:
+  /// **'El viaje debe agendarse con al menos 30 minutos de anticipación'**
+  String get scheduleMinimumTime;
+
+  /// No description provided for @activate.
+  ///
+  /// In es, this message translates to:
+  /// **'Activar'**
+  String get activate;
+
+  /// No description provided for @loginRequired.
+  ///
+  /// In es, this message translates to:
+  /// **'Debes iniciar sesión'**
+  String get loginRequired;
+
+  /// No description provided for @serviceTypePtoP.
+  ///
+  /// In es, this message translates to:
+  /// **'Punto a Punto'**
+  String get serviceTypePtoP;
+
+  /// No description provided for @serviceTypeArmedEscort.
+  ///
+  /// In es, this message translates to:
+  /// **'Con Escolta Armado'**
+  String get serviceTypeArmedEscort;
+
+  /// No description provided for @serviceTypeUnarmedEscort.
+  ///
+  /// In es, this message translates to:
+  /// **'Con Escolta Desarmado'**
+  String get serviceTypeUnarmedEscort;
+
+  /// No description provided for @serviceTypeArmored.
+  ///
+  /// In es, this message translates to:
+  /// **'Auto Blindado'**
+  String get serviceTypeArmored;
+
+  /// No description provided for @serviceTypeArmoredEscort.
+  ///
+  /// In es, this message translates to:
+  /// **'Auto Blindado + Escolta'**
+  String get serviceTypeArmoredEscort;
+
+  /// No description provided for @byDayComingSoon.
+  ///
+  /// In es, this message translates to:
+  /// **'El servicio por día te permitirá contratar un conductor y vehículo durante un día completo para múltiples traslados.'**
+  String get byDayComingSoon;
+
+  /// No description provided for @tripsCompleted.
+  ///
+  /// In es, this message translates to:
+  /// **'Viajes completados'**
+  String get tripsCompleted;
+
+  /// No description provided for @totalSpent.
+  ///
+  /// In es, this message translates to:
+  /// **'Total gastado'**
+  String get totalSpent;
+
+  /// No description provided for @registerLinkPrefix.
+  ///
+  /// In es, this message translates to:
+  /// **'¿No tienes cuenta? '**
+  String get registerLinkPrefix;
+
+  /// No description provided for @registerLinkAction.
+  ///
+  /// In es, this message translates to:
+  /// **'Regístrate'**
+  String get registerLinkAction;
+
+  /// No description provided for @supportDescription.
+  ///
+  /// In es, this message translates to:
+  /// **'Nuestro equipo de soporte está disponible las 24 horas para ayudarte'**
+  String get supportDescription;
 }
 
 class _AppLocalizationsDelegate

@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb, kDebugMode;
+import 'package:blincar_app/l10n/app_localizations.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -13,6 +14,8 @@ import '../../bloc/auth/auth_state.dart';
 import '../../widgets/common/custom_text_field.dart';
 import '../../widgets/common/custom_button.dart';
 import '../home/home_page.dart';
+import '../legal/terms_conditions_page.dart';
+import '../legal/privacy_policy_page.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -58,11 +61,12 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   String? _validateConfirmPassword(String? value) {
+    final l10n = AppLocalizations.of(context)!;
     if (value == null || value.isEmpty) {
-      return 'Confirma tu contraseña';
+      return l10n.confirmPassword;
     }
     if (value != _passwordController.text) {
-      return 'Las contraseñas no coinciden';
+      return l10n.passwordsMismatch;
     }
     return null;
   }
@@ -74,7 +78,9 @@ class _RegisterPageState extends State<RegisterPage> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (context) => SafeArea(
+      builder: (context) {
+        final l10n = AppLocalizations.of(context)!;
+        return SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(20),
           child: Column(
@@ -90,7 +96,7 @@ class _RegisterPageState extends State<RegisterPage> {
               ),
               const SizedBox(height: 20),
               Text(
-                isFront ? 'INE - Anverso (Frente)' : 'INE - Reverso (Atrás)',
+                isFront ? l10n.ineFront : l10n.ineBack,
                 style: const TextStyle(
                   color: AppTheme.textPrimaryColor,
                   fontSize: 18,
@@ -110,13 +116,13 @@ class _RegisterPageState extends State<RegisterPage> {
                     color: AppTheme.primaryLightColor,
                   ),
                 ),
-                title: const Text(
-                  'Tomar foto',
-                  style: TextStyle(color: AppTheme.textPrimaryColor),
+                title: Text(
+                  l10n.takePhotoOption,
+                  style: const TextStyle(color: AppTheme.textPrimaryColor),
                 ),
-                subtitle: const Text(
-                  'Usar la cámara del dispositivo',
-                  style: TextStyle(color: AppTheme.textSecondaryColor),
+                subtitle: Text(
+                  l10n.useDeviceCamera,
+                  style: const TextStyle(color: AppTheme.textSecondaryColor),
                 ),
                 onTap: () async {
                   Navigator.pop(context);
@@ -148,13 +154,13 @@ class _RegisterPageState extends State<RegisterPage> {
                     color: AppTheme.accentColor,
                   ),
                 ),
-                title: const Text(
-                  'Seleccionar de galería',
-                  style: TextStyle(color: AppTheme.textPrimaryColor),
+                title: Text(
+                  l10n.selectFromGallery,
+                  style: const TextStyle(color: AppTheme.textPrimaryColor),
                 ),
-                subtitle: const Text(
-                  'Elegir una imagen existente',
-                  style: TextStyle(color: AppTheme.textSecondaryColor),
+                subtitle: Text(
+                  l10n.chooseGallery,
+                  style: const TextStyle(color: AppTheme.textSecondaryColor),
                 ),
                 onTap: () async {
                   Navigator.pop(context);
@@ -177,7 +183,8 @@ class _RegisterPageState extends State<RegisterPage> {
             ],
           ),
         ),
-      ),
+        );
+      },
     );
   }
 
@@ -210,9 +217,10 @@ class _RegisterPageState extends State<RegisterPage> {
         _log('URLs de INE guardadas en base de datos');
 
         if (mounted) {
+          final l10n = AppLocalizations.of(context)!;
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Documentos subidos correctamente'),
+            SnackBar(
+              content: Text(l10n.documentsUploaded),
               backgroundColor: AppTheme.successColor,
             ),
           );
@@ -221,9 +229,10 @@ class _RegisterPageState extends State<RegisterPage> {
     } catch (e) {
       _log('Error subiendo INE: $e');
       if (mounted) {
+        final l10n = AppLocalizations.of(context)!;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('Error subiendo documentos: $e'),
+            content: Text(l10n.errorUploadingDocs(e.toString())),
             backgroundColor: AppTheme.warningColor,
           ),
         );
@@ -242,11 +251,12 @@ class _RegisterPageState extends State<RegisterPage> {
   }
 
   void _handleRegister() {
+    final l10n = AppLocalizations.of(context)!;
     if (_formKey.currentState!.validate()) {
       if (!_acceptTerms) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Debes aceptar los términos y condiciones'),
+          SnackBar(
+            content: Text(l10n.termsRequiredError),
             backgroundColor: AppTheme.errorColor,
           ),
         );
@@ -255,8 +265,8 @@ class _RegisterPageState extends State<RegisterPage> {
 
       if (!_acceptPrivacy) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Debes aceptar la política de privacidad'),
+          SnackBar(
+            content: Text(l10n.privacyRequiredError),
             backgroundColor: AppTheme.errorColor,
           ),
         );
@@ -266,8 +276,8 @@ class _RegisterPageState extends State<RegisterPage> {
       // Validar INE
       if (_ineFrontImage == null || _ineBackImage == null) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Debes cargar ambos lados de tu INE'),
+          SnackBar(
+            content: Text(l10n.ineRequiredError),
             backgroundColor: AppTheme.errorColor,
           ),
         );
@@ -294,6 +304,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppTheme.backgroundColor,
       appBar: AppBar(
@@ -335,18 +346,18 @@ class _RegisterPageState extends State<RegisterPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Crear cuenta',
-                      style: TextStyle(
+                    Text(
+                      l10n.registerTitle,
+                      style: const TextStyle(
                         color: AppTheme.textPrimaryColor,
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 8),
-                    const Text(
-                      'Completa la información para registrarte',
-                      style: TextStyle(
+                    Text(
+                      l10n.registerSubtitle,
+                      style: const TextStyle(
                         color: AppTheme.textSecondaryColor,
                         fontSize: 16,
                       ),
@@ -354,9 +365,9 @@ class _RegisterPageState extends State<RegisterPage> {
                     const SizedBox(height: 32),
 
                     // Tipo de usuario
-                    const Text(
-                      'Tipo de cuenta',
-                      style: TextStyle(
+                    Text(
+                      l10n.accountTypeLabel,
+                      style: const TextStyle(
                         color: AppTheme.textPrimaryColor,
                         fontSize: 16,
                         fontWeight: FontWeight.w500,
@@ -393,7 +404,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
-                                    'Pasajero',
+                                    l10n.passengerType,
                                     style: TextStyle(
                                       color: _selectedRole == 'passenger'
                                           ? Colors.white
@@ -435,7 +446,7 @@ class _RegisterPageState extends State<RegisterPage> {
                                   ),
                                   const SizedBox(height: 8),
                                   Text(
-                                    'Conductor',
+                                    l10n.driverType,
                                     style: TextStyle(
                                       color: _selectedRole == 'driver'
                                           ? Colors.white
@@ -458,8 +469,8 @@ class _RegisterPageState extends State<RegisterPage> {
                       children: [
                         Expanded(
                           child: CustomTextField(
-                            label: 'Nombre',
-                            hint: 'Tu nombre',
+                            label: l10n.firstName,
+                            hint: l10n.nameHint,
                             controller: _firstNameController,
                             validator: Validators.name,
                             prefixIcon: const Icon(
@@ -471,8 +482,8 @@ class _RegisterPageState extends State<RegisterPage> {
                         const SizedBox(width: 16),
                         Expanded(
                           child: CustomTextField(
-                            label: 'Apellidos',
-                            hint: 'Tus apellidos',
+                            label: l10n.lastName,
+                            hint: l10n.lastNameHint,
                             controller: _lastNameController,
                             validator: Validators.name,
                             prefixIcon: const Icon(
@@ -487,7 +498,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     const SizedBox(height: 24),
 
                     CustomTextField(
-                      label: 'Teléfono',
+                      label: l10n.phone,
                       hint: '5512345678',
                       controller: _phoneController,
                       keyboardType: TextInputType.phone,
@@ -501,7 +512,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     const SizedBox(height: 24),
 
                     CustomTextField(
-                      label: 'Correo Electrónico',
+                      label: l10n.email,
                       hint: 'tu@email.com',
                       controller: _emailController,
                       keyboardType: TextInputType.emailAddress,
@@ -515,7 +526,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     const SizedBox(height: 24),
 
                     CustomTextField(
-                      label: 'Contraseña',
+                      label: l10n.password,
                       hint: '••••••••',
                       controller: _passwordController,
                       obscureText: true,
@@ -529,7 +540,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     const SizedBox(height: 24),
 
                     CustomTextField(
-                      label: 'Confirmar Contraseña',
+                      label: l10n.confirmPassword,
                       hint: '••••••••',
                       controller: _confirmPasswordController,
                       obscureText: true,
@@ -571,22 +582,22 @@ class _RegisterPageState extends State<RegisterPage> {
                                 ),
                               ),
                               const SizedBox(width: 12),
-                              const Expanded(
+                              Expanded(
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      'Identificación Oficial (INE)',
-                                      style: TextStyle(
+                                      l10n.ineLabel,
+                                      style: const TextStyle(
                                         color: AppTheme.textPrimaryColor,
                                         fontSize: 16,
                                         fontWeight: FontWeight.w600,
                                       ),
                                     ),
-                                    SizedBox(height: 2),
+                                    const SizedBox(height: 2),
                                     Text(
-                                      'Sube fotos claras de tu INE',
-                                      style: TextStyle(
+                                      l10n.ineDescription,
+                                      style: const TextStyle(
                                         color: AppTheme.textSecondaryColor,
                                         fontSize: 12,
                                       ),
@@ -601,8 +612,8 @@ class _RegisterPageState extends State<RegisterPage> {
 
                           // INE Anverso (Frente)
                           _buildIneUploadCard(
-                            title: 'Anverso (Frente)',
-                            subtitle: 'Foto con tu nombre y fotografía',
+                            title: l10n.ineFront,
+                            subtitle: l10n.ineFrontDescription,
                             icon: Icons.credit_card,
                             image: _ineFrontImage,
                             onTap: () => _pickImage(true),
@@ -614,8 +625,8 @@ class _RegisterPageState extends State<RegisterPage> {
 
                           // INE Reverso (Atrás)
                           _buildIneUploadCard(
-                            title: 'Reverso (Atrás)',
-                            subtitle: 'Foto con el código de barras',
+                            title: l10n.ineBack,
+                            subtitle: l10n.ineBackDescription,
                             icon: Icons.qr_code,
                             image: _ineBackImage,
                             onTap: () => _pickImage(false),
@@ -633,18 +644,18 @@ class _RegisterPageState extends State<RegisterPage> {
                                   AppTheme.successColor.withValues(alpha: 0.1),
                               borderRadius: BorderRadius.circular(10),
                             ),
-                            child: const Row(
+                            child: Row(
                               children: [
-                                Icon(
+                                const Icon(
                                   Icons.security,
                                   color: AppTheme.successColor,
                                   size: 20,
                                 ),
-                                SizedBox(width: 10),
+                                const SizedBox(width: 10),
                                 Expanded(
                                   child: Text(
-                                    'Tu información está protegida y encriptada',
-                                    style: TextStyle(
+                                    l10n.securityNotice,
+                                    style: const TextStyle(
                                       color: AppTheme.successColor,
                                       fontSize: 12,
                                     ),
@@ -660,9 +671,9 @@ class _RegisterPageState extends State<RegisterPage> {
                     const SizedBox(height: 32),
 
                     // Contacto de emergencia
-                    const Text(
-                      'Contacto de Emergencia',
-                      style: TextStyle(
+                    Text(
+                      l10n.emergencyContact,
+                      style: const TextStyle(
                         color: AppTheme.textPrimaryColor,
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
@@ -671,8 +682,8 @@ class _RegisterPageState extends State<RegisterPage> {
                     const SizedBox(height: 16),
 
                     CustomTextField(
-                      label: 'Nombre del contacto',
-                      hint: 'Nombre completo',
+                      label: l10n.emergencyContactName,
+                      hint: l10n.emergencyContactNameHint,
                       controller: _emergencyContactNameController,
                       validator: Validators.name,
                       prefixIcon: const Icon(
@@ -684,7 +695,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     const SizedBox(height: 24),
 
                     CustomTextField(
-                      label: 'Teléfono de emergencia',
+                      label: l10n.emergencyContactPhone,
                       hint: '5512345678',
                       controller: _emergencyContactPhoneController,
                       keyboardType: TextInputType.phone,
@@ -699,7 +710,7 @@ class _RegisterPageState extends State<RegisterPage> {
 
                     // Términos y condiciones
                     Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Checkbox(
                           value: _acceptTerms,
@@ -708,21 +719,39 @@ class _RegisterPageState extends State<RegisterPage> {
                           activeColor: AppTheme.primaryLightColor,
                         ),
                         Expanded(
-                          child: GestureDetector(
-                            onTap: () =>
-                                setState(() => _acceptTerms = !_acceptTerms),
-                            child: const Text(
-                              'Acepto los términos y condiciones',
-                              style:
-                                  TextStyle(color: AppTheme.textSecondaryColor),
-                            ),
+                          child: Wrap(
+                            children: [
+                              Text(
+                                l10n.acceptTermsPrefix,
+                                style: const TextStyle(
+                                    color: AppTheme.textSecondaryColor),
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const TermsConditionsPage(),
+                                    ),
+                                  );
+                                },
+                                child: Text(
+                                  l10n.termsLink,
+                                  style: const TextStyle(
+                                    color: AppTheme.textPrimaryColor,
+                                    decoration: TextDecoration.underline,
+                                    decorationColor: AppTheme.primaryLightColor,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
                     ),
 
                     Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Checkbox(
                           value: _acceptPrivacy,
@@ -731,14 +760,32 @@ class _RegisterPageState extends State<RegisterPage> {
                           activeColor: AppTheme.primaryLightColor,
                         ),
                         Expanded(
-                          child: GestureDetector(
-                            onTap: () => setState(
-                                () => _acceptPrivacy = !_acceptPrivacy),
-                            child: const Text(
-                              'Acepto la política de privacidad',
-                              style:
-                                  TextStyle(color: AppTheme.textSecondaryColor),
-                            ),
+                          child: Wrap(
+                            children: [
+                              Text(
+                                l10n.acceptPrivacyPrefix,
+                                style: const TextStyle(
+                                    color: AppTheme.textSecondaryColor),
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (context) =>
+                                          const PrivacyPolicyPage(),
+                                    ),
+                                  );
+                                },
+                                child: Text(
+                                  l10n.privacyLink,
+                                  style: const TextStyle(
+                                    color: AppTheme.textPrimaryColor,
+                                    decoration: TextDecoration.underline,
+                                    decorationColor: AppTheme.primaryLightColor,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ],
@@ -750,10 +797,11 @@ class _RegisterPageState extends State<RegisterPage> {
                       builder: (context, state) {
                         final isLoading =
                             state is AuthLoading || _isUploadingIne;
+                        final l10nBtn = AppLocalizations.of(context)!;
                         return CustomButton(
                           text: _isUploadingIne
-                              ? 'Subiendo documentos...'
-                              : 'Crear Cuenta',
+                              ? l10nBtn.uploadingDocuments
+                              : l10nBtn.createAccountButton,
                           onPressed: _handleRegister,
                           isLoading: isLoading,
                         );

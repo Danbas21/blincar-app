@@ -1,6 +1,7 @@
 // lib/presentation/pages/help/help_page.dart
 
 import 'package:flutter/material.dart';
+import 'package:blincar_app/l10n/app_localizations.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../core/theme/app_theme.dart';
 
@@ -206,10 +207,11 @@ class _HelpPageState extends State<HelpPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppTheme.backgroundColor,
       appBar: AppBar(
-        title: const Text('Ayuda y Soporte'),
+        title: Text(l10n.helpTitle),
         backgroundColor: AppTheme.backgroundColor,
         foregroundColor: AppTheme.textPrimaryColor,
         elevation: 0,
@@ -223,7 +225,7 @@ class _HelpPageState extends State<HelpPage> {
               controller: _searchController,
               onChanged: (value) => setState(() => _searchQuery = value),
               decoration: InputDecoration(
-                hintText: 'Buscar en preguntas frecuentes...',
+                hintText: l10n.faqSearchHint,
                 hintStyle: const TextStyle(color: AppTheme.textSecondaryColor),
                 prefixIcon: const Icon(
                   Icons.search,
@@ -256,15 +258,15 @@ class _HelpPageState extends State<HelpPage> {
           // Contenido
           Expanded(
             child: _searchQuery.isNotEmpty
-                ? _buildSearchResults()
-                : _buildCategoriesAndContact(),
+                ? _buildSearchResults(l10n)
+                : _buildCategoriesAndContact(l10n),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildSearchResults() {
+  Widget _buildSearchResults(AppLocalizations l10n) {
     final results = _filteredQuestions;
 
     if (results.isEmpty) {
@@ -278,9 +280,9 @@ class _HelpPageState extends State<HelpPage> {
               color: AppTheme.textSecondaryColor,
             ),
             const SizedBox(height: 16),
-            const Text(
-              'No se encontraron resultados',
-              style: TextStyle(
+            Text(
+              l10n.noSearchResults,
+              style: const TextStyle(
                 color: AppTheme.textSecondaryColor,
                 fontSize: 16,
               ),
@@ -289,7 +291,7 @@ class _HelpPageState extends State<HelpPage> {
             ElevatedButton.icon(
               onPressed: () => _contactSupport(),
               icon: const Icon(Icons.support_agent),
-              label: const Text('Contactar soporte'),
+              label: Text(l10n.contactSupport),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppTheme.primaryLightColor,
               ),
@@ -308,18 +310,18 @@ class _HelpPageState extends State<HelpPage> {
     );
   }
 
-  Widget _buildCategoriesAndContact() {
+  Widget _buildCategoriesAndContact(AppLocalizations l10n) {
     return ListView(
       padding: const EdgeInsets.symmetric(horizontal: 24),
       children: [
         // Contacto rápido
-        _buildContactCard(),
+        _buildContactCard(l10n),
 
         const SizedBox(height: 24),
 
         // Categorías
-        const Text(
-          'Preguntas Frecuentes',
+        Text(
+          l10n.faqTitle,
           style: TextStyle(
             color: AppTheme.textPrimaryColor,
             fontSize: 18,
@@ -335,7 +337,7 @@ class _HelpPageState extends State<HelpPage> {
     );
   }
 
-  Widget _buildContactCard() {
+  Widget _buildContactCard(AppLocalizations l10n) {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -352,12 +354,12 @@ class _HelpPageState extends State<HelpPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Row(
+          Row(
             children: [
-              Icon(Icons.support_agent, color: Colors.white, size: 28),
-              SizedBox(width: 12),
+              const Icon(Icons.support_agent, color: Colors.white, size: 28),
+              const SizedBox(width: 12),
               Text(
-                'Soporte 24/7',
+                l10n.support247,
                 style: TextStyle(
                   color: Colors.white,
                   fontSize: 20,
@@ -367,8 +369,8 @@ class _HelpPageState extends State<HelpPage> {
             ],
           ),
           const SizedBox(height: 8),
-          const Text(
-            'Estamos aquí para ayudarte en cualquier momento',
+          Text(
+            l10n.supportDescription,
             style: TextStyle(
               color: Colors.white70,
               fontSize: 14,

@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:blincar_app/l10n/app_localizations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/constants/images_constant.dart';
@@ -76,7 +77,12 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           child: SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: _emailSent ? _buildSuccessContent() : _buildFormContent(),
+              child: Builder(
+                builder: (context) {
+                  final l10n = AppLocalizations.of(context)!;
+                  return _emailSent ? _buildSuccessContent(l10n) : _buildFormContent(l10n);
+                },
+              ),
             ),
           ),
         ),
@@ -84,7 +90,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     );
   }
 
-  Widget _buildFormContent() {
+  Widget _buildFormContent(AppLocalizations l10n) {
     return Form(
       key: _formKey,
       child: Column(
@@ -103,8 +109,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           ),
           const SizedBox(height: 32),
           // Titulo
-          const Text(
-            'RECUPERAR CONTRASEÑA',
+          Text(
+            l10n.forgotPasswordTitle,
             textAlign: TextAlign.center,
             style: TextStyle(
               color: AppTheme.textPrimaryColor,
@@ -159,7 +165,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           // Campo de email
           _buildGradientTextField(
             controller: _emailController,
-            hintText: 'Correo Electrónico*',
+            hintText: l10n.forgotPasswordEmailHint,
             keyboardType: TextInputType.emailAddress,
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -196,8 +202,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                             color: Colors.white,
                           ),
                         )
-                      : const Text(
-                          'Enviar Enlace',
+                      : Text(
+                          l10n.sendLink,
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w600,
@@ -211,8 +217,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           // Link volver a login
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text(
-              'Volver a Iniciar Sesión',
+            child: Text(
+              l10n.backToLogin,
               style: TextStyle(
                 color: AppTheme.textPrimaryColor,
                 fontSize: 14,
@@ -225,7 +231,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     );
   }
 
-  Widget _buildSuccessContent() {
+  Widget _buildSuccessContent(AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
@@ -246,8 +252,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         ),
         const SizedBox(height: 32),
         // Titulo
-        const Text(
-          '¡CORREO ENVIADO!',
+        Text(
+          l10n.emailSentTitle,
           textAlign: TextAlign.center,
           style: TextStyle(
             color: AppTheme.textPrimaryColor,
@@ -259,7 +265,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         const SizedBox(height: 16),
         // Descripción
         Text(
-          'Hemos enviado un enlace de recuperación a:\n${_emailController.text}',
+          '${l10n.emailSentMessage}\n${_emailController.text}',
           textAlign: TextAlign.center,
           style: const TextStyle(
             color: AppTheme.textSecondaryColor,
@@ -267,8 +273,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           ),
         ),
         const SizedBox(height: 16),
-        const Text(
-          'Revisa tu bandeja de entrada y sigue las instrucciones para restablecer tu contraseña.',
+        Text(
+          l10n.checkInboxMessage,
           textAlign: TextAlign.center,
           style: TextStyle(
             color: AppTheme.textSecondaryColor,
@@ -289,9 +295,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                 borderRadius: BorderRadius.circular(24),
               ),
             ),
-            child: const Text(
-              'Volver a Iniciar Sesión',
-              style: TextStyle(
+            child: Text(
+              l10n.backToLogin,
+              style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
               ),
@@ -306,8 +312,8 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
               _emailSent = false;
             });
           },
-          child: const Text(
-            '¿No recibiste el correo? Intentar de nuevo',
+          child: Text(
+            l10n.resendEmailLink,
             style: TextStyle(
               color: AppTheme.textSecondaryColor,
               fontSize: 14,

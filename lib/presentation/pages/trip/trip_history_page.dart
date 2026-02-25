@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:blincar_app/l10n/app_localizations.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../data/mock/mock_data.dart';
 import '../../../domain/entities/trip.dart';
@@ -16,13 +17,14 @@ class _TripHistoryPageState extends State<TripHistoryPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final allTrips = MockData.getRecentTrips();
     final filteredTrips = _getFilteredTrips(allTrips);
 
     return Scaffold(
       backgroundColor: AppTheme.backgroundColor,
       appBar: AppBar(
-        title: const Text('Historial de Viajes'),
+        title: Text(l10n.tripHistory),
         backgroundColor: AppTheme.backgroundColor,
         foregroundColor: AppTheme.textPrimaryColor,
         elevation: 0,
@@ -77,19 +79,19 @@ class _TripHistoryPageState extends State<TripHistoryPage> {
           // Lista de viajes
           Expanded(
             child: filteredTrips.isEmpty
-                ? const Center(
+                ? Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.history,
                           size: 64,
                           color: AppTheme.textSecondaryColor,
                         ),
-                        SizedBox(height: 16),
+                        const SizedBox(height: 16),
                         Text(
-                          'No hay viajes para mostrar',
-                          style: TextStyle(
+                          l10n.noTripsDisplay,
+                          style: const TextStyle(
                             color: AppTheme.textSecondaryColor,
                             fontSize: 16,
                           ),
@@ -102,7 +104,7 @@ class _TripHistoryPageState extends State<TripHistoryPage> {
                     itemCount: filteredTrips.length,
                     itemBuilder: (context, index) {
                       final trip = filteredTrips[index];
-                      return _buildTripCard(trip);
+                      return _buildTripCard(trip, l10n);
                     },
                   ),
           ),
@@ -126,7 +128,7 @@ class _TripHistoryPageState extends State<TripHistoryPage> {
     }
   }
 
-  Widget _buildTripCard(Trip trip) {
+  Widget _buildTripCard(Trip trip, AppLocalizations l10n) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(20),
@@ -155,7 +157,7 @@ class _TripHistoryPageState extends State<TripHistoryPage> {
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
-                  _getStatusText(trip.status),
+                  _getStatusText(trip.status, l10n),
                   style: TextStyle(
                     color: _getStatusColor(trip.status),
                     fontSize: 12,
@@ -321,21 +323,29 @@ class _TripHistoryPageState extends State<TripHistoryPage> {
         return AppTheme.primaryLightColor;
       case TripStatus.requested:
         return AppTheme.accentColor;
+      case TripStatus.assigned:
+        return AppTheme.accentColor;
+      case TripStatus.pending:
+        return AppTheme.accentColor;
     }
   }
 
-  String _getStatusText(TripStatus status) {
+  String _getStatusText(TripStatus status, AppLocalizations l10n) {
     switch (status) {
       case TripStatus.completed:
-        return 'Completado';
+        return l10n.tripStatusCompleted;
       case TripStatus.cancelled:
-        return 'Cancelado';
+        return l10n.tripStatusCancelled;
       case TripStatus.inProgress:
-        return 'En progreso';
+        return l10n.tripStatusInProgress;
       case TripStatus.accepted:
-        return 'Aceptado';
+        return l10n.tripStatusAssigned;
       case TripStatus.requested:
-        return 'Solicitado';
+        return l10n.tripStatusPending;
+      case TripStatus.assigned:
+        return l10n.tripStatusAssigned;
+      case TripStatus.pending:
+        return l10n.tripStatusPending;
     }
   }
 }

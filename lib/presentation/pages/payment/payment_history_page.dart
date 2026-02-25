@@ -1,6 +1,7 @@
 // lib/presentation/pages/payment/payment_history_page.dart
 
 import 'package:flutter/material.dart';
+import 'package:blincar_app/l10n/app_localizations.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/services/stripe_backend_service.dart';
 import '../../../core/services/service_locator.dart';
@@ -142,6 +143,7 @@ class _PaymentHistoryPageState extends State<PaymentHistoryPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final filteredPayments = _getFilteredPayments();
 
     // Calcular totales
@@ -157,7 +159,7 @@ class _PaymentHistoryPageState extends State<PaymentHistoryPage> {
     return Scaffold(
       backgroundColor: AppTheme.backgroundColor,
       appBar: AppBar(
-        title: const Text('Historial de Pagos'),
+        title: Text(l10n.paymentHistoryTitle),
         backgroundColor: AppTheme.backgroundColor,
         foregroundColor: AppTheme.textPrimaryColor,
         elevation: 0,
@@ -165,18 +167,18 @@ class _PaymentHistoryPageState extends State<PaymentHistoryPage> {
           IconButton(
             icon: const Icon(Icons.refresh),
             onPressed: _loadPaymentHistory,
-            tooltip: 'Actualizar',
+            tooltip: l10n.refreshButton,
           ),
         ],
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _errorMessage != null
-              ? _buildErrorState()
+              ? _buildErrorState(l10n)
               : Column(
                   children: [
                     // Resumen de pagos
-                    _buildSummaryCard(totalPaid, completedCount),
+                    _buildSummaryCard(totalPaid, completedCount, l10n),
 
                     // Filtros
                     _buildFilters(),
@@ -186,7 +188,7 @@ class _PaymentHistoryPageState extends State<PaymentHistoryPage> {
                     // Lista de pagos
                     Expanded(
                       child: filteredPayments.isEmpty
-                          ? _buildEmptyState()
+                          ? _buildEmptyState(l10n)
                           : RefreshIndicator(
                               onRefresh: _loadPaymentHistory,
                               child: ListView.builder(
@@ -204,7 +206,7 @@ class _PaymentHistoryPageState extends State<PaymentHistoryPage> {
     );
   }
 
-  Widget _buildSummaryCard(double totalPaid, int completedCount) {
+  Widget _buildSummaryCard(double totalPaid, int completedCount, AppLocalizations l10n) {
     return Container(
       margin: const EdgeInsets.all(24),
       padding: const EdgeInsets.all(20),
@@ -225,9 +227,9 @@ class _PaymentHistoryPageState extends State<PaymentHistoryPage> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Total pagado',
-                  style: TextStyle(
+                Text(
+                  l10n.totalPaid,
+                  style: const TextStyle(
                     color: Colors.white70,
                     fontSize: 14,
                   ),
@@ -243,7 +245,7 @@ class _PaymentHistoryPageState extends State<PaymentHistoryPage> {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  '$completedCount transacciones completadas',
+                  '$completedCount ${l10n.completedTransactions}',
                   style: const TextStyle(
                     color: Colors.white70,
                     fontSize: 12,
@@ -315,20 +317,20 @@ class _PaymentHistoryPageState extends State<PaymentHistoryPage> {
     );
   }
 
-  Widget _buildEmptyState() {
-    return const Center(
+  Widget _buildEmptyState(AppLocalizations l10n) {
+    return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
+          const Icon(
             Icons.receipt_long,
             size: 64,
             color: AppTheme.textSecondaryColor,
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           Text(
-            'No hay transacciones',
-            style: TextStyle(
+            l10n.noTransactions,
+            style: const TextStyle(
               color: AppTheme.textSecondaryColor,
               fontSize: 16,
             ),
@@ -338,7 +340,7 @@ class _PaymentHistoryPageState extends State<PaymentHistoryPage> {
     );
   }
 
-  Widget _buildErrorState() {
+  Widget _buildErrorState(AppLocalizations l10n) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -350,7 +352,7 @@ class _PaymentHistoryPageState extends State<PaymentHistoryPage> {
           ),
           const SizedBox(height: 16),
           Text(
-            _errorMessage ?? 'Error al cargar historial',
+            _errorMessage ?? l10n.errorLoadingHistory,
             style: const TextStyle(
               color: AppTheme.textSecondaryColor,
               fontSize: 16,
@@ -360,7 +362,7 @@ class _PaymentHistoryPageState extends State<PaymentHistoryPage> {
           const SizedBox(height: 24),
           ElevatedButton(
             onPressed: _loadPaymentHistory,
-            child: const Text('Reintentar'),
+            child: Text(l10n.retry),
           ),
         ],
       ),

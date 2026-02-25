@@ -9,6 +9,7 @@ import 'package:blincar_app/presentation/pages/trip/trip_request_page.dart';
 import 'package:blincar_app/presentation/pages/trip/trip_tracking_page.dart';
 import 'package:blincar_app/presentation/pages/trip/waiting_assignment_page.dart';
 
+import 'package:blincar_app/l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../core/theme/app_theme.dart';
@@ -56,19 +57,23 @@ class _HomePageState extends State<HomePage> {
   bool _isCalculatingRoute = false;
   String? _durationText;
 
-  // Precio base por defecto (3 bloques de 10 min = 150 MXN)
-  // Se usa cuando no hay duracion calculada de Google Maps
-  static const double baseTripPrice = 150.0;
+  // Agendamiento de viaje
+  bool _isScheduled = false;
+  DateTime? _scheduledDateTime;
 
-  // Precio calculado segun tiempo de viaje (50 MXN / 10 min)
+  // Precio base por defecto (3 bloques de 10 min = 150 MXN)
+  // Se usa cuando no hay duración calculada de Google Maps
+  static const double baseTripPrice = 10.0; //aquí cambie el precio
+
+  // Precio calculado según tiempo de viaje (50 MXN / 10 min)
   double get _calculatedPrice {
     if (_estimatedDurationMinutes != null && _estimatedDurationMinutes! > 0) {
       // 50 MXN por cada 10 minutos
       final basePriceBlocks = (_estimatedDurationMinutes! / 10).ceil();
-      final basePrice = basePriceBlocks * 50.0;
+      final basePrice = basePriceBlocks * 10.0; //aquí cambi el precio
       return basePrice * (_serviceMultipliers[_selectedServiceType] ?? 1.0);
     }
-    // Precio por defecto si no hay duracion calculada
+    // Precio por defecto si no hay duración calculada
     return baseTripPrice * (_serviceMultipliers[_selectedServiceType] ?? 1.0);
   }
 
@@ -151,6 +156,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildHeader() {
+    final l10n = AppLocalizations.of(context)!;
     return Row(
       children: [
         Container(
@@ -171,16 +177,16 @@ class _HomePageState extends State<HomePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'Hola, ${currentUser.fullName}',
+                l10n.helloName(currentUser.fullName),
                 style: const TextStyle(
                   color: AppTheme.textPrimaryColor,
                   fontSize: 24,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              const Text(
-                'Pasajero',
-                style: TextStyle(
+              Text(
+                l10n.passengerRole,
+                style: const TextStyle(
                   color: AppTheme.textSecondaryColor,
                   fontSize: 14,
                 ),
@@ -223,12 +229,13 @@ class _HomePageState extends State<HomePage> {
 
   /// 3 Cards principales: Por Ruta, Por Día, Personaliza tu viaje
   Widget _buildMainServiceCards() {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
-          'Servicios de Transporte',
-          style: TextStyle(
+        Text(
+          l10n.transportServices,
+          style: const TextStyle(
             color: AppTheme.textPrimaryColor,
             fontSize: 20,
             fontWeight: FontWeight.w600,
@@ -240,10 +247,10 @@ class _HomePageState extends State<HomePage> {
             // Card 1: Por Ruta
             Expanded(
               child: _buildServiceCard(
-                title: 'Por Ruta',
-                subtitle: 'Rutas predefinidas',
+                title: l10n.byRouteTitle,
+                subtitle: l10n.byRouteSubtitle,
                 icon: Icons.route,
-                gradient: const [Color(0xFF1B5E20), Color(0xFF4CAF50)],
+                gradient: const [Color(0xFF0D47A1), Color(0xFF1E88E5)],
                 onTap: () {
                   setState(() => _currentIndex = 1);
                 },
@@ -253,8 +260,8 @@ class _HomePageState extends State<HomePage> {
             // Card 2: Por Día
             Expanded(
               child: _buildServiceCard(
-                title: 'Por Día',
-                subtitle: 'Servicio completo',
+                title: l10n.byDayTitle,
+                subtitle: l10n.byDaySubtitle,
                 icon: Icons.calendar_today,
                 gradient: const [Color(0xFF0D47A1), Color(0xFF2196F3)],
                 onTap: () => _showDayServiceDialog(),
@@ -265,10 +272,10 @@ class _HomePageState extends State<HomePage> {
         const SizedBox(height: 12),
         // Card 3: Personaliza tu viaje (ancha)
         _buildWideServiceCard(
-          title: 'Personaliza tu Viaje',
-          subtitle: 'Ingresa origen y destino manualmente',
+          title: l10n.customTripTitle,
+          subtitle: l10n.customTripSubtitle,
           icon: Icons.edit_location_alt,
-          gradient: const [Color(0xFF4A148C), Color(0xFF9C27B0)],
+          gradient: const [Color(0xFF1A237E), Color(0xFF1976D2)],
           onTap: () => _showCustomTripBottomSheet(),
         ),
       ],
@@ -418,6 +425,7 @@ class _HomePageState extends State<HomePage> {
 
   /// Sección de viaje rápido con inputs de ubicación y tipo de servicio
   Widget _buildQuickTripSection() {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
@@ -448,9 +456,9 @@ class _HomePageState extends State<HomePage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Viaje Rápido',
-                      style: TextStyle(
+                    Text(
+                      l10n.quickTrip,
+                      style: const TextStyle(
                         color: AppTheme.textPrimaryColor,
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -475,7 +483,8 @@ class _HomePageState extends State<HomePage> {
                 )
               else
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                   decoration: BoxDecoration(
                     color: AppTheme.successColor.withAlpha(26),
                     borderRadius: BorderRadius.circular(20),
@@ -495,30 +504,30 @@ class _HomePageState extends State<HomePage> {
 
           // Selector de Origen (estilo Uber)
           _buildLocationSelector(
-            label: 'Origen',
+            label: l10n.originLabel,
             location: _originLocation,
             icon: Icons.trip_origin,
             iconColor: AppTheme.successColor,
-            placeholder: '¿Dónde te recogemos?',
+            placeholder: l10n.whereFrom,
             onTap: () => _openLocationPicker(isOrigin: true),
           ),
           const SizedBox(height: 12),
 
           // Selector de Destino (estilo Uber)
           _buildLocationSelector(
-            label: 'Destino',
+            label: l10n.destinationLabel,
             location: _destinationLocation,
             icon: Icons.location_on,
             iconColor: AppTheme.errorColor,
-            placeholder: '¿A dónde vas?',
+            placeholder: l10n.whereGoing,
             onTap: () => _openLocationPicker(isOrigin: false),
           ),
           const SizedBox(height: 20),
 
           // Selector de tipo de servicio
-          const Text(
-            'Tipo de servicio',
-            style: TextStyle(
+          Text(
+            l10n.serviceTypeLabel,
+            style: const TextStyle(
               color: AppTheme.textPrimaryColor,
               fontSize: 16,
               fontWeight: FontWeight.w600,
@@ -526,6 +535,10 @@ class _HomePageState extends State<HomePage> {
           ),
           const SizedBox(height: 12),
           _buildServiceTypeSelector(),
+          const SizedBox(height: 20),
+
+          // Agendamiento
+          _buildScheduleSection(),
           const SizedBox(height: 20),
 
           // Botón solicitar
@@ -541,14 +554,14 @@ class _HomePageState extends State<HomePage> {
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: const Row(
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.local_taxi, color: Colors.white),
-                  SizedBox(width: 8),
+                  const Icon(Icons.local_taxi, color: Colors.white),
+                  const SizedBox(width: 8),
                   Text(
-                    'Solicitar Viaje',
-                    style: TextStyle(
+                    AppLocalizations.of(context)!.requestTrip,
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -647,7 +660,8 @@ class _HomePageState extends State<HomePage> {
           color: AppTheme.cardColor,
           borderRadius: BorderRadius.circular(12),
           border: Border.all(
-            color: hasLocation ? iconColor.withAlpha(100) : AppTheme.dividerColor,
+            color:
+                hasLocation ? iconColor.withAlpha(100) : AppTheme.dividerColor,
           ),
         ),
         child: Row(
@@ -681,7 +695,8 @@ class _HomePageState extends State<HomePage> {
                           ? AppTheme.textPrimaryColor
                           : AppTheme.textSecondaryColor,
                       fontSize: 14,
-                      fontWeight: hasLocation ? FontWeight.w500 : FontWeight.normal,
+                      fontWeight:
+                          hasLocation ? FontWeight.w500 : FontWeight.normal,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -718,7 +733,7 @@ class _HomePageState extends State<HomePage> {
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
             decoration: BoxDecoration(
               color: isSelected
-                  ? AppTheme.primaryLightColor.withAlpha(26)
+                  ? AppTheme.textSecondaryColor.withAlpha(26)
                   : AppTheme.cardColor,
               borderRadius: BorderRadius.circular(10),
               border: Border.all(
@@ -748,7 +763,8 @@ class _HomePageState extends State<HomePage> {
                           ? AppTheme.primaryLightColor
                           : AppTheme.textPrimaryColor,
                       fontSize: 14,
-                      fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                      fontWeight:
+                          isSelected ? FontWeight.bold : FontWeight.normal,
                     ),
                   ),
                 ),
@@ -792,19 +808,19 @@ class _HomePageState extends State<HomePage> {
         child: InkWell(
           borderRadius: BorderRadius.circular(16),
           onTap: () => _showPanicDialog(),
-          child: const Center(
+          child: Center(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Icon(
+                const Icon(
                   Icons.warning_rounded,
                   color: Colors.white,
                   size: 28,
                 ),
-                SizedBox(width: 12),
+                const SizedBox(width: 12),
                 Text(
-                  'BOTÓN DE PÁNICO',
-                  style: TextStyle(
+                  AppLocalizations.of(context)!.panicButtonLabel,
+                  style: const TextStyle(
                     color: Colors.white,
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
@@ -823,6 +839,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _buildBottomNavigationBar() {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       decoration: BoxDecoration(
         color: AppTheme.surfaceColor,
@@ -840,10 +857,10 @@ class _HomePageState extends State<HomePage> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              _buildNavItem(Icons.home, 'Inicio', 0),
-              _buildNavItem(Icons.route, 'Rutas', 1),
-              _buildNavItem(Icons.history, 'Actividad', 2),
-              _buildNavItem(Icons.person, 'Perfil', 3),
+              _buildNavItem(Icons.home, l10n.navHome, 0),
+              _buildNavItem(Icons.route, l10n.navRoutes, 1),
+              _buildNavItem(Icons.history, l10n.navActivity, 2),
+              _buildNavItem(Icons.person, l10n.navProfile, 3),
             ],
           ),
         ),
@@ -884,6 +901,215 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  // ==================== AGENDAMIENTO ====================
+
+  Widget _buildScheduleSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Toggle "Programar para más tarde"
+        GestureDetector(
+          onTap: () {
+            setState(() {
+              _isScheduled = !_isScheduled;
+              if (!_isScheduled) _scheduledDateTime = null;
+            });
+            if (_isScheduled) _selectScheduledDate();
+          },
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: _isScheduled
+                  ? AppTheme.primaryLightColor.withAlpha(26)
+                  : AppTheme.cardColor,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                color: _isScheduled
+                    ? AppTheme.primaryLightColor
+                    : AppTheme.dividerColor,
+              ),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  Icons.schedule,
+                  color: _isScheduled
+                      ? AppTheme.primaryLightColor
+                      : AppTheme.textSecondaryColor,
+                  size: 20,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    _isScheduled && _scheduledDateTime != null
+                        ? _formatScheduledDate(_scheduledDateTime!)
+                        : 'Programar para más tarde',
+                    style: TextStyle(
+                      color: _isScheduled
+                          ? AppTheme.textPrimaryColor
+                          : AppTheme.textSecondaryColor,
+                      fontSize: 14,
+                      fontWeight:
+                          _isScheduled ? FontWeight.w600 : FontWeight.normal,
+                    ),
+                  ),
+                ),
+                Switch(
+                  value: _isScheduled,
+                  onChanged: (val) {
+                    setState(() {
+                      _isScheduled = val;
+                      if (!_isScheduled) _scheduledDateTime = null;
+                    });
+                    if (val) _selectScheduledDate();
+                  },
+                  activeThumbColor: AppTheme.primaryLightColor,
+                  activeTrackColor: AppTheme.primaryLightColor.withAlpha(128),
+                ),
+              ],
+            ),
+          ),
+        ),
+        if (_isScheduled && _scheduledDateTime != null) ...[
+          const SizedBox(height: 8),
+          GestureDetector(
+            onTap: _selectScheduledDate,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              decoration: BoxDecoration(
+                color: AppTheme.primaryLightColor.withAlpha(15),
+                borderRadius: BorderRadius.circular(10),
+                border:
+                    Border.all(color: AppTheme.primaryLightColor.withAlpha(80)),
+              ),
+              child: Row(
+                children: [
+                  const Icon(Icons.edit_calendar,
+                      color: AppTheme.primaryLightColor, size: 18),
+                  const SizedBox(width: 10),
+                  Text(
+                    _formatScheduledDate(_scheduledDateTime!),
+                    style: const TextStyle(
+                      color: AppTheme.primaryLightColor,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const Spacer(),
+                  const Text(
+                    'Cambiar',
+                    style: TextStyle(
+                      color: AppTheme.primaryLightColor,
+                      fontSize: 13,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ],
+    );
+  }
+
+  String _formatScheduledDate(DateTime dt) {
+    final now = DateTime.now();
+    final isToday =
+        dt.day == now.day && dt.month == now.month && dt.year == now.year;
+    final tomorrow = now.add(const Duration(days: 1));
+    final isTomorrow = dt.day == tomorrow.day &&
+        dt.month == tomorrow.month &&
+        dt.year == tomorrow.year;
+
+    final timeStr =
+        '${dt.hour.toString().padLeft(2, '0')}:${dt.minute.toString().padLeft(2, '0')}';
+
+    if (isToday) return 'Hoy a las $timeStr';
+    if (isTomorrow) return 'Mañana a las $timeStr';
+
+    const months = [
+      '',
+      'ene',
+      'feb',
+      'mar',
+      'abr',
+      'may',
+      'jun',
+      'jul',
+      'ago',
+      'sep',
+      'oct',
+      'nov',
+      'dic'
+    ];
+    return '${dt.day} ${months[dt.month]} a las $timeStr';
+  }
+
+  Future<void> _selectScheduledDate() async {
+    final now = DateTime.now();
+    final minDate = now.add(const Duration(minutes: 30));
+
+    final pickedDate = await showDatePicker(
+      context: context,
+      initialDate: _scheduledDateTime ?? minDate,
+      firstDate: minDate,
+      lastDate: now.add(const Duration(days: 30)),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.dark(
+              primary: Color.fromARGB(255, 166, 166, 212),
+              surface: AppTheme.surfaceColor,
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (pickedDate == null || !mounted) return;
+
+    final pickedTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.fromDateTime(_scheduledDateTime ?? minDate),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.dark(
+              primary: Color.fromARGB(255, 156, 156, 181),
+              surface: Color.fromARGB(255, 23, 71, 230),
+            ),
+          ),
+          child: child!,
+        );
+      },
+    );
+
+    if (pickedTime == null || !mounted) return;
+
+    final selected = DateTime(
+      pickedDate.year,
+      pickedDate.month,
+      pickedDate.day,
+      pickedTime.hour,
+      pickedTime.minute,
+    );
+
+    // Mínimo 30 minutos desde ahora
+    if (selected.isBefore(minDate)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+              'El viaje debe agendarse con al menos 30 minutos de anticipación'),
+          backgroundColor: AppTheme.errorColor,
+        ),
+      );
+      return;
+    }
+
+    setState(() => _scheduledDateTime = selected);
+  }
+
   // ==================== DIALOGS Y ACCIONES ====================
 
   void _showPanicDialog() {
@@ -891,18 +1117,21 @@ class _HomePageState extends State<HomePage> {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: AppTheme.surfaceColor,
-        title: const Text(
-          'Botón de Pánico',
-          style: TextStyle(color: AppTheme.textPrimaryColor),
+        title: Text(
+          AppLocalizations.of(context)!.panicDialogTitle,
+          style: const TextStyle(color: AppTheme.textPrimaryColor),
         ),
-        content: const Text(
-          '¿Estás seguro de activar el botón de pánico? Se enviará una alerta inmediata.',
-          style: TextStyle(color: AppTheme.textSecondaryColor),
+        content: Text(
+          AppLocalizations.of(context)!.panicDialogMessage,
+          style: const TextStyle(color: AppTheme.textSecondaryColor),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancelar'),
+            child: Text(
+              AppLocalizations.of(context)!.cancel,
+              style: const TextStyle(color: AppTheme.textPrimaryColor),
+            ),
           ),
           TextButton(
             onPressed: () {
@@ -913,9 +1142,9 @@ class _HomePageState extends State<HomePage> {
                 ),
               );
             },
-            child: const Text(
-              'Activar',
-              style: TextStyle(color: AppTheme.errorColor),
+            child: Text(
+              AppLocalizations.of(context)!.activate,
+              style: const TextStyle(color: AppTheme.errorColor),
             ),
           ),
         ],
@@ -959,25 +1188,31 @@ class _HomePageState extends State<HomePage> {
             SizedBox(height: 16),
             Row(
               children: [
-                Icon(Icons.check_circle, color: AppTheme.successColor, size: 18),
+                Icon(Icons.check_circle,
+                    color: Color.fromARGB(255, 83, 76, 175), size: 18),
                 SizedBox(width: 8),
-                Text('8 horas de servicio', style: TextStyle(color: AppTheme.textSecondaryColor)),
+                Text('8 horas de servicio',
+                    style: TextStyle(color: AppTheme.textSecondaryColor)),
               ],
             ),
             SizedBox(height: 8),
             Row(
               children: [
-                Icon(Icons.check_circle, color: AppTheme.successColor, size: 18),
+                Icon(Icons.check_circle,
+                    color: AppTheme.successColor, size: 18),
                 SizedBox(width: 8),
-                Text('Múltiples destinos', style: TextStyle(color: AppTheme.textSecondaryColor)),
+                Text('Múltiples destinos',
+                    style: TextStyle(color: AppTheme.textSecondaryColor)),
               ],
             ),
             SizedBox(height: 8),
             Row(
               children: [
-                Icon(Icons.check_circle, color: AppTheme.successColor, size: 18),
+                Icon(Icons.check_circle,
+                    color: AppTheme.successColor, size: 18),
                 SizedBox(width: 8),
-                Text('Conductor dedicado', style: TextStyle(color: AppTheme.textSecondaryColor)),
+                Text('Conductor dedicado',
+                    style: TextStyle(color: AppTheme.textSecondaryColor)),
               ],
             ),
           ],
@@ -985,6 +1220,9 @@ class _HomePageState extends State<HomePage> {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.white,
+            ),
             child: const Text('Entendido'),
           ),
         ],
@@ -1000,7 +1238,8 @@ class _HomePageState extends State<HomePage> {
         builder: (_) => _CustomTripPage(
           serviceMultipliers: _serviceMultipliers,
           baseTripPrice: baseTripPrice,
-          onTripCreated: (origin, destination, serviceType, price, estimatedDuration, estimatedDistance, durationText) {
+          onTripCreated: (origin, destination, serviceType, price,
+              estimatedDuration, estimatedDistance, durationText) {
             // Navegar a la pantalla de pago antes de crear el viaje
             Navigator.of(context).push(
               MaterialPageRoute(
@@ -1041,8 +1280,8 @@ class _HomePageState extends State<HomePage> {
   void _requestQuickTrip() {
     if (_originLocation == null || _destinationLocation == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Selecciona origen y destino'),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.selectOriginDestination),
           backgroundColor: AppTheme.errorColor,
         ),
       );
@@ -1096,7 +1335,7 @@ class _HomePageState extends State<HomePage> {
     final authState = context.read<AuthBloc>().state;
     if (authState is! AuthAuthenticated) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Debes iniciar sesión')),
+        SnackBar(content: Text(AppLocalizations.of(context)!.loginRequired)),
       );
       return;
     }
@@ -1230,10 +1469,12 @@ class _CustomTripPageState extends State<_CustomTripPage> {
       final basePrice = basePriceBlocks * 50.0;
       return basePrice * (widget.serviceMultipliers[_selectedService] ?? 1.0);
     }
-    return widget.baseTripPrice * (widget.serviceMultipliers[_selectedService] ?? 1.0);
+    return widget.baseTripPrice *
+        (widget.serviceMultipliers[_selectedService] ?? 1.0);
   }
 
-  bool get _canRequest => _origin != null && _destination != null && !_isCalculatingRoute;
+  bool get _canRequest =>
+      _origin != null && _destination != null && !_isCalculatingRoute;
 
   Future<void> _selectLocation({required bool isOrigin}) async {
     final result = await Navigator.of(context).push<SelectedLocation>(
@@ -1340,7 +1581,8 @@ class _CustomTripPageState extends State<_CustomTripPage> {
             if (_durationText != null || _isCalculatingRoute) ...[
               const SizedBox(height: 12),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 decoration: BoxDecoration(
                   color: AppTheme.primaryLightColor.withAlpha(20),
                   borderRadius: BorderRadius.circular(8),
@@ -1357,23 +1599,28 @@ class _CustomTripPageState extends State<_CustomTripPage> {
                           const SizedBox(width: 8),
                           const Text(
                             'Calculando ruta...',
-                            style: TextStyle(color: AppTheme.textSecondaryColor),
+                            style:
+                                TextStyle(color: AppTheme.textSecondaryColor),
                           ),
                         ]
                       : [
-                          const Icon(Icons.access_time, size: 16, color: AppTheme.primaryLightColor),
+                          const Icon(Icons.access_time,
+                              size: 16, color: AppTheme.primaryLightColor),
                           const SizedBox(width: 4),
                           Text(
                             _durationText!,
-                            style: const TextStyle(color: AppTheme.textPrimaryColor),
+                            style: const TextStyle(
+                                color: AppTheme.textPrimaryColor),
                           ),
                           if (_estimatedDistanceKm != null) ...[
                             const SizedBox(width: 12),
-                            const Icon(Icons.straighten, size: 16, color: AppTheme.primaryLightColor),
+                            const Icon(Icons.straighten,
+                                size: 16, color: AppTheme.primaryLightColor),
                             const SizedBox(width: 4),
                             Text(
                               '${_estimatedDistanceKm!.toStringAsFixed(1)} km',
-                              style: const TextStyle(color: AppTheme.textPrimaryColor),
+                              style: const TextStyle(
+                                  color: AppTheme.textPrimaryColor),
                             ),
                           ],
                         ],
@@ -1398,8 +1645,10 @@ class _CustomTripPageState extends State<_CustomTripPage> {
               final isSelected = _selectedService == entry.key;
               // Precio basado en duracion si esta disponible
               double servicePrice;
-              if (_estimatedDurationMinutes != null && _estimatedDurationMinutes! > 0) {
-                final basePriceBlocks = (_estimatedDurationMinutes! / 10).ceil();
+              if (_estimatedDurationMinutes != null &&
+                  _estimatedDurationMinutes! > 0) {
+                final basePriceBlocks =
+                    (_estimatedDurationMinutes! / 10).ceil();
                 final basePrice = basePriceBlocks * 50.0;
                 servicePrice = basePrice * entry.value;
               } else {
@@ -1417,30 +1666,42 @@ class _CustomTripPageState extends State<_CustomTripPage> {
                         : AppTheme.surfaceColor,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: isSelected ? AppTheme.primaryLightColor : AppTheme.dividerColor,
+                      color: isSelected
+                          ? AppTheme.primaryLightColor
+                          : AppTheme.dividerColor,
                       width: isSelected ? 2 : 1,
                     ),
                   ),
                   child: Row(
                     children: [
                       Icon(
-                        isSelected ? Icons.radio_button_checked : Icons.radio_button_unchecked,
-                        color: isSelected ? AppTheme.primaryLightColor : AppTheme.textSecondaryColor,
+                        isSelected
+                            ? Icons.radio_button_checked
+                            : Icons.radio_button_unchecked,
+                        color: isSelected
+                            ? AppTheme.textSecondaryColor
+                            : AppTheme.textSecondaryColor,
                       ),
                       const SizedBox(width: 12),
                       Expanded(
                         child: Text(
                           entry.key,
                           style: TextStyle(
-                            color: isSelected ? AppTheme.primaryLightColor : AppTheme.textPrimaryColor,
-                            fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                            color: isSelected
+                                ? AppTheme.textSecondaryColor
+                                : AppTheme.textPrimaryColor,
+                            fontWeight: isSelected
+                                ? FontWeight.bold
+                                : FontWeight.normal,
                           ),
                         ),
                       ),
                       Text(
                         '\$${servicePrice.toStringAsFixed(0)} MXN',
                         style: TextStyle(
-                          color: isSelected ? AppTheme.primaryLightColor : AppTheme.textSecondaryColor,
+                          color: isSelected
+                              ? AppTheme.textSecondaryColor
+                              : AppTheme.textSecondaryColor,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -1464,9 +1725,9 @@ class _CustomTripPageState extends State<_CustomTripPage> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    'Total a pagar',
-                    style: TextStyle(color: Colors.white, fontSize: 18),
+                  Text(
+                    AppLocalizations.of(context)!.totalToPay,
+                    style: const TextStyle(color: Colors.white, fontSize: 18),
                   ),
                   Text(
                     '\$${_price.toStringAsFixed(0)} MXN',
@@ -1508,14 +1769,14 @@ class _CustomTripPageState extends State<_CustomTripPage> {
                     borderRadius: BorderRadius.circular(14),
                   ),
                 ),
-                child: const Row(
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.local_taxi, color: Colors.white, size: 26),
-                    SizedBox(width: 12),
+                    const Icon(Icons.local_taxi, color: Colors.white, size: 26),
+                    const SizedBox(width: 12),
                     Text(
-                      'Continuar al pago',
-                      style: TextStyle(
+                      AppLocalizations.of(context)!.continueToPay,
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -1549,7 +1810,8 @@ class _CustomTripPageState extends State<_CustomTripPage> {
           color: AppTheme.surfaceColor,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: hasLocation ? iconColor.withAlpha(100) : AppTheme.dividerColor,
+            color:
+                hasLocation ? iconColor.withAlpha(100) : AppTheme.dividerColor,
           ),
         ),
         child: Row(
@@ -1578,9 +1840,12 @@ class _CustomTripPageState extends State<_CustomTripPage> {
                   Text(
                     hasLocation ? location.address : placeholder,
                     style: TextStyle(
-                      color: hasLocation ? AppTheme.textPrimaryColor : AppTheme.textSecondaryColor,
+                      color: hasLocation
+                          ? AppTheme.textPrimaryColor
+                          : AppTheme.textSecondaryColor,
                       fontSize: 15,
-                      fontWeight: hasLocation ? FontWeight.w500 : FontWeight.normal,
+                      fontWeight:
+                          hasLocation ? FontWeight.w500 : FontWeight.normal,
                     ),
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,

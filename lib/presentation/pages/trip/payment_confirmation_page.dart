@@ -3,6 +3,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:blincar_app/l10n/app_localizations.dart';
 import 'package:uuid/uuid.dart';
 import '../../../core/services/service_locator.dart';
 import '../../../core/services/stripe_backend_service.dart';
@@ -152,10 +153,11 @@ class _PaymentConfirmationViewState extends State<_PaymentConfirmationView> {
 
   /// Procesa el pago con retry logic y timeout
   Future<void> _processPayment() async {
+    final l10n = AppLocalizations.of(context)!;
     if (_selectedCard == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Selecciona un metodo de pago'),
+        SnackBar(
+          content: Text(l10n.selectPaymentMethod),
           backgroundColor: AppTheme.errorColor,
         ),
       );
@@ -213,9 +215,10 @@ class _PaymentConfirmationViewState extends State<_PaymentConfirmationView> {
           setState(() {
             _paymentState = PaymentProcessState.failed;
           });
+          final l10nSnack = AppLocalizations.of(context)!;
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Se requiere autenticacion adicional'),
+            SnackBar(
+              content: Text(l10nSnack.additionalAuthRequired),
               backgroundColor: AppTheme.warningColor,
             ),
           );
@@ -227,11 +230,13 @@ class _PaymentConfirmationViewState extends State<_PaymentConfirmationView> {
           _showPaymentSuccessAndConfirm();
         } else {
           // Pago fallido - intentar retry
-          await _handlePaymentFailure('Pago rechazado: ${result.data!.status ?? "Desconocido"}');
+          final l10nFail = AppLocalizations.of(context)!;
+          await _handlePaymentFailure('${l10nFail.paymentRejected}: ${result.data!.status ?? "Desconocido"}');
         }
       } else {
         // Error del servidor - intentar retry
-        await _handlePaymentFailure(result.error ?? 'Error procesando el pago');
+        final l10nErr = AppLocalizations.of(context)!;
+        await _handlePaymentFailure(result.error ?? l10nErr.paymentProcessingError);
       }
     } on TimeoutException catch (e) {
       if (!mounted) return;
@@ -319,21 +324,25 @@ class _PaymentConfirmationViewState extends State<_PaymentConfirmationView> {
                 ),
               ),
               const SizedBox(height: 20),
-              const Text(
-                'Pago confirmado',
-                style: TextStyle(
-                  color: AppTheme.textPrimaryColor,
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
+              Builder(
+                builder: (ctx) => Text(
+                  AppLocalizations.of(ctx)!.paymentConfirmed,
+                  style: const TextStyle(
+                    color: AppTheme.textPrimaryColor,
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
               const SizedBox(height: 8),
-              Text(
-                'Se ha procesado el pago de \$${widget.tripData.totalPrice.toStringAsFixed(0)} MXN',
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: AppTheme.textSecondaryColor,
-                  fontSize: 14,
+              Builder(
+                builder: (ctx) => Text(
+                  AppLocalizations.of(ctx)!.paymentProcessedMessage(widget.tripData.totalPrice.toStringAsFixed(0)),
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    color: AppTheme.textSecondaryColor,
+                    fontSize: 14,
+                  ),
                 ),
               ),
               const SizedBox(height: 24),
@@ -353,11 +362,13 @@ class _PaymentConfirmationViewState extends State<_PaymentConfirmationView> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                   ),
-                  child: const Text(
-                    'Buscar conductor',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
+                  child: Builder(
+                    builder: (ctx) => Text(
+                      AppLocalizations.of(ctx)!.lookingForDriver,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ),
@@ -380,9 +391,11 @@ class _PaymentConfirmationViewState extends State<_PaymentConfirmationView> {
           icon: const Icon(Icons.arrow_back, color: AppTheme.textPrimaryColor),
           onPressed: () => Navigator.pop(context),
         ),
-        title: const Text(
-          'Confirmar pago',
-          style: TextStyle(color: AppTheme.textPrimaryColor),
+        title: Builder(
+          builder: (ctx) => Text(
+            AppLocalizations.of(ctx)!.confirmPayment,
+            style: const TextStyle(color: AppTheme.textPrimaryColor),
+          ),
         ),
       ),
       body: BlocConsumer<PaymentBloc, PaymentState>(
@@ -419,12 +432,14 @@ class _PaymentConfirmationViewState extends State<_PaymentConfirmationView> {
                   const SizedBox(height: 24),
 
                   // Metodos de pago
-                  const Text(
-                    'Metodo de pago',
-                    style: TextStyle(
-                      color: AppTheme.textPrimaryColor,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+                  Builder(
+                    builder: (ctx) => Text(
+                      AppLocalizations.of(ctx)!.paymentMethods,
+                      style: const TextStyle(
+                        color: AppTheme.textPrimaryColor,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 12),
@@ -455,6 +470,7 @@ class _PaymentConfirmationViewState extends State<_PaymentConfirmationView> {
   }
 
   Widget _buildTripSummary() {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -484,9 +500,9 @@ class _PaymentConfirmationViewState extends State<_PaymentConfirmationView> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Origen',
-                      style: TextStyle(
+                    Text(
+                      l10n.originLabel,
+                      style: const TextStyle(
                         color: AppTheme.textSecondaryColor,
                         fontSize: 12,
                       ),
@@ -537,9 +553,9 @@ class _PaymentConfirmationViewState extends State<_PaymentConfirmationView> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Destino',
-                      style: TextStyle(
+                    Text(
+                      l10n.destinationLabel,
+                      style: const TextStyle(
                         color: AppTheme.textSecondaryColor,
                         fontSize: 12,
                       ),
@@ -624,31 +640,36 @@ class _PaymentConfirmationViewState extends State<_PaymentConfirmationView> {
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: AppTheme.dividerColor),
         ),
-        child: const Column(
-          children: [
-            Icon(
-              Icons.credit_card_off,
-              color: AppTheme.textSecondaryColor,
-              size: 40,
-            ),
-            SizedBox(height: 12),
-            Text(
-              'No tienes tarjetas guardadas',
-              style: TextStyle(
-                color: AppTheme.textPrimaryColor,
-                fontSize: 16,
-              ),
-            ),
-            SizedBox(height: 4),
-            Text(
-              'Agrega una tarjeta para continuar',
-              style: TextStyle(
+        child: Builder(
+        builder: (ctx) {
+          final l10n = AppLocalizations.of(ctx)!;
+          return Column(
+            children: [
+              const Icon(
+                Icons.credit_card_off,
                 color: AppTheme.textSecondaryColor,
-                fontSize: 14,
+                size: 40,
               ),
-            ),
-          ],
-        ),
+              const SizedBox(height: 12),
+              Text(
+                l10n.noSavedCards,
+                style: const TextStyle(
+                  color: AppTheme.textPrimaryColor,
+                  fontSize: 16,
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                l10n.addCardToContinue,
+                style: const TextStyle(
+                  color: AppTheme.textSecondaryColor,
+                  fontSize: 14,
+                ),
+              ),
+            ],
+          );
+        },
+      ),
       );
     }
 
@@ -717,11 +738,13 @@ class _PaymentConfirmationViewState extends State<_PaymentConfirmationView> {
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  Text(
-                    'Vence ${card.expiryDate}',
-                    style: const TextStyle(
-                      color: AppTheme.textSecondaryColor,
-                      fontSize: 12,
+                  Builder(
+                    builder: (ctx) => Text(
+                      AppLocalizations.of(ctx)!.cardExpires(card.expiryDate),
+                      style: const TextStyle(
+                        color: AppTheme.textSecondaryColor,
+                        fontSize: 12,
+                      ),
                     ),
                   ),
                 ],
@@ -734,12 +757,14 @@ class _PaymentConfirmationViewState extends State<_PaymentConfirmationView> {
                   color: AppTheme.successColor.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Text(
-                  'Principal',
-                  style: TextStyle(
-                    color: AppTheme.successColor,
-                    fontSize: 10,
-                    fontWeight: FontWeight.bold,
+                child: Builder(
+                  builder: (ctx) => Text(
+                    AppLocalizations.of(ctx)!.defaultCard,
+                    style: const TextStyle(
+                      color: AppTheme.successColor,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ),
@@ -808,28 +833,31 @@ class _PaymentConfirmationViewState extends State<_PaymentConfirmationView> {
             style: BorderStyle.solid,
           ),
         ),
-        child: const Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.add_circle_outline,
-              color: AppTheme.primaryLightColor,
-            ),
-            SizedBox(width: 8),
-            Text(
-              'Agregar nueva tarjeta',
-              style: TextStyle(
+        child: Builder(
+          builder: (ctx) => Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.add_circle_outline,
                 color: AppTheme.primaryLightColor,
-                fontWeight: FontWeight.w600,
               ),
-            ),
-          ],
+              const SizedBox(width: 8),
+              Text(
+                AppLocalizations.of(ctx)!.addNewCard,
+                style: const TextStyle(
+                  color: AppTheme.primaryLightColor,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 
   Widget _buildPriceBreakdown() {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -849,9 +877,9 @@ class _PaymentConfirmationViewState extends State<_PaymentConfirmationView> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'Servicio',
-                style: TextStyle(color: AppTheme.textSecondaryColor),
+              Text(
+                l10n.serviceLabel,
+                style: const TextStyle(color: AppTheme.textSecondaryColor),
               ),
               Text(
                 widget.tripData.serviceType.split('|').first.trim(),
@@ -864,9 +892,9 @@ class _PaymentConfirmationViewState extends State<_PaymentConfirmationView> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  'Tiempo estimado',
-                  style: TextStyle(color: AppTheme.textSecondaryColor),
+                Text(
+                  l10n.estimatedTime,
+                  style: const TextStyle(color: AppTheme.textSecondaryColor),
                 ),
                 Text(
                   '${widget.tripData.estimatedDurationMinutes} min',
@@ -879,9 +907,9 @@ class _PaymentConfirmationViewState extends State<_PaymentConfirmationView> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'Total a pagar',
-                style: TextStyle(
+              Text(
+                l10n.totalToPay,
+                style: const TextStyle(
                   color: AppTheme.textPrimaryColor,
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
@@ -926,6 +954,7 @@ class _PaymentConfirmationViewState extends State<_PaymentConfirmationView> {
   }
 
   Widget _buildButtonContent() {
+    final l10n = AppLocalizations.of(context)!;
     switch (_paymentState) {
       case PaymentProcessState.processing:
         return Row(
@@ -942,8 +971,8 @@ class _PaymentConfirmationViewState extends State<_PaymentConfirmationView> {
             const SizedBox(width: 12),
             Text(
               _retryCount > 0
-                  ? 'Reintentando... (${_retryCount}/$_maxRetries)'
-                  : 'Procesando pago...',
+                  ? '${l10n.retryingPayment} (${_retryCount}/$_maxRetries)'
+                  : l10n.processingPayment,
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 16,
@@ -954,10 +983,10 @@ class _PaymentConfirmationViewState extends State<_PaymentConfirmationView> {
         );
 
       case PaymentProcessState.pending:
-        return const Row(
+        return Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            SizedBox(
+            const SizedBox(
               width: 20,
               height: 20,
               child: CircularProgressIndicator(
@@ -965,10 +994,10 @@ class _PaymentConfirmationViewState extends State<_PaymentConfirmationView> {
                 strokeWidth: 2,
               ),
             ),
-            SizedBox(width: 12),
+            const SizedBox(width: 12),
             Text(
-              'Confirmando pago...',
-              style: TextStyle(
+              l10n.confirmingPayment,
+              style: const TextStyle(
                 color: Colors.white,
                 fontSize: 16,
                 fontWeight: FontWeight.bold,
@@ -978,14 +1007,14 @@ class _PaymentConfirmationViewState extends State<_PaymentConfirmationView> {
         );
 
       case PaymentProcessState.completed:
-        return const Row(
+        return Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.check_circle, color: Colors.white, size: 20),
-            SizedBox(width: 8),
+            const Icon(Icons.check_circle, color: Colors.white, size: 20),
+            const SizedBox(width: 8),
             Text(
-              'Pago completado',
-              style: TextStyle(
+              l10n.paymentCompleted,
+              style: const TextStyle(
                 color: Colors.white,
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -995,14 +1024,14 @@ class _PaymentConfirmationViewState extends State<_PaymentConfirmationView> {
         );
 
       case PaymentProcessState.failed:
-        return const Row(
+        return Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.refresh, color: Colors.white, size: 20),
-            SizedBox(width: 8),
+            const Icon(Icons.refresh, color: Colors.white, size: 20),
+            const SizedBox(width: 8),
             Text(
-              'Reintentar pago',
-              style: TextStyle(
+              l10n.retryPayment,
+              style: const TextStyle(
                 color: Colors.white,
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
@@ -1018,7 +1047,7 @@ class _PaymentConfirmationViewState extends State<_PaymentConfirmationView> {
             const Icon(Icons.lock, color: Colors.white, size: 20),
             const SizedBox(width: 8),
             Text(
-              'Pagar \$${widget.tripData.totalPrice.toStringAsFixed(0)} MXN',
+              l10n.payAmount(widget.tripData.totalPrice.toStringAsFixed(0)),
               style: const TextStyle(
                 color: Colors.white,
                 fontSize: 18,
@@ -1045,12 +1074,14 @@ class _PaymentConfirmationViewState extends State<_PaymentConfirmationView> {
             size: 20,
           ),
           const SizedBox(width: 12),
-          const Expanded(
-            child: Text(
-              'Pago seguro. Tu informacion esta protegida con encriptacion de nivel bancario.',
-              style: TextStyle(
-                color: AppTheme.textSecondaryColor,
-                fontSize: 12,
+          Expanded(
+            child: Builder(
+              builder: (ctx) => Text(
+                AppLocalizations.of(ctx)!.securePaymentNote,
+                style: const TextStyle(
+                  color: AppTheme.textSecondaryColor,
+                  fontSize: 12,
+                ),
               ),
             ),
           ),

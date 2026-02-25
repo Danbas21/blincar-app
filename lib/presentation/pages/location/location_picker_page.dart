@@ -1,10 +1,14 @@
 // lib/presentation/pages/location/location_picker_page.dart
 
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:blincar_app/l10n/app_localizations.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:geocoding/geocoding.dart';
+import 'package:geocoding/geocoding.dart' as geo;
+import 'package:http/http.dart' as http;
 import '../../../core/theme/app_theme.dart';
+import '../../../core/config/env_config.dart';
 
 /// Modelo para representar una ubicación seleccionada
 class SelectedLocation {
@@ -22,20 +26,22 @@ class SelectedLocation {
   String toString() => address;
 }
 
-/// Página para seleccionar ubicación estilo Uber
-///
-/// Uso:
-/// ```dart
-/// final result = await Navigator.push<SelectedLocation>(
-///   context,
-///   MaterialPageRoute(
-///     builder: (_) => LocationPickerPage(
-///       title: 'Seleccionar origen',
-///       initialLocation: LatLng(19.4326, -99.1332),
-///     ),
-///   ),
-/// );
-/// ```
+/// Bounds de México para restringir búsquedas y selecciones
+class _MexicoBounds {
+  static const double minLat = 14.50;
+  static const double maxLat = 32.72;
+  static const double minLng = -118.40;
+  static const double maxLng = -86.72;
+
+  static bool contains(LatLng point) {
+    return point.latitude >= minLat &&
+        point.latitude <= maxLat &&
+        point.longitude >= minLng &&
+        point.longitude <= maxLng;
+  }
+}
+
+/// Página para seleccionar ubicación estilo Uber con Places Autocomplete
 class LocationPickerPage extends StatefulWidget {
   final String title;
   final LatLng? initialLocation;
@@ -62,7 +68,7 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
   String _selectedAddress = '';
   bool _isLoading = false;
   bool _isSearching = false;
-  List<_SearchResult> _searchResults = [];
+  List<_PlaceResult> _searchResults = [];
 
   // Ubicación por defecto (CDMX)
   static const LatLng _defaultLocation = LatLng(19.4326, -99.1332);
@@ -87,7 +93,6 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
     setState(() => _isLoading = true);
 
     try {
-      // Verificar permisos
       LocationPermission permission = await Geolocator.checkPermission();
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
@@ -99,75 +104,88 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
         return;
       }
 
-      // Obtener posición
       final position = await Geolocator.getCurrentPosition(
         desiredAccuracy: LocationAccuracy.high,
       );
 
       final newLocation = LatLng(position.latitude, position.longitude);
 
+      // Verificar que la ubicación esté en México
+      if (!_MexicoBounds.contains(newLocation)) {
+        setState(() => _isLoading = false);
+        return;
+      }
+
       setState(() {
         _selectedLocation = newLocation;
         _isLoading = false;
       });
 
-      // Mover cámara
       _mapController?.animateCamera(
         CameraUpdate.newLatLngZoom(newLocation, 16),
       );
 
-      // Obtener direccion
       await _getAddressFromLatLng(newLocation);
     } catch (_) {
       setState(() => _isLoading = false);
     }
   }
 
-  /// Convierte coordenadas a dirección
+  /// Convierte coordenadas a dirección usando Geocoding API via backend
   Future<void> _getAddressFromLatLng(LatLng location) async {
     try {
-      final placemarks = await placemarkFromCoordinates(
+      final baseUrl = EnvConfig.apiBaseUrl;
+      final url = Uri.parse(
+        '$baseUrl/api/routes/places/geocode'
+        '?lat=${location.latitude}&lng=${location.longitude}',
+      );
+
+      final response = await http.get(url).timeout(const Duration(seconds: 8));
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body) as Map<String, dynamic>;
+        if (data['success'] == true && data['data'] != null) {
+          final address = data['data']['formattedAddress'] as String? ?? '';
+          if (address.isNotEmpty) {
+            setState(() => _selectedAddress = address);
+            return;
+          }
+        }
+      }
+    } catch (_) {}
+
+    // Fallback: usar geocoding nativo del dispositivo (funciona con la key SHA-1 de Android)
+    try {
+      final placemarks = await geo.placemarkFromCoordinates(
         location.latitude,
         location.longitude,
       );
-
       if (placemarks.isNotEmpty) {
-        final place = placemarks.first;
-        final address = _formatAddress(place);
-        setState(() {
-          _selectedAddress = address;
-        });
+        final p = placemarks.first;
+        final parts = <String>[
+          if (p.street != null && p.street!.isNotEmpty) p.street!,
+          if (p.subLocality != null && p.subLocality!.isNotEmpty) p.subLocality!,
+          if (p.locality != null && p.locality!.isNotEmpty) p.locality!,
+          if (p.administrativeArea != null && p.administrativeArea!.isNotEmpty)
+            p.administrativeArea!,
+        ];
+        final address = parts.join(', ');
+        if (address.isNotEmpty) {
+          setState(() => _selectedAddress = address);
+          return;
+        }
       }
-    } catch (_) {
-      setState(() {
-        _selectedAddress = '${location.latitude.toStringAsFixed(6)}, ${location.longitude.toStringAsFixed(6)}';
-      });
-    }
+    } catch (_) {}
+
+    setState(() {
+      _selectedAddress =
+          '${location.latitude.toStringAsFixed(5)}, ${location.longitude.toStringAsFixed(5)}';
+    });
   }
 
-  /// Formatea el placemark a una dirección legible
-  String _formatAddress(Placemark place) {
-    final parts = <String>[];
-
-    if (place.street != null && place.street!.isNotEmpty) {
-      parts.add(place.street!);
-    }
-    if (place.subLocality != null && place.subLocality!.isNotEmpty) {
-      parts.add(place.subLocality!);
-    }
-    if (place.locality != null && place.locality!.isNotEmpty) {
-      parts.add(place.locality!);
-    }
-    if (place.administrativeArea != null && place.administrativeArea!.isNotEmpty) {
-      parts.add(place.administrativeArea!);
-    }
-
-    return parts.isNotEmpty ? parts.join(', ') : 'Ubicación seleccionada';
-  }
-
-  /// Busca direcciones por texto
-  Future<void> _searchAddress(String query) async {
-    if (query.length < 3) {
+  /// Búsqueda de lugares estilo Uber - usa backend como proxy (misma key que Directions)
+  Future<void> _searchPlaces(String query) async {
+    if (query.length < 2) {
       setState(() {
         _searchResults = [];
         _isSearching = false;
@@ -178,65 +196,215 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
     setState(() => _isSearching = true);
 
     try {
-      final locations = await locationFromAddress(query);
-      final results = <_SearchResult>[];
+      final baseUrl = EnvConfig.apiBaseUrl;
+      final url = Uri.parse(
+        '$baseUrl/api/routes/places/autocomplete'
+        '?input=${Uri.encodeComponent(query)}',
+      );
 
-      for (final loc in locations.take(5)) {
-        try {
-          final placemarks = await placemarkFromCoordinates(loc.latitude, loc.longitude);
-          if (placemarks.isNotEmpty) {
-            results.add(_SearchResult(
-              address: _formatAddress(placemarks.first),
-              location: LatLng(loc.latitude, loc.longitude),
-            ));
-          }
-        } catch (_) {}
+      final response = await http.get(url).timeout(const Duration(seconds: 8));
+
+      if (response.statusCode == 200) {
+        final data = json.decode(response.body) as Map<String, dynamic>;
+        if (data['success'] == true && data['data'] != null) {
+          final predictions =
+              data['data']['predictions'] as List<dynamic>? ?? [];
+
+          final results = predictions.map((p) {
+            return _PlaceResult(
+              placeId: p['placeId'] as String? ?? '',
+              mainText: p['mainText'] as String? ?? '',
+              secondaryText: p['secondaryText'] as String? ?? '',
+              fullDescription: p['fullDescription'] as String? ?? '',
+            );
+          }).toList();
+
+          setState(() {
+            _searchResults = results;
+            _isSearching = false;
+          });
+          return;
+        }
       }
+    } catch (_) {}
 
-      setState(() {
-        _searchResults = results;
-        _isSearching = false;
-      });
-    } catch (_) {
-      setState(() {
-        _searchResults = [];
-        _isSearching = false;
-      });
-    }
+    // Fallback: usar geocoding nativo del dispositivo para búsqueda básica
+    try {
+      final locations = await geo.locationFromAddress('$query, México');
+      if (locations.isNotEmpty) {
+        final results = <_PlaceResult>[];
+        for (final loc in locations.take(4)) {
+          try {
+            final marks = await geo.placemarkFromCoordinates(loc.latitude, loc.longitude);
+            if (marks.isNotEmpty) {
+              final p = marks.first;
+              final main = (p.street?.isNotEmpty == true ? p.street! : null) ??
+                  (p.thoroughfare?.isNotEmpty == true ? p.thoroughfare! : null) ??
+                  query;
+              final secondaryParts = <String>[
+                if (p.subLocality?.isNotEmpty == true) p.subLocality!,
+                if (p.locality?.isNotEmpty == true) p.locality!,
+                if (p.administrativeArea?.isNotEmpty == true) p.administrativeArea!,
+              ];
+              final secondary = secondaryParts.join(', ');
+              final full = [main, if (secondary.isNotEmpty) secondary].join(', ');
+              results.add(_PlaceResult(
+                placeId: '',
+                mainText: main,
+                secondaryText: secondary,
+                fullDescription: full,
+                fallbackLat: loc.latitude,
+                fallbackLng: loc.longitude,
+              ));
+            }
+          } catch (_) {}
+        }
+        if (results.isNotEmpty) {
+          setState(() {
+            _searchResults = results;
+            _isSearching = false;
+          });
+          return;
+        }
+      }
+    } catch (_) {}
+
+    setState(() {
+      _searchResults = [];
+      _isSearching = false;
+    });
   }
 
-  /// Selecciona una ubicación del resultado de búsqueda
-  void _selectSearchResult(_SearchResult result) {
+  /// Obtiene coordenadas de un Place ID (Google Places Details)
+  Future<void> _selectPlace(_PlaceResult place) async {
+    _searchFocus.unfocus();
     setState(() {
-      _selectedLocation = result.location;
-      _selectedAddress = result.address;
       _searchResults = [];
-      _searchController.text = result.address;
+      _searchController.text = place.fullDescription;
     });
 
-    _searchFocus.unfocus();
+    // Resultado del fallback geocoding nativo (sin placeId pero con lat/lng)
+    if (place.placeId.isEmpty && place.fallbackLat != null && place.fallbackLng != null) {
+      final latLng = LatLng(place.fallbackLat!, place.fallbackLng!);
+      if (!_MexicoBounds.contains(latLng)) {
+        _showOutsideMexicoError();
+        return;
+      }
+      setState(() {
+        _selectedLocation = latLng;
+        _selectedAddress = place.fullDescription;
+        _searchController.text = place.fullDescription;
+      });
+      _mapController?.animateCamera(CameraUpdate.newLatLngZoom(latLng, 16));
+      return;
+    }
 
-    _mapController?.animateCamera(
-      CameraUpdate.newLatLngZoom(result.location, 16),
-    );
+    // Obtener coordenadas del Place ID via backend
+    if (place.placeId.isNotEmpty) {
+      setState(() => _isLoading = true);
+
+      try {
+        final baseUrl = EnvConfig.apiBaseUrl;
+        final url = Uri.parse(
+          '$baseUrl/api/routes/places/details'
+          '?placeId=${Uri.encodeComponent(place.placeId)}',
+        );
+
+        final response =
+            await http.get(url).timeout(const Duration(seconds: 8));
+
+        if (response.statusCode == 200) {
+          final data = json.decode(response.body) as Map<String, dynamic>;
+          if (data['success'] == true && data['data'] != null) {
+            final details = data['data'] as Map<String, dynamic>;
+            final lat = (details['lat'] as num?)?.toDouble();
+            final lng = (details['lng'] as num?)?.toDouble();
+            final name = details['name'] as String? ?? '';
+            final formattedAddress =
+                details['formattedAddress'] as String? ?? place.fullDescription;
+            // Mostrar nombre del lugar si existe (ej: "Plaza Forum Buenavista"),
+            // si no, mostrar la dirección exacta
+            final displayAddress = name.isNotEmpty ? name : formattedAddress;
+
+            if (lat != null && lng != null) {
+              final latLng = LatLng(lat, lng);
+
+              if (!_MexicoBounds.contains(latLng)) {
+                setState(() => _isLoading = false);
+                _showOutsideMexicoError();
+                return;
+              }
+
+              setState(() {
+                _selectedLocation = latLng;
+                _selectedAddress = displayAddress;
+                _searchController.text = displayAddress;
+                _isLoading = false;
+              });
+
+              _mapController?.animateCamera(
+                CameraUpdate.newLatLngZoom(latLng, 16),
+              );
+              return;
+            }
+          }
+        }
+      } catch (_) {}
+
+      setState(() => _isLoading = false);
+    }
   }
 
   /// Maneja tap en el mapa
   void _onMapTap(LatLng location) {
+    if (!_MexicoBounds.contains(location)) {
+      _showOutsideMexicoError();
+      return;
+    }
+
     setState(() {
       _selectedLocation = location;
-      _selectedAddress = 'Cargando dirección...';
+      _selectedAddress = AppLocalizations.of(context)!.loadingAddress;
     });
 
     _getAddressFromLatLng(location);
+  }
+
+  void _showOutsideMexicoError() {
+    final l10n = AppLocalizations.of(context)!;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            const Icon(Icons.location_off, color: Colors.white),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Text(
+                l10n.onlyMexicoDestinations,
+                style: const TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: AppTheme.errorColor,
+        duration: const Duration(seconds: 3),
+      ),
+    );
   }
 
   /// Confirma la selección y regresa
   void _confirmSelection() {
     if (_selectedLocation == null) return;
 
+    if (!_MexicoBounds.contains(_selectedLocation!)) {
+      _showOutsideMexicoError();
+      return;
+    }
+
     final result = SelectedLocation(
-      address: _selectedAddress.isNotEmpty ? _selectedAddress : 'Ubicación seleccionada',
+      address: _selectedAddress.isNotEmpty
+          ? _selectedAddress
+          : 'Ubicación seleccionada',
       latitude: _selectedLocation!.latitude,
       longitude: _selectedLocation!.longitude,
     );
@@ -246,6 +414,7 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppTheme.backgroundColor,
       body: Stack(
@@ -284,7 +453,8 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
             child: Column(
               children: [
                 _buildSearchHeader(),
-                if (_searchResults.isNotEmpty) _buildSearchResults(),
+                if (_searchResults.isNotEmpty || _isSearching)
+                  _buildSearchResults(),
               ],
             ),
           ),
@@ -303,7 +473,10 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
                       height: 20,
                       child: CircularProgressIndicator(strokeWidth: 2),
                     )
-                  : const Icon(Icons.my_location, color: AppTheme.primaryLightColor),
+                  : const Icon(
+                      Icons.my_location,
+                      color: AppTheme.primaryLightColor,
+                    ),
             ),
           ),
 
@@ -343,7 +516,9 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
               children: [
                 Icon(
                   widget.isOrigin ? Icons.trip_origin : Icons.location_on,
-                  color: widget.isOrigin ? AppTheme.successColor : AppTheme.errorColor,
+                  color: widget.isOrigin
+                      ? AppTheme.successColor
+                      : AppTheme.errorColor,
                   size: 20,
                 ),
                 const SizedBox(width: 8),
@@ -358,27 +533,48 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.close, color: AppTheme.textSecondaryColor),
+                  icon: const Icon(Icons.close,
+                      color: AppTheme.textSecondaryColor),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
               ],
             ),
           ),
 
-          // Campo de búsqueda
+          // Campo de búsqueda estilo Uber
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
             child: TextField(
               controller: _searchController,
               focusNode: _searchFocus,
-              style: const TextStyle(color: AppTheme.textPrimaryColor),
+              style: const TextStyle(
+                color: AppTheme.textPrimaryColor,
+                fontSize: 16,
+              ),
               decoration: InputDecoration(
-                hintText: 'Buscar dirección...',
-                hintStyle: const TextStyle(color: AppTheme.textSecondaryColor),
-                prefixIcon: const Icon(Icons.search, color: AppTheme.textSecondaryColor),
+                hintText: widget.isOrigin
+                    ? AppLocalizations.of(context)!.whereFrom
+                    : AppLocalizations.of(context)!.whereGoing,
+                hintStyle:
+                    const TextStyle(color: AppTheme.textSecondaryColor),
+                prefixIcon: _isSearching
+                    ? const Padding(
+                        padding: EdgeInsets.all(12),
+                        child: SizedBox(
+                          width: 20,
+                          height: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: AppTheme.primaryLightColor,
+                          ),
+                        ),
+                      )
+                    : const Icon(Icons.search,
+                        color: AppTheme.textSecondaryColor),
                 suffixIcon: _searchController.text.isNotEmpty
                     ? IconButton(
-                        icon: const Icon(Icons.clear, color: AppTheme.textSecondaryColor),
+                        icon: const Icon(Icons.clear,
+                            color: AppTheme.textSecondaryColor),
                         onPressed: () {
                           _searchController.clear();
                           setState(() => _searchResults = []);
@@ -391,11 +587,10 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide.none,
                 ),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                contentPadding: const EdgeInsets.symmetric(
+                    horizontal: 16, vertical: 14),
               ),
-              onChanged: (value) {
-                _searchAddress(value);
-              },
+              onChanged: (value) => _searchPlaces(value),
             ),
           ),
         ],
@@ -406,45 +601,94 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
   Widget _buildSearchResults() {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16),
-      constraints: const BoxConstraints(maxHeight: 250),
+      constraints: const BoxConstraints(maxHeight: 280),
       decoration: BoxDecoration(
         color: AppTheme.surfaceColor,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withAlpha(40),
-            blurRadius: 10,
+            color: Colors.black.withAlpha(50),
+            blurRadius: 12,
           ),
         ],
       ),
-      child: _isSearching
-          ? const Center(
-              child: Padding(
-                padding: EdgeInsets.all(20),
-                child: CircularProgressIndicator(),
+      child: _isSearching && _searchResults.isEmpty
+          ? Padding(
+              padding: const EdgeInsets.all(20),
+              child: Center(
+                child: Builder(
+                  builder: (ctx) => Text(
+                    AppLocalizations.of(ctx)!.searching,
+                    style: const TextStyle(color: AppTheme.textSecondaryColor),
+                  ),
+                ),
               ),
             )
-          : ListView.builder(
+          : ListView.separated(
               shrinkWrap: true,
               padding: EdgeInsets.zero,
               itemCount: _searchResults.length,
+              separatorBuilder: (_, __) => Divider(
+                height: 1,
+                color: AppTheme.dividerColor,
+                indent: 56,
+              ),
               itemBuilder: (context, index) {
-                final result = _searchResults[index];
-                return ListTile(
-                  leading: const Icon(
-                    Icons.location_on_outlined,
-                    color: AppTheme.textSecondaryColor,
-                  ),
-                  title: Text(
-                    result.address,
-                    style: const TextStyle(
-                      color: AppTheme.textPrimaryColor,
-                      fontSize: 14,
+                final place = _searchResults[index];
+                return InkWell(
+                  onTap: () => _selectPlace(place),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 12),
+                    child: Row(
+                      children: [
+                        Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                            color: AppTheme.cardColor,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: const Icon(
+                            Icons.location_on_outlined,
+                            color: AppTheme.primaryLightColor,
+                            size: 20,
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              // Nombre del lugar en bold (estilo Uber)
+                              Text(
+                                place.mainText,
+                                style: const TextStyle(
+                                  color: AppTheme.textPrimaryColor,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                              if (place.secondaryText.isNotEmpty) ...[
+                                const SizedBox(height: 2),
+                                // Dirección secundaria más pequeña
+                                Text(
+                                  place.secondaryText,
+                                  style: const TextStyle(
+                                    color: AppTheme.textSecondaryColor,
+                                    fontSize: 13,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
                   ),
-                  onTap: () => _selectSearchResult(result),
                 );
               },
             ),
@@ -452,11 +696,13 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
   }
 
   Widget _buildBottomPanel() {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: AppTheme.surfaceColor,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+        borderRadius:
+            const BorderRadius.vertical(top: Radius.circular(24)),
         boxShadow: [
           BoxShadow(
             color: Colors.black.withAlpha(40),
@@ -471,7 +717,6 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Indicador
             Center(
               child: Container(
                 width: 40,
@@ -484,19 +729,22 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
             ),
             const SizedBox(height: 16),
 
-            // Dirección seleccionada
             Row(
               children: [
                 Container(
                   padding: const EdgeInsets.all(10),
                   decoration: BoxDecoration(
-                    color: (widget.isOrigin ? AppTheme.successColor : AppTheme.errorColor)
+                    color: (widget.isOrigin
+                            ? AppTheme.successColor
+                            : AppTheme.errorColor)
                         .withAlpha(30),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   child: Icon(
                     widget.isOrigin ? Icons.trip_origin : Icons.location_on,
-                    color: widget.isOrigin ? AppTheme.successColor : AppTheme.errorColor,
+                    color: widget.isOrigin
+                        ? AppTheme.successColor
+                        : AppTheme.errorColor,
                     size: 24,
                   ),
                 ),
@@ -506,7 +754,9 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        widget.isOrigin ? 'Punto de origen' : 'Punto de destino',
+                        widget.isOrigin
+                            ? l10n.originPoint
+                            : l10n.destinationPoint,
                         style: const TextStyle(
                           color: AppTheme.textSecondaryColor,
                           fontSize: 12,
@@ -516,7 +766,7 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
                       Text(
                         _selectedAddress.isNotEmpty
                             ? _selectedAddress
-                            : 'Toca el mapa para seleccionar',
+                            : l10n.tapMapToSelect,
                         style: const TextStyle(
                           color: AppTheme.textPrimaryColor,
                           fontSize: 15,
@@ -532,12 +782,12 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
             ),
             const SizedBox(height: 20),
 
-            // Botón confirmar
             SizedBox(
               width: double.infinity,
               height: 54,
               child: ElevatedButton(
-                onPressed: _selectedLocation != null ? _confirmSelection : null,
+                onPressed:
+                    _selectedLocation != null ? _confirmSelection : null,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppTheme.primaryLightColor,
                   disabledBackgroundColor: AppTheme.dividerColor,
@@ -546,7 +796,7 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
                   ),
                 ),
                 child: Text(
-                  'Confirmar ${widget.isOrigin ? 'origen' : 'destino'}',
+                  widget.isOrigin ? l10n.confirmOrigin : l10n.confirmDestination,
                   style: const TextStyle(
                     color: Colors.white,
                     fontSize: 16,
@@ -562,10 +812,21 @@ class _LocationPickerPageState extends State<LocationPickerPage> {
   }
 }
 
-/// Resultado de búsqueda interno
-class _SearchResult {
-  final String address;
-  final LatLng location;
+/// Resultado de búsqueda de Places Autocomplete
+class _PlaceResult {
+  final String placeId;
+  final String mainText;       // Nombre del lugar (bold, estilo Uber)
+  final String secondaryText;  // Dirección secundaria (más pequeña)
+  final String fullDescription;
+  final double? fallbackLat;   // Usado cuando placeId está vacío (geocoding nativo)
+  final double? fallbackLng;
 
-  _SearchResult({required this.address, required this.location});
+  _PlaceResult({
+    required this.placeId,
+    required this.mainText,
+    required this.secondaryText,
+    required this.fullDescription,
+    this.fallbackLat,
+    this.fallbackLng,
+  });
 }

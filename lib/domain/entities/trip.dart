@@ -125,4 +125,6 @@ enum TripStatus {
   inProgress,
   completed,
   cancelled,
+  assigned,
+  pending,
 }

@@ -121,11 +121,14 @@ class TripModel extends Trip {
 
   static TripStatus _parseTripStatus(String status) {
     switch (status) {
-      case 'requested':
+      case 'pending':        // Firebase actual
+      case 'requested':      // Legacy/display name
         return TripStatus.requested;
-      case 'accepted':
+      case 'assigned':       // Firebase actual
+      case 'accepted':       // Legacy/display name
         return TripStatus.accepted;
-      case 'in_progress':
+      case 'inProgress':     // Firebase actual (camelCase)
+      case 'in_progress':    // Legacy (snake_case)
         return TripStatus.inProgress;
       case 'completed':
         return TripStatus.completed;

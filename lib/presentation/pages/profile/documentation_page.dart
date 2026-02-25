@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:blincar_app/l10n/app_localizations.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/services/service_locator.dart';
 import '../../../core/services/document_service.dart';
@@ -44,10 +45,11 @@ class _DocumentationPageState extends State<DocumentationPage>
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppTheme.backgroundColor,
       appBar: AppBar(
-        title: const Text('Documentación'),
+        title: Text(l10n.documentation),
         backgroundColor: AppTheme.backgroundColor,
         foregroundColor: AppTheme.textPrimaryColor,
         elevation: 0,
@@ -57,27 +59,27 @@ class _DocumentationPageState extends State<DocumentationPage>
           labelColor: AppTheme.textPrimaryColor,
           unselectedLabelColor: AppTheme.textSecondaryColor,
           isScrollable: true,
-          tabs: const [
-            Tab(text: 'Personal'),
-            Tab(text: 'Licencia'),
-            Tab(text: 'Vehículo'),
-            Tab(text: 'Seguros'),
+          tabs: [
+            Tab(text: l10n.personalDocs),
+            Tab(text: l10n.licenseDocs),
+            Tab(text: l10n.vehicleDocs),
+            Tab(text: l10n.insuranceDocs),
           ],
         ),
       ),
       body: TabBarView(
         controller: _tabController,
         children: [
-          _buildPersonalDocuments(),
-          _buildLicenseDocuments(),
-          _buildVehicleDocuments(),
-          _buildInsuranceDocuments(),
+          _buildPersonalDocuments(l10n),
+          _buildLicenseDocuments(l10n),
+          _buildVehicleDocuments(l10n),
+          _buildInsuranceDocuments(l10n),
         ],
       ),
     );
   }
 
-  Widget _buildPersonalDocuments() {
+  Widget _buildPersonalDocuments(AppLocalizations l10n) {
     final personalDocs = MockData.getPersonalDocuments();
 
     return SingleChildScrollView(
@@ -85,8 +87,8 @@ class _DocumentationPageState extends State<DocumentationPage>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Documentos Personales',
+          Text(
+            l10n.personalDocsTitle,
             style: TextStyle(
               color: AppTheme.textPrimaryColor,
               fontSize: 20,
@@ -94,19 +96,19 @@ class _DocumentationPageState extends State<DocumentationPage>
             ),
           ),
           const SizedBox(height: 8),
-          const Text(
-            'Sube tus documentos oficiales para verificación',
+          Text(
+            l10n.personalDocsDescription,
             style: TextStyle(
               color: AppTheme.textSecondaryColor,
               fontSize: 14,
             ),
           ),
           const SizedBox(height: 24),
-          ...personalDocs.map((doc) => _buildDocumentCard(doc)),
+          ...personalDocs.map((doc) => _buildDocumentCard(doc, l10n)),
           const SizedBox(height: 32),
           CustomButton(
-            text: 'Subir Nuevo Documento',
-            onPressed: () => _showUploadDialog('personal'),
+            text: l10n.uploadDocument,
+            onPressed: () => _showUploadDialog('personal', l10n),
             icon: Icons.upload_file,
           ),
         ],
@@ -114,7 +116,7 @@ class _DocumentationPageState extends State<DocumentationPage>
     );
   }
 
-  Widget _buildLicenseDocuments() {
+  Widget _buildLicenseDocuments(AppLocalizations l10n) {
     final licenseDocs = MockData.getLicenseDocuments();
 
     return SingleChildScrollView(
@@ -186,13 +188,13 @@ class _DocumentationPageState extends State<DocumentationPage>
 
           const SizedBox(height: 24),
 
-          ...licenseDocs.map((doc) => _buildDocumentCard(doc)),
+          ...licenseDocs.map((doc) => _buildDocumentCard(doc, l10n)),
 
           const SizedBox(height: 32),
 
           CustomButton(
-            text: 'Subir Licencia',
-            onPressed: () => _showUploadDialog('license'),
+            text: l10n.uploadDocument,
+            onPressed: () => _showUploadDialog('license', l10n),
             icon: Icons.badge,
           ),
         ],
@@ -200,7 +202,7 @@ class _DocumentationPageState extends State<DocumentationPage>
     );
   }
 
-  Widget _buildVehicleDocuments() {
+  Widget _buildVehicleDocuments(AppLocalizations l10n) {
     final vehicleDocs = MockData.getVehicleDocuments();
 
     return SingleChildScrollView(
@@ -263,13 +265,13 @@ class _DocumentationPageState extends State<DocumentationPage>
 
           const SizedBox(height: 24),
 
-          ...vehicleDocs.map((doc) => _buildDocumentCard(doc)),
+          ...vehicleDocs.map((doc) => _buildDocumentCard(doc, l10n)),
 
           const SizedBox(height: 32),
 
           CustomButton(
-            text: 'Subir Documento Vehicular',
-            onPressed: () => _showUploadDialog('vehicle'),
+            text: l10n.uploadDocument,
+            onPressed: () => _showUploadDialog('vehicle', l10n),
             icon: Icons.directions_car,
           ),
         ],
@@ -277,7 +279,7 @@ class _DocumentationPageState extends State<DocumentationPage>
     );
   }
 
-  Widget _buildInsuranceDocuments() {
+  Widget _buildInsuranceDocuments(AppLocalizations l10n) {
     final insuranceDocs = MockData.getInsuranceDocuments();
 
     return SingleChildScrollView(
@@ -349,13 +351,13 @@ class _DocumentationPageState extends State<DocumentationPage>
 
           const SizedBox(height: 24),
 
-          ...insuranceDocs.map((doc) => _buildDocumentCard(doc)),
+          ...insuranceDocs.map((doc) => _buildDocumentCard(doc, l10n)),
 
           const SizedBox(height: 32),
 
           CustomButton(
-            text: 'Subir Póliza de Seguro',
-            onPressed: () => _showUploadDialog('insurance'),
+            text: l10n.uploadDocument,
+            onPressed: () => _showUploadDialog('insurance', l10n),
             icon: Icons.security,
           ),
         ],
@@ -363,7 +365,7 @@ class _DocumentationPageState extends State<DocumentationPage>
     );
   }
 
-  Widget _buildDocumentCard(DocumentItem doc) {
+  Widget _buildDocumentCard(DocumentItem doc, AppLocalizations l10n) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(20),
@@ -424,7 +426,7 @@ class _DocumentationPageState extends State<DocumentationPage>
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  _getStatusText(doc.status),
+                  _getStatusText(doc.status, l10n),
                   style: TextStyle(
                     color: _getStatusColor(doc.status),
                     fontSize: 12,
@@ -496,8 +498,8 @@ class _DocumentationPageState extends State<DocumentationPage>
                   doc.status == DocumentStatus.expired) ...[
                 Expanded(
                   child: CustomButton(
-                    text: 'Resubir',
-                    onPressed: () => _showUploadDialog(doc.type),
+                    text: l10n.reupload,
+                    onPressed: () => _showUploadDialog(doc.type, l10n),
                     type: ButtonType.secondary,
                     height: 40,
                   ),
@@ -506,8 +508,8 @@ class _DocumentationPageState extends State<DocumentationPage>
               ],
               Expanded(
                 child: CustomButton(
-                  text: 'Ver Documento',
-                  onPressed: () => _viewDocument(doc),
+                  text: l10n.viewDocument,
+                  onPressed: () => _viewDocument(doc, l10n),
                   type: ButtonType.outline,
                   height: 40,
                 ),
@@ -628,18 +630,18 @@ class _DocumentationPageState extends State<DocumentationPage>
     }
   }
 
-  String _getStatusText(DocumentStatus status) {
+  String _getStatusText(DocumentStatus status, AppLocalizations l10n) {
     switch (status) {
       case DocumentStatus.approved:
-        return 'Aprobado';
+        return l10n.docApproved;
       case DocumentStatus.pending:
-        return 'Pendiente';
+        return l10n.docPending;
       case DocumentStatus.rejected:
-        return 'Rechazado';
+        return l10n.docRejected;
       case DocumentStatus.expired:
-        return 'Vencido';
+        return l10n.docExpired;
       case DocumentStatus.missing:
-        return 'Faltante';
+        return l10n.docMissing;
     }
   }
 
@@ -664,25 +666,25 @@ class _DocumentationPageState extends State<DocumentationPage>
     return difference <= 30;
   }
 
-  void _showUploadDialog(String type) {
+  void _showUploadDialog(String type, AppLocalizations l10n) {
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
         backgroundColor: AppTheme.surfaceColor,
-        title: const Text(
-          'Subir Documento',
-          style: TextStyle(color: AppTheme.textPrimaryColor),
+        title: Text(
+          l10n.uploadNewDocument,
+          style: const TextStyle(color: AppTheme.textPrimaryColor),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Text(
-              'Selecciona cómo quieres subir tu documento:',
-              style: TextStyle(color: AppTheme.textSecondaryColor),
+            Text(
+              l10n.chooseUploadMethod,
+              style: const TextStyle(color: AppTheme.textSecondaryColor),
             ),
             const SizedBox(height: 20),
             CustomButton(
-              text: 'Tomar Foto',
+              text: l10n.takePhoto,
               onPressed: () {
                 Navigator.of(dialogContext).pop();
                 _captureAndUpload(type, useCamera: true);
@@ -691,7 +693,7 @@ class _DocumentationPageState extends State<DocumentationPage>
             ),
             const SizedBox(height: 12),
             CustomButton(
-              text: 'Seleccionar de Galería',
+              text: l10n.selectFromGallery,
               onPressed: () {
                 Navigator.of(dialogContext).pop();
                 _captureAndUpload(type, useCamera: false);
@@ -704,7 +706,7 @@ class _DocumentationPageState extends State<DocumentationPage>
         actions: [
           TextButton(
             onPressed: () => Navigator.of(dialogContext).pop(),
-            child: const Text('Cancelar'),
+            child: Text(l10n.cancel),
           ),
         ],
       ),
@@ -831,7 +833,7 @@ class _DocumentationPageState extends State<DocumentationPage>
     }
   }
 
-  void _viewDocument(DocumentItem doc) {
+  void _viewDocument(DocumentItem doc, AppLocalizations l10n) {
     // Mostrar diálogo con opciones de visualización
     showModalBottomSheet(
       context: context,
@@ -895,7 +897,7 @@ class _DocumentationPageState extends State<DocumentationPage>
                           borderRadius: BorderRadius.circular(4),
                         ),
                         child: Text(
-                          _getStatusText(doc.status),
+                          _getStatusText(doc.status, l10n),
                           style: TextStyle(
                             color: _getStatusColor(doc.status),
                             fontSize: 12,
@@ -970,10 +972,10 @@ class _DocumentationPageState extends State<DocumentationPage>
                     doc.status == DocumentStatus.expired) ...[
                   Expanded(
                     child: CustomButton(
-                      text: 'Resubir',
+                      text: l10n.reupload,
                       onPressed: () {
                         Navigator.pop(context);
-                        _showUploadDialog(doc.type);
+                        _showUploadDialog(doc.type, l10n);
                       },
                       icon: Icons.upload,
                     ),

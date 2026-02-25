@@ -3,6 +3,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:blincar_app/l10n/app_localizations.dart';
 import 'package:image_picker/image_picker.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/utils/validators.dart';
@@ -129,35 +130,49 @@ class _EditProfilePageState extends State<EditProfilePage> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
-                'Cambiar foto de perfil',
-                style: TextStyle(
-                  color: AppTheme.textPrimaryColor,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 20),
-              ListTile(
-                leading: const Icon(Icons.camera_alt, color: AppTheme.accentColor),
-                title: const Text(
-                  'Tomar foto',
-                  style: TextStyle(color: AppTheme.textPrimaryColor),
-                ),
-                onTap: () {
-                  Navigator.pop(context);
-                  _pickImage(ImageSource.camera);
+              Builder(
+                builder: (ctx) {
+                  final l10n = AppLocalizations.of(ctx)!;
+                  return Text(
+                    l10n.changeProfilePhoto,
+                    style: const TextStyle(
+                      color: AppTheme.textPrimaryColor,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  );
                 },
               ),
-              ListTile(
-                leading: const Icon(Icons.photo_library, color: AppTheme.accentColor),
-                title: const Text(
-                  'Elegir de galería',
-                  style: TextStyle(color: AppTheme.textPrimaryColor),
-                ),
-                onTap: () {
-                  Navigator.pop(context);
-                  _pickImage(ImageSource.gallery);
+              const SizedBox(height: 20),
+              Builder(
+                builder: (ctx) {
+                  final l10n = AppLocalizations.of(ctx)!;
+                  return Column(
+                    children: [
+                      ListTile(
+                        leading: const Icon(Icons.camera_alt, color: AppTheme.accentColor),
+                        title: Text(
+                          l10n.takePhotoOption,
+                          style: const TextStyle(color: AppTheme.textPrimaryColor),
+                        ),
+                        onTap: () {
+                          Navigator.pop(context);
+                          _pickImage(ImageSource.camera);
+                        },
+                      ),
+                      ListTile(
+                        leading: const Icon(Icons.photo_library, color: AppTheme.accentColor),
+                        title: Text(
+                          l10n.chooseGallery,
+                          style: const TextStyle(color: AppTheme.textPrimaryColor),
+                        ),
+                        onTap: () {
+                          Navigator.pop(context);
+                          _pickImage(ImageSource.gallery);
+                        },
+                      ),
+                    ],
+                  );
                 },
               ),
             ],
@@ -194,7 +209,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
   void _updatePassword() {
     if (_passwordFormKey.currentState?.validate() ?? false) {
       if (_newPasswordController.text != _confirmPasswordController.text) {
-        _showSnackBar('Las contraseñas no coinciden', isError: true);
+        final l10n = AppLocalizations.of(context)!;
+        _showSnackBar(l10n.passwordsMismatch, isError: true);
         return;
       }
 
@@ -266,6 +282,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         }
       },
       builder: (context, state) {
+        final l10n = AppLocalizations.of(context)!;
         final isLoading = state is ProfileUpdating || state is UploadingPhoto;
 
         // Obtener usuario actual
@@ -284,7 +301,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
         return Scaffold(
           backgroundColor: AppTheme.backgroundColor,
           appBar: AppBar(
-            title: const Text('Editar Perfil'),
+            title: Text(l10n.editProfile),
             backgroundColor: AppTheme.backgroundColor,
             foregroundColor: AppTheme.textPrimaryColor,
             elevation: 0,
@@ -306,17 +323,17 @@ class _EditProfilePageState extends State<EditProfilePage> {
                       const SizedBox(height: 24),
 
                       // Información básica
-                      _buildBasicInfoSection(user, isLoading),
+                      _buildBasicInfoSection(user, isLoading, l10n),
 
                       const SizedBox(height: 16),
 
                       // Cambiar email
-                      _buildEmailSection(user, isLoading),
+                      _buildEmailSection(user, isLoading, l10n),
 
                       const SizedBox(height: 16),
 
                       // Cambiar contraseña
-                      _buildPasswordSection(isLoading),
+                      _buildPasswordSection(isLoading, l10n),
 
                       const SizedBox(height: 32),
                     ],
@@ -431,9 +448,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 
-  Widget _buildBasicInfoSection(User user, bool isLoading) {
+  Widget _buildBasicInfoSection(User user, bool isLoading, AppLocalizations l10n) {
     return _buildExpandableSection(
-      title: 'Información Personal',
+      title: l10n.personalInformation,
       icon: Icons.person,
       isExpanded: _isEditingProfile,
       onToggle: () => setState(() => _isEditingProfile = !_isEditingProfile),
@@ -442,8 +459,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
         child: Column(
           children: [
             CustomTextField(
-              label: 'Nombre completo',
-              hint: 'Tu nombre completo',
+              label: l10n.fullName,
+              hint: l10n.fullNameHint,
               controller: _nameController,
               validator: Validators.name,
               prefixIcon: const Icon(Icons.person_outline,
@@ -452,8 +469,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
             ),
             const SizedBox(height: 16),
             CustomTextField(
-              label: 'Teléfono',
-              hint: '10 dígitos',
+              label: l10n.phone,
+              hint: l10n.phone10Digits,
               controller: _phoneController,
               validator: Validators.phone,
               keyboardType: TextInputType.phone,
@@ -463,8 +480,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
             ),
             const SizedBox(height: 16),
             CustomTextField(
-              label: 'Contacto de emergencia',
-              hint: 'Nombre del contacto',
+              label: l10n.emergencyContact,
+              hint: l10n.emergencyContact,
               controller: _emergencyNameController,
               prefixIcon: const Icon(Icons.contact_emergency_outlined,
                   color: AppTheme.textSecondaryColor),
@@ -472,8 +489,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
             ),
             const SizedBox(height: 16),
             CustomTextField(
-              label: 'Teléfono de emergencia',
-              hint: '10 dígitos',
+              label: l10n.emergencyContactPhone,
+              hint: l10n.phone10Digits,
               controller: _emergencyPhoneController,
               keyboardType: TextInputType.phone,
               prefixIcon: const Icon(Icons.phone_outlined,
@@ -482,7 +499,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             ),
             const SizedBox(height: 20),
             _buildActionButton(
-              text: 'Guardar cambios',
+              text: l10n.saveChanges,
               onPressed: isLoading ? null : _saveProfile,
               isLoading: isLoading && !_isEditingEmail && !_isEditingPassword,
             ),
@@ -492,9 +509,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 
-  Widget _buildEmailSection(User user, bool isLoading) {
+  Widget _buildEmailSection(User user, bool isLoading, AppLocalizations l10n) {
     return _buildExpandableSection(
-      title: 'Cambiar correo electrónico',
+      title: l10n.changeEmailSection,
       icon: Icons.email,
       subtitle: user.email,
       isExpanded: _isEditingEmail,
@@ -516,7 +533,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
-                      'Se enviará un correo de verificación al nuevo email',
+                      l10n.emailVerificationNotice,
                       style: TextStyle(
                         color: AppTheme.warningColor,
                         fontSize: 12,
@@ -528,8 +545,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
             ),
             const SizedBox(height: 16),
             CustomTextField(
-              label: 'Nuevo correo electrónico',
-              hint: 'ejemplo@correo.com',
+              label: l10n.newEmail,
+              hint: l10n.emailHint,
               controller: _newEmailController,
               validator: Validators.email,
               keyboardType: TextInputType.emailAddress,
@@ -550,7 +567,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             ),
             const SizedBox(height: 20),
             _buildActionButton(
-              text: 'Actualizar correo',
+              text: l10n.updateEmailButton,
               onPressed: isLoading ? null : _updateEmail,
               isLoading: isLoading && _isEditingEmail,
             ),
@@ -560,9 +577,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
     );
   }
 
-  Widget _buildPasswordSection(bool isLoading) {
+  Widget _buildPasswordSection(bool isLoading, AppLocalizations l10n) {
     return _buildExpandableSection(
-      title: 'Cambiar contraseña',
+      title: l10n.changePasswordSection,
       icon: Icons.lock,
       isExpanded: _isEditingPassword,
       onToggle: () => setState(() => _isEditingPassword = !_isEditingPassword),
@@ -582,8 +599,8 @@ class _EditProfilePageState extends State<EditProfilePage> {
             ),
             const SizedBox(height: 16),
             CustomTextField(
-              label: 'Nueva contraseña',
-              hint: 'Mínimo 8 caracteres',
+              label: l10n.newPassword,
+              hint: l10n.min8Chars,
               controller: _newPasswordController,
               validator: Validators.password,
               obscureText: true,
@@ -593,12 +610,12 @@ class _EditProfilePageState extends State<EditProfilePage> {
             ),
             const SizedBox(height: 16),
             CustomTextField(
-              label: 'Confirmar nueva contraseña',
-              hint: 'Repite la nueva contraseña',
+              label: l10n.confirmPassword,
+              hint: l10n.repeatNewPassword,
               controller: _confirmPasswordController,
               validator: (value) {
                 if (value != _newPasswordController.text) {
-                  return 'Las contraseñas no coinciden';
+                  return l10n.passwordsMismatch;
                 }
                 return Validators.password(value);
               },
@@ -609,7 +626,7 @@ class _EditProfilePageState extends State<EditProfilePage> {
             ),
             const SizedBox(height: 20),
             _buildActionButton(
-              text: 'Actualizar contraseña',
+              text: l10n.updatePassword,
               onPressed: isLoading ? null : _updatePassword,
               isLoading: isLoading && _isEditingPassword,
             ),

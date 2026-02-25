@@ -2,7 +2,7 @@ name: blincar_app
 description: "Aplicación móvil Blincar - Transporte seguro"
 publish_to: "none"
 
-version: 1.0.1+4
+version: 1.0.1+7
 
 environment:
   sdk: ">=3.0.0 <4.0.0"
@@ -76,11 +76,14 @@ flutter_launcher_icons:
   ios: true
   image_path: "assets/icons/b-icon.png"
   min_sdk_android: 21
+  # Icono adaptativo Android: fondo azul oscuro Blincar + logo blanco centrado (25% más pequeño)
+  adaptive_icon_background: "#010130"
+  adaptive_icon_foreground: "assets/icons/w-icon-padded.png"
   web:
     generate: true
     image_path: "assets/icons/b-icon.png"
-    background_color: "#1a1a2e"
-    theme_color: "#4f46e5"
+    background_color: "#010130"
+    theme_color: "#1E88E5"
   windows:
     generate: true
     image_path: "assets/icons/b-icon.png"

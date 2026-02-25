@@ -70,7 +70,7 @@ class FirebaseTripRepository implements TripRepository {
         // De lo contrario, usar el totalPrice proporcionado
         if (estimatedDurationMinutes != null && estimatedDurationMinutes > 0) {
           // Calcular: (duracion / 10) * 50 = duracion * 5
-          final baseTimePrice = (estimatedDurationMinutes / 10).ceil() * 50.0;
+          final baseTimePrice = (estimatedDurationMinutes / 10).ceil() * 1.0;
           finalPrice = baseTimePrice;
         }
 

@@ -1,6 +1,7 @@
 // lib/presentation/pages/reservations/reservations_page.dart
 
 import 'package:flutter/material.dart';
+import 'package:blincar_app/l10n/app_localizations.dart';
 import '../../../core/theme/app_theme.dart';
 
 /// Página de reservaciones del usuario
@@ -37,13 +38,14 @@ class _ReservationsPageState extends State<ReservationsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final reservations = _getMockReservations();
     final filteredReservations = _getFilteredReservations(reservations);
 
     return Scaffold(
       backgroundColor: AppTheme.backgroundColor,
       appBar: AppBar(
-        title: const Text('Mis Reservaciones'),
+        title: Text(l10n.myReservations),
         backgroundColor: AppTheme.backgroundColor,
         foregroundColor: AppTheme.textPrimaryColor,
         elevation: 0,
@@ -98,19 +100,19 @@ class _ReservationsPageState extends State<ReservationsPage> {
           // Lista de reservaciones
           Expanded(
             child: filteredReservations.isEmpty
-                ? const Center(
+                ? Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(
+                        const Icon(
                           Icons.calendar_today,
                           size: 64,
                           color: AppTheme.textSecondaryColor,
                         ),
-                        SizedBox(height: 16),
+                        const SizedBox(height: 16),
                         Text(
-                          'No tienes reservaciones',
-                          style: TextStyle(
+                          l10n.noReservations,
+                          style: const TextStyle(
                             color: AppTheme.textSecondaryColor,
                             fontSize: 16,
                           ),
@@ -123,7 +125,7 @@ class _ReservationsPageState extends State<ReservationsPage> {
                     itemCount: filteredReservations.length,
                     itemBuilder: (context, index) {
                       final reservation = filteredReservations[index];
-                      return _buildReservationCard(reservation);
+                      return _buildReservationCard(reservation, l10n);
                     },
                   ),
           ),
@@ -208,7 +210,7 @@ class _ReservationsPageState extends State<ReservationsPage> {
     }
   }
 
-  Widget _buildReservationCard(_Reservation reservation) {
+  Widget _buildReservationCard(_Reservation reservation, AppLocalizations l10n) {
     return GestureDetector(
       onTap: () => _showReservationDetails(reservation.id),
       child: Container(
@@ -240,7 +242,7 @@ class _ReservationsPageState extends State<ReservationsPage> {
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Text(
-                    _getStatusText(reservation.status),
+                    _getStatusText(reservation.status, l10n),
                     style: TextStyle(
                       color: _getStatusColor(reservation.status),
                       fontSize: 12,
@@ -398,16 +400,16 @@ class _ReservationsPageState extends State<ReservationsPage> {
     }
   }
 
-  String _getStatusText(_ReservationStatus status) {
+  String _getStatusText(_ReservationStatus status, AppLocalizations l10n) {
     switch (status) {
       case _ReservationStatus.confirmed:
-        return 'Confirmada';
+        return l10n.reservationConfirmed;
       case _ReservationStatus.pending:
-        return 'Pendiente';
+        return l10n.tripStatusPending;
       case _ReservationStatus.completed:
-        return 'Completada';
+        return l10n.reservationCompleted;
       case _ReservationStatus.cancelled:
-        return 'Cancelada';
+        return l10n.reservationCancelled;
     }
   }
 
@@ -445,12 +447,14 @@ class _ReservationsPageState extends State<ReservationsPage> {
               ),
             ),
             const SizedBox(height: 24),
-            Text(
-              'Detalles de Reservación',
-              style: const TextStyle(
-                color: AppTheme.textPrimaryColor,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+            Builder(
+              builder: (ctx) => Text(
+                AppLocalizations.of(ctx)!.reservationDetails,
+                style: const TextStyle(
+                  color: AppTheme.textPrimaryColor,
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
             const SizedBox(height: 8),
@@ -475,7 +479,7 @@ class _ReservationsPageState extends State<ReservationsPage> {
                       );
                     },
                     icon: const Icon(Icons.edit),
-                    label: const Text('Modificar'),
+                    label: Builder(builder: (ctx) => Text(AppLocalizations.of(ctx)!.modifyButton)),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: AppTheme.textPrimaryColor,
                       side: const BorderSide(color: AppTheme.dividerColor),
@@ -496,7 +500,7 @@ class _ReservationsPageState extends State<ReservationsPage> {
                       );
                     },
                     icon: const Icon(Icons.cancel),
-                    label: const Text('Cancelar'),
+                    label: Builder(builder: (ctx) => Text(AppLocalizations.of(ctx)!.cancel)),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppTheme.errorColor,
                       foregroundColor: Colors.white,

@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:blincar_app/l10n/app_localizations.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/services/service_locator.dart';
 import '../../../domain/entities/trip/trip_entity.dart';
@@ -72,10 +73,11 @@ class _ActivityPageState extends State<ActivityPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppTheme.backgroundColor,
       appBar: AppBar(
-        title: const Text('Mi Actividad'),
+        title: Text(l10n.activityTitle),
         backgroundColor: AppTheme.backgroundColor,
         foregroundColor: AppTheme.textPrimaryColor,
         elevation: 0,
@@ -86,11 +88,11 @@ class _ActivityPageState extends State<ActivityPage> {
           ),
         ],
       ),
-      body: _buildBody(),
+      body: _buildBody(l10n),
     );
   }
 
-  Widget _buildBody() {
+  Widget _buildBody(AppLocalizations l10n) {
     if (_isLoading) {
       return const Center(
         child: CircularProgressIndicator(),
@@ -120,7 +122,7 @@ class _ActivityPageState extends State<ActivityPage> {
             ElevatedButton.icon(
               onPressed: _loadUserTrips,
               icon: const Icon(Icons.refresh),
-              label: const Text('Reintentar'),
+              label: Text(l10n.retry),
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppTheme.primaryColor,
                 foregroundColor: Colors.white,
@@ -132,7 +134,7 @@ class _ActivityPageState extends State<ActivityPage> {
     }
 
     if (_trips.isEmpty) {
-      return _buildEmptyState();
+      return _buildEmptyState(l10n);
     }
 
     return RefreshIndicator(
@@ -152,8 +154,8 @@ class _ActivityPageState extends State<ActivityPage> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  'Historial de Viajes',
+                Text(
+                  l10n.tripHistory,
                   style: TextStyle(
                     color: AppTheme.textPrimaryColor,
                     fontSize: 20,
@@ -179,7 +181,7 @@ class _ActivityPageState extends State<ActivityPage> {
               itemCount: _trips.length,
               itemBuilder: (context, index) {
                 final trip = _trips[index];
-                return _buildTripCard(trip);
+                return _buildTripCard(trip, l10n);
               },
             ),
           ],
@@ -189,6 +191,7 @@ class _ActivityPageState extends State<ActivityPage> {
   }
 
   Widget _buildSummaryCards() {
+    final l10n = AppLocalizations.of(context)!;
     final completedTrips =
         _trips.where((t) => t.status == TripStatus.completed).toList();
     final totalSpent =
@@ -220,8 +223,8 @@ class _ActivityPageState extends State<ActivityPage> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const Text(
-                  'Viajes completados',
+                Text(
+                  l10n.tripsCompleted,
                   style: TextStyle(
                     color: AppTheme.textSecondaryColor,
                     fontSize: 12,
@@ -256,8 +259,8 @@ class _ActivityPageState extends State<ActivityPage> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const Text(
-                  'Total gastado',
+                Text(
+                  l10n.totalSpent,
                   style: TextStyle(
                     color: AppTheme.textSecondaryColor,
                     fontSize: 12,
@@ -271,7 +274,7 @@ class _ActivityPageState extends State<ActivityPage> {
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildEmptyState(AppLocalizations l10n) {
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(40),
@@ -291,19 +294,19 @@ class _ActivityPageState extends State<ActivityPage> {
               ),
             ),
             const SizedBox(height: 24),
-            const Text(
-              'Sin viajes aún',
-              style: TextStyle(
+            Text(
+              l10n.noTripsYet,
+              style: const TextStyle(
                 color: AppTheme.textPrimaryColor,
                 fontSize: 20,
                 fontWeight: FontWeight.w600,
               ),
             ),
             const SizedBox(height: 12),
-            const Text(
-              'Cuando completes tu primer viaje, aparecerá aquí',
+            Text(
+              l10n.noTripsDescription,
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 color: AppTheme.textSecondaryColor,
                 fontSize: 14,
               ),
@@ -314,9 +317,9 @@ class _ActivityPageState extends State<ActivityPage> {
     );
   }
 
-  Widget _buildTripCard(TripEntity trip) {
+  Widget _buildTripCard(TripEntity trip, AppLocalizations l10n) {
     final statusColor = _getStatusColor(trip.status);
-    final statusText = _getStatusText(trip.status);
+    final statusText = _getStatusText(trip.status, l10n);
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
@@ -515,18 +518,18 @@ class _ActivityPageState extends State<ActivityPage> {
     }
   }
 
-  String _getStatusText(TripStatus status) {
+  String _getStatusText(TripStatus status, AppLocalizations l10n) {
     switch (status) {
       case TripStatus.completed:
-        return 'Completado';
+        return l10n.tripStatusCompleted;
       case TripStatus.cancelled:
-        return 'Cancelado';
+        return l10n.tripStatusCancelled;
       case TripStatus.pending:
-        return 'Pendiente';
+        return l10n.tripStatusPending;
       case TripStatus.assigned:
-        return 'Asignado';
+        return l10n.tripStatusAssigned;
       case TripStatus.inProgress:
-        return 'En progreso';
+        return l10n.tripStatusInProgress;
     }
   }
 

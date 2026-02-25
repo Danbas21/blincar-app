@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:video_player/video_player.dart';
 
 import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/auth/auth_event.dart';
@@ -15,47 +16,69 @@ class SplashPage extends StatefulWidget {
   State<SplashPage> createState() => _SplashPageState();
 }
 
-class _SplashPageState extends State<SplashPage> with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _scaleAnimation;
-  late Animation<double> _opacityAnimation;
+class _SplashPageState extends State<SplashPage> {
+  late VideoPlayerController _videoController;
+  bool _videoInitialized = false;
   bool _hasNavigated = false;
 
   @override
   void initState() {
     super.initState();
+    _initVideo();
 
-    // Animación del logo
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1500),
-    );
-
-    _scaleAnimation = Tween<double>(begin: 0.5, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.elasticOut),
-    );
-
-    _opacityAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeIn),
-    );
-
-    // Iniciar animación
-    _controller.forward();
-
-    // Despues de 2 segundos, verificar autenticacion
-    Future.delayed(const Duration(seconds: 2), () {
-      if (mounted) {
-        context.read<AuthBloc>().add(CheckAuthStatus());
-      }
-    });
-
-    // Timeout de seguridad: si despues de 10 segundos no se navego,
-    // ir a login para evitar que la app se quede pegada
+    // Timeout de seguridad: si en 10s no navega, ir a login
     Future.delayed(const Duration(seconds: 10), () {
       if (mounted && !_hasNavigated) {
         _navigateToLogin();
       }
     });
+  }
+
+  Future<void> _initVideo() async {
+    _videoController = VideoPlayerController.asset('assets/video/splash.mp4');
+
+    try {
+      await _videoController.initialize();
+
+      if (!mounted) return;
+
+      setState(() => _videoInitialized = true);
+
+      // Reproducir el video sin loop
+      await _videoController.setLooping(false);
+      await _videoController.setVolume(1.0);
+      await _videoController.play();
+
+      // Verificar auth cuando el video lleva ~1 segundo reproduciéndose
+      Future.delayed(const Duration(milliseconds: 1000), () {
+        if (mounted) {
+          context.read<AuthBloc>().add(CheckAuthStatus());
+        }
+      });
+
+      // Cuando el video termina, asegurarse de navegar
+      _videoController.addListener(_onVideoEnd);
+    } catch (e) {
+      // Si el video falla, usar splash de fallback con logo
+      if (mounted) {
+        setState(() => _videoInitialized = false);
+        // Verificar auth de todas formas
+        Future.delayed(const Duration(milliseconds: 1500), () {
+          if (mounted) {
+            context.read<AuthBloc>().add(CheckAuthStatus());
+          }
+        });
+      }
+    }
+  }
+
+  void _onVideoEnd() {
+    if (_videoController.value.position >= _videoController.value.duration &&
+        !_videoController.value.isPlaying &&
+        _videoController.value.duration > Duration.zero) {
+      // Video terminó - si ya teníamos el resultado del auth, navegar
+      // Si no, esperar (el BlocListener lo manejará)
+    }
   }
 
   void _navigateToLogin() {
@@ -76,99 +99,103 @@ class _SplashPageState extends State<SplashPage> with SingleTickerProviderStateM
 
   @override
   void dispose() {
-    _controller.dispose();
+    _videoController.removeListener(_onVideoEnd);
+    _videoController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.backgroundColor,
+      backgroundColor: Colors.black,
       body: BlocListener<AuthBloc, AuthState>(
         listener: (context, state) {
           if (state is AuthAuthenticated) {
-            _navigateToHome();
+            // Esperar a que el video termine si queda poco tiempo
+            final remaining = _videoController.value.duration -
+                _videoController.value.position;
+            if (_videoInitialized && remaining.inMilliseconds > 500) {
+              Future.delayed(
+                remaining.inMilliseconds > 3000
+                    ? const Duration(milliseconds: 500)
+                    : remaining,
+                () {
+                  if (mounted) _navigateToHome();
+                },
+              );
+            } else {
+              _navigateToHome();
+            }
           } else if (state is AuthUnauthenticated || state is AuthError) {
-            // En caso de error tambien redirigir a login
-            _navigateToLogin();
+            final remaining = _videoController.value.duration -
+                _videoController.value.position;
+            if (_videoInitialized && remaining.inMilliseconds > 500) {
+              Future.delayed(
+                remaining.inMilliseconds > 3000
+                    ? const Duration(milliseconds: 500)
+                    : remaining,
+                () {
+                  if (mounted) _navigateToLogin();
+                },
+              );
+            } else {
+              _navigateToLogin();
+            }
           }
         },
-        child: Center(
-          child: AnimatedBuilder(
-            animation: _controller,
-            builder: (context, child) {
-              return Opacity(
-                opacity: _opacityAnimation.value,
-                child: Transform.scale(
-                  scale: _scaleAnimation.value,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      // Logo
-                      Container(
-                        width: 140,
-                        height: 140,
-                        decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [AppTheme.primaryLightColor, Color(0xFF0F4C75)],
-                            begin: Alignment.topLeft,
-                            end: Alignment.bottomRight,
-                          ),
-                          borderRadius: BorderRadius.circular(35),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppTheme.primaryLightColor.withAlpha(100),
-                              blurRadius: 40,
-                              spreadRadius: 10,
-                            ),
-                          ],
-                        ),
-                        child: const Icon(
-                          Icons.local_taxi,
-                          size: 70,
-                          color: Colors.white,
-                        ),
-                      ),
-                      const SizedBox(height: 32),
+        child: _videoInitialized
+            ? _buildVideoSplash()
+            : _buildFallbackSplash(),
+      ),
+    );
+  }
 
-                      // Nombre
-                      const Text(
-                        'BLINCAR',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 38,
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 6,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
+  Widget _buildVideoSplash() {
+    return SizedBox.expand(
+      child: FittedBox(
+        fit: BoxFit.cover,
+        child: SizedBox(
+          width: _videoController.value.size.width,
+          height: _videoController.value.size.height,
+          child: VideoPlayer(_videoController),
+        ),
+      ),
+    );
+  }
 
-                      // Slogan
-                      const Text(
-                        'Transporte Seguro',
-                        style: TextStyle(
-                          color: AppTheme.textSecondaryColor,
-                          fontSize: 16,
-                          letterSpacing: 2,
-                        ),
-                      ),
-                      const SizedBox(height: 60),
-
-                      // Loading
-                      const SizedBox(
-                        width: 40,
-                        height: 40,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 3,
-                          color: AppTheme.primaryLightColor,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              );
-            },
-          ),
+  // Splash de respaldo si el video falla
+  Widget _buildFallbackSplash() {
+    return Container(
+      color: AppTheme.backgroundColor,
+      child: const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.local_taxi,
+              size: 80,
+              color: AppTheme.primaryLightColor,
+            ),
+            SizedBox(height: 24),
+            Text(
+              'BLINCAR',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 38,
+                fontWeight: FontWeight.bold,
+                letterSpacing: 6,
+              ),
+            ),
+            SizedBox(height: 48),
+            SizedBox(
+              width: 40,
+              height: 40,
+              child: CircularProgressIndicator(
+                strokeWidth: 3,
+                color: AppTheme.primaryLightColor,
+              ),
+            ),
+          ],
         ),
       ),
     );

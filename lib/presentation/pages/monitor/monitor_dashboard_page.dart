@@ -8,6 +8,7 @@ import '../../../domain/entities/trip/trip_entity.dart';
 import '../../../domain/repositories/trip_repository.dart';
 import '../../../core/services/service_locator.dart';
 import 'assign_trip_dialog.dart';
+import 'monitor_map_page.dart';
 
 class MonitorDashboardPage extends StatefulWidget {
   const MonitorDashboardPage({super.key});
@@ -203,6 +204,21 @@ class _MonitorDashboardPageState extends State<MonitorDashboardPage>
                 _buildCompletedTripsTab(),
               ],
             ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (context) => const MonitorMapPage(),
+            ),
+          );
+        },
+        backgroundColor: AppTheme.primaryColor,
+        icon: const Icon(Icons.map, color: Colors.white),
+        label: const Text(
+          'Mapa en Vivo',
+          style: TextStyle(color: Colors.white),
+        ),
+      ),
     );
   }
 
@@ -527,33 +543,216 @@ class _MonitorDashboardPageState extends State<MonitorDashboardPage>
   }
 
   void _showTripDetails(TripEntity trip) {
+    final canReassign = trip.status == TripStatus.assigned ||
+        trip.status == TripStatus.inProgress;
+    final canCancel = trip.status == TripStatus.assigned ||
+        trip.status == TripStatus.inProgress ||
+        trip.status == TripStatus.pending;
+
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
+      builder: (dialogContext) => AlertDialog(
+        backgroundColor: AppTheme.surfaceColor,
+        title: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: _getStatusColor(trip.status).withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Text(
+                trip.status.displayName,
+                style: TextStyle(
+                  color: _getStatusColor(trip.status),
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            const Expanded(
+              child: Text(
+                'Detalles del Viaje',
+                style: TextStyle(
+                  color: AppTheme.textPrimaryColor,
+                  fontSize: 16,
+                ),
+              ),
+            ),
+          ],
+        ),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildDetailRow('Usuario', trip.userName),
+              _buildDetailRow('Teléfono', trip.userPhone),
+              const Divider(color: AppTheme.dividerColor),
+              _buildDetailRow('Origen', trip.route.origin.name),
+              _buildDetailRow('Destino', trip.route.destination.name),
+              _buildDetailRow('Distancia', '${trip.route.distanceKm.toStringAsFixed(1)} km'),
+              const Divider(color: AppTheme.dividerColor),
+              if (trip.driverName != null)
+                _buildDetailRow('Conductor', trip.driverName!),
+              if (trip.driverPhone != null)
+                _buildDetailRow('Tel. Conductor', trip.driverPhone!),
+              if (trip.vehiclePlate != null)
+                _buildDetailRow('Vehículo', trip.vehiclePlate!),
+              const Divider(color: AppTheme.dividerColor),
+              _buildDetailRow('Precio', '\$${trip.totalPrice.toStringAsFixed(2)} MXN'),
+            ],
+          ),
+        ),
+        actionsAlignment: MainAxisAlignment.spaceBetween,
+        actions: [
+          // Botón de cancelar viaje
+          if (canCancel)
+            TextButton.icon(
+              onPressed: () {
+                Navigator.of(dialogContext).pop();
+                _showCancelTripDialog(trip);
+              },
+              icon: const Icon(Icons.cancel, color: AppTheme.errorColor, size: 18),
+              label: const Text(
+                'Cancelar',
+                style: TextStyle(color: AppTheme.errorColor),
+              ),
+            ),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // Botón de reasignar
+              if (canReassign)
+                TextButton.icon(
+                  onPressed: () {
+                    Navigator.of(dialogContext).pop();
+                    _showReassignDialog(trip);
+                  },
+                  icon: const Icon(Icons.swap_horiz, color: AppTheme.warningColor, size: 18),
+                  label: const Text(
+                    'Reasignar',
+                    style: TextStyle(color: AppTheme.warningColor),
+                  ),
+                ),
+              TextButton(
+                onPressed: () => Navigator.of(dialogContext).pop(),
+                child: const Text('Cerrar'),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _showReassignDialog(TripEntity trip) {
+    showDialog(
+      context: context,
+      builder: (context) => AssignTripDialog(
+        trip: trip,
+        isReassignment: true,
+      ),
+    ).then((reassigned) {
+      if (reassigned == true) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Viaje reasignado exitosamente'),
+            backgroundColor: AppTheme.successColor,
+          ),
+        );
+        _refreshTrips();
+      }
+    });
+  }
+
+  void _showCancelTripDialog(TripEntity trip) {
+    final reasonController = TextEditingController();
+
+    showDialog(
+      context: context,
+      builder: (dialogContext) => AlertDialog(
         backgroundColor: AppTheme.surfaceColor,
         title: const Text(
-          'Detalles del Viaje',
+          'Cancelar Viaje',
           style: TextStyle(color: AppTheme.textPrimaryColor),
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildDetailRow('Usuario', trip.userName),
-            _buildDetailRow('Teléfono', trip.userPhone),
-            _buildDetailRow('Estado', trip.status.displayName),
-            if (trip.driverName != null)
-              _buildDetailRow('Conductor', trip.driverName!),
-            if (trip.vehiclePlate != null)
-              _buildDetailRow('Vehículo', trip.vehiclePlate!),
-            _buildDetailRow('Precio', '\$${trip.totalPrice}'),
-            _buildDetailRow('Distancia', '${trip.route.distanceKm} km'),
+            const Text(
+              '¿Estás seguro de que deseas cancelar este viaje?',
+              style: TextStyle(color: AppTheme.textSecondaryColor),
+            ),
+            const SizedBox(height: 16),
+            TextField(
+              controller: reasonController,
+              maxLines: 3,
+              style: const TextStyle(color: AppTheme.textPrimaryColor),
+              decoration: InputDecoration(
+                hintText: 'Motivo de cancelación (obligatorio)',
+                hintStyle: const TextStyle(color: AppTheme.textSecondaryColor),
+                filled: true,
+                fillColor: AppTheme.backgroundColor,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8),
+                  borderSide: BorderSide.none,
+                ),
+              ),
+            ),
           ],
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cerrar'),
+            onPressed: () => Navigator.of(dialogContext).pop(),
+            child: const Text('Volver'),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              final reason = reasonController.text.trim();
+              if (reason.isEmpty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Por favor indica el motivo de cancelación'),
+                    backgroundColor: AppTheme.warningColor,
+                  ),
+                );
+                return;
+              }
+
+              Navigator.of(dialogContext).pop();
+
+              // Cancelar el viaje
+              final result = await _tripRepository.cancelTrip(
+                tripId: trip.id,
+                reason: 'Cancelado por monitor: $reason',
+              );
+
+              result.fold(
+                (failure) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Error: ${failure.message}'),
+                      backgroundColor: AppTheme.errorColor,
+                    ),
+                  );
+                },
+                (_) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Viaje cancelado exitosamente'),
+                      backgroundColor: AppTheme.successColor,
+                    ),
+                  );
+                  _refreshTrips();
+                },
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: AppTheme.errorColor,
+            ),
+            child: const Text('Cancelar Viaje'),
           ),
         ],
       ),

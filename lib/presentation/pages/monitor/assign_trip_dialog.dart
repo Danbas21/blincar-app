@@ -8,10 +8,12 @@ import '../../../domain/entities/trip/trip_entity.dart';
 
 class AssignTripDialog extends StatefulWidget {
   final TripEntity trip;
+  final bool isReassignment;
 
   const AssignTripDialog({
     super.key,
     required this.trip,
+    this.isReassignment = false,
   });
 
   @override
@@ -281,6 +283,29 @@ class _AssignTripDialogState extends State<AssignTripDialog> {
       final vehicle =
           _vehicles.firstWhere((v) => v['id'] == _selectedVehicleId);
 
+      // Si es reasignación, liberar el conductor y vehículo anterior
+      if (widget.isReassignment) {
+        final previousDriverId = widget.trip.driverId;
+        final previousVehicleId = widget.trip.vehicleId;
+
+        if (previousDriverId != null && previousDriverId != driver['id']) {
+          await _database
+              .child('blincar/drivers/$previousDriverId/isAvailable')
+              .set(true);
+          await _database
+              .child('blincar/drivers/$previousDriverId/currentTripId')
+              .remove();
+          _log('Conductor anterior $previousDriverId liberado');
+        }
+
+        if (previousVehicleId != null && previousVehicleId != vehicle['id']) {
+          await _database
+              .child('blincar/vehicles/$previousVehicleId/isAvailable')
+              .set(true);
+          _log('Vehículo anterior $previousVehicleId liberado');
+        }
+      }
+
       // Actualizar trip en Firebase
       await _database.child('blincar/trips/${widget.trip.id}').update({
         'status': 'assigned',
@@ -290,23 +315,29 @@ class _AssignTripDialogState extends State<AssignTripDialog> {
         'vehicleId': vehicle['id'],
         'vehiclePlate': vehicle['licensePlate'],
         'assignedAt': DateTime.now().toIso8601String(),
+        if (widget.isReassignment) 'reassignedAt': DateTime.now().toIso8601String(),
       });
 
-      // Marcar conductor como no disponible
-      await _database
-          .child('blincar/drivers/${driver['id']}/isAvailable')
-          .set(false);
+      // Marcar nuevo conductor como no disponible y asignar trip
+      await _database.child('blincar/drivers/${driver['id']}').update({
+        'isAvailable': false,
+        'currentTripId': widget.trip.id,
+      });
 
-      // Marcar vehículo como no disponible
+      // Marcar nuevo vehículo como no disponible
       await _database
           .child('blincar/vehicles/${vehicle['id']}/isAvailable')
           .set(false);
 
       if (!mounted) return;
 
+      final message = widget.isReassignment
+          ? '✅ Viaje reasignado exitosamente'
+          : '✅ Viaje asignado exitosamente';
+
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('✅ Viaje asignado exitosamente'),
+        SnackBar(
+          content: Text(message),
           backgroundColor: AppTheme.successColor,
         ),
       );
@@ -344,16 +375,18 @@ class _AssignTripDialogState extends State<AssignTripDialog> {
                   // Header
                   Row(
                     children: [
-                      const Icon(
-                        Icons.assignment_ind,
-                        color: AppTheme.primaryLightColor,
+                      Icon(
+                        widget.isReassignment ? Icons.swap_horiz : Icons.assignment_ind,
+                        color: widget.isReassignment
+                            ? AppTheme.warningColor
+                            : AppTheme.primaryLightColor,
                         size: 32,
                       ),
                       const SizedBox(width: 12),
-                      const Expanded(
+                      Expanded(
                         child: Text(
-                          'Asignar Viaje',
-                          style: TextStyle(
+                          widget.isReassignment ? 'Reasignar Viaje' : 'Asignar Viaje',
+                          style: const TextStyle(
                             color: AppTheme.textPrimaryColor,
                             fontSize: 24,
                             fontWeight: FontWeight.bold,
@@ -599,7 +632,9 @@ class _AssignTripDialogState extends State<AssignTripDialog> {
                         child: ElevatedButton(
                           onPressed: _isAssigning ? null : _assignTrip,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: AppTheme.primaryColor,
+                            backgroundColor: widget.isReassignment
+                                ? AppTheme.warningColor
+                                : AppTheme.primaryColor,
                             foregroundColor: Colors.white,
                           ),
                           child: _isAssigning
@@ -612,7 +647,9 @@ class _AssignTripDialogState extends State<AssignTripDialog> {
                                         Colors.white),
                                   ),
                                 )
-                              : const Text('Asignar Viaje'),
+                              : Text(widget.isReassignment
+                                  ? 'Reasignar Viaje'
+                                  : 'Asignar Viaje'),
                         ),
                       ),
                     ],

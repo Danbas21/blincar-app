@@ -93,8 +93,15 @@ class EnvConfig {
   // ========================================
 
   /// API Key de Google Maps (restringida por SHA-1 y package name)
+  /// Usada por el Maps SDK nativo (google_maps_flutter)
   static String get googleMapsApiKey =>
       dotenv.env['GOOGLE_MAPS_API_KEY'] ?? '';
+
+  /// API Key para llamadas HTTP a Google Places y Geocoding REST API
+  /// Esta key NO tiene restricción de Android SHA-1 - solo restricción de API
+  /// Habilitar: Places API, Places API (New), Geocoding API
+  static String get googlePlacesHttpKey =>
+      dotenv.env['GOOGLE_PLACES_HTTP_KEY'] ?? dotenv.env['GOOGLE_MAPS_API_KEY'] ?? '';
 
   // ========================================
   // ENVIRONMENT FLAGS

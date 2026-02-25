@@ -5,6 +5,7 @@ import 'package:blincar_app/presentation/pages/auth/forgot_password_page.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:blincar_app/l10n/app_localizations.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/constants/images_constant.dart';
@@ -54,6 +55,7 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppTheme.backgroundColor,
       body: BlocListener<AuthBloc, AuthState>(
@@ -93,8 +95,8 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     const SizedBox(height: 32),
                     // Titulo principal
-                    const Text(
-                      'MOVILIDAD DE ALTO NIVEL\nCON SEGURIDAD TOTAL.',
+                    Text(
+                      l10n.loginHeroText,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: AppTheme.textPrimaryColor,
@@ -105,8 +107,8 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     const SizedBox(height: 32),
                     // Subtitulo
-                    const Text(
-                      'INICIA SESION',
+                    Text(
+                      l10n.loginTitle,
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: AppTheme.textPrimaryColor,
@@ -119,14 +121,14 @@ class _LoginPageState extends State<LoginPage> {
                     // Campo de email
                     _buildGradientTextField(
                       controller: _emailController,
-                      hintText: 'Correo Electronico Corporativo o Personal*',
+                      hintText: l10n.loginEmailLabel,
                       keyboardType: TextInputType.emailAddress,
                     ),
                     const SizedBox(height: 16),
                     // Campo de password
                     _buildGradientTextField(
                       controller: _passwordController,
-                      hintText: 'Contrasena*',
+                      hintText: l10n.loginPasswordLabel,
                       obscureText: _obscurePassword,
                       suffixIcon: IconButton(
                         icon: Icon(
@@ -159,8 +161,8 @@ class _LoginPageState extends State<LoginPage> {
                           minimumSize: Size.zero,
                           tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                         ),
-                        child: const Text(
-                          'Has olvidado tu contrasena?',
+                        child: Text(
+                          l10n.forgotPasswordLink,
                           style: TextStyle(
                             color: AppTheme.textPrimaryColor,
                             fontSize: 14,
@@ -173,7 +175,7 @@ class _LoginPageState extends State<LoginPage> {
                     BlocBuilder<AuthBloc, AuthState>(
                       builder: (context, state) {
                         return _buildOutlinedButton(
-                          text: 'Iniciar Sesion',
+                          text: l10n.loginButton,
                           onPressed: state is AuthLoading ? null : _handleLogin,
                           isLoading: state is AuthLoading,
                         );
@@ -189,17 +191,17 @@ class _LoginPageState extends State<LoginPage> {
                           ),
                         );
                       },
-                      child: const Text.rich(
+                      child: Text.rich(
                         TextSpan(
-                          text: 'Eres nuevo en BlinCar? ',
-                          style: TextStyle(
+                          text: l10n.registerLinkPrefix,
+                          style: const TextStyle(
                             color: AppTheme.textPrimaryColor,
                             fontSize: 14,
                           ),
                           children: [
                             TextSpan(
-                              text: 'Inscribete!',
-                              style: TextStyle(
+                              text: l10n.registerLinkAction,
+                              style: const TextStyle(
                                 color: AppTheme.textPrimaryColor,
                                 fontWeight: FontWeight.w600,
                                 decoration: TextDecoration.underline,
@@ -211,7 +213,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     const SizedBox(height: 24),
                     // Divisor con "o"
-                    _buildDividerWithText('o'),
+                    _buildDividerWithText(l10n.orDivider),
                     const SizedBox(height: 24),
                     // Botones de autenticacion social
                     // Apple Sign In solo disponible en iOS nativo (no web)
@@ -219,25 +221,25 @@ class _LoginPageState extends State<LoginPage> {
                         Theme.of(context).platform == TargetPlatform.iOS) ...[
                       _buildSocialButton(
                         icon: Icons.apple,
-                        text: 'Continuar con Apple',
+                        text: l10n.continueWithApple,
                         onPressed: _handleAppleSignIn,
                       ),
                       const SizedBox(height: 12),
                     ],
                     _buildSocialButton(
                       iconWidget: _buildGoogleIcon(),
-                      text: 'Continuar con Google',
+                      text: l10n.continueWithGoogle,
                       onPressed: _handleGoogleSignIn,
                     ),
                     const SizedBox(height: 12),
                     _buildSocialButton(
                       icon: Icons.facebook,
                       iconColor: const Color(0xFF1877F2),
-                      text: 'Continuar con Facebook',
+                      text: l10n.continueWithFacebook,
                       onPressed: () {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Facebook Sign In proximamente'),
+                          SnackBar(
+                            content: Text(l10n.facebookComingSoon),
                             backgroundColor: AppTheme.primaryLightColor,
                           ),
                         );

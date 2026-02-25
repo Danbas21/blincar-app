@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:blincar_app/l10n/app_localizations.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/constants/routes_data.dart';
@@ -13,6 +14,7 @@ import '../../bloc/auth/auth_bloc.dart';
 import '../../bloc/auth/auth_state.dart';
 import '../../widgets/common/custom_button.dart';
 import 'waiting_assignment_page.dart';
+import 'package:intl/intl.dart';
 
 class TripRequestPageV2 extends StatefulWidget {
   const TripRequestPageV2({super.key});
@@ -46,6 +48,7 @@ class _TripRequestPageV2State extends State<TripRequestPageV2> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final routesCount = RoutesData.airportRoutes.length;
 
     return Scaffold(
@@ -60,7 +63,7 @@ class _TripRequestPageV2State extends State<TripRequestPageV2> {
             const Icon(Icons.route, color: AppTheme.primaryLightColor),
             const SizedBox(width: 12),
             Text(
-              'Rutas Disponibles ($routesCount)',
+              l10n.availableRoutes(routesCount),
               style: const TextStyle(color: AppTheme.textPrimaryColor),
             ),
           ],
@@ -86,47 +89,49 @@ class _TripRequestPageV2State extends State<TripRequestPageV2> {
             myLocationButtonEnabled: false,
           ),
 
-          // Panel de selección de ruta
-          Positioned(
-            bottom: 0,
-            left: 0,
-            right: 0,
-            child: Container(
-              constraints: BoxConstraints(
-                maxHeight: MediaQuery.of(context).size.height * 0.7,
-              ),
-              decoration: const BoxDecoration(
-                color: AppTheme.surfaceColor,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(20),
-                  topRight: Radius.circular(20),
+          // Panel deslizable
+          DraggableScrollableSheet(
+            initialChildSize: 0.45,
+            minChildSize: 0.15,
+            maxChildSize: 0.85,
+            builder: (context, scrollController) {
+              return Container(
+                decoration: const BoxDecoration(
+                  color: AppTheme.surfaceColor,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
+                  ),
                 ),
-              ),
-              child: _selectedRoute == null
-                  ? _buildRouteSelector()
-                  : _buildRouteDetails(),
-            ),
+                child: _selectedRoute == null
+                    ? _buildRouteSelector(scrollController)
+                    : _buildRouteDetails(scrollController),
+              );
+            },
           ),
         ],
       ),
     );
   }
 
-  Widget _buildRouteSelector() {
+  Widget _buildRouteSelector(ScrollController scrollController) {
     final routes = RoutesData.airportRoutes;
 
-    return Column(
-      mainAxisSize: MainAxisSize.min,
+    return ListView(
+      controller: scrollController,
+      padding: EdgeInsets.zero,
       children: [
         // Handle
         Padding(
           padding: const EdgeInsets.only(top: 12),
-          child: Container(
-            width: 40,
-            height: 4,
-            decoration: BoxDecoration(
-              color: AppTheme.dividerColor,
-              borderRadius: BorderRadius.circular(2),
+          child: Center(
+            child: Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: AppTheme.dividerColor,
+                borderRadius: BorderRadius.circular(2),
+              ),
             ),
           ),
         ),
@@ -137,12 +142,14 @@ class _TripRequestPageV2State extends State<TripRequestPageV2> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              const Text(
-                'Selecciona tu ruta',
-                style: TextStyle(
-                  color: AppTheme.textPrimaryColor,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
+              Builder(
+                builder: (ctx) => Text(
+                  AppLocalizations.of(ctx)!.selectYourRoute,
+                  style: const TextStyle(
+                    color: AppTheme.textPrimaryColor,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
               Container(
@@ -155,7 +162,7 @@ class _TripRequestPageV2State extends State<TripRequestPageV2> {
                 child: Text(
                   '${routes.length} rutas',
                   style: const TextStyle(
-                    color: AppTheme.primaryLightColor,
+                    color: AppTheme.textSecondaryColor,
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
                   ),
@@ -179,31 +186,31 @@ class _TripRequestPageV2State extends State<TripRequestPageV2> {
                     color: AppTheme.errorColor,
                   ),
                   const SizedBox(height: 20),
-                  const Text(
-                    'No hay rutas disponibles',
-                    style: TextStyle(
-                      color: AppTheme.textPrimaryColor,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+                  Builder(
+                    builder: (ctx) => Text(
+                      AppLocalizations.of(ctx)!.noRoutesAvailable,
+                      style: const TextStyle(
+                        color: AppTheme.textPrimaryColor,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 10),
-                  const Text(
-                    'Revisa la consola para más detalles',
-                    style: TextStyle(
-                      color: AppTheme.textSecondaryColor,
-                      fontSize: 14,
+                  Builder(
+                    builder: (ctx) => Text(
+                      AppLocalizations.of(ctx)!.checkConsoleDetails,
+                      style: const TextStyle(
+                        color: AppTheme.textSecondaryColor,
+                        fontSize: 14,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 20),
                   ElevatedButton.icon(
-                    onPressed: () {
-                      // setState(() {
-                      //   _debugRoutes();
-                      // });
-                    },
+                    onPressed: () {},
                     icon: const Icon(Icons.refresh),
-                    label: const Text('Recargar rutas'),
+                    label: Builder(builder: (ctx) => Text(AppLocalizations.of(ctx)!.reloadRoutes)),
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppTheme.primaryLightColor,
                     ),
@@ -213,17 +220,11 @@ class _TripRequestPageV2State extends State<TripRequestPageV2> {
             ),
           )
         else
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.5,
-            child: ListView.builder(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              itemCount: routes.length,
-              itemBuilder: (context, index) {
-                final route = routes[index];
-                return _buildRouteCard(route);
-              },
-            ),
-          ),
+          ...routes.map((route) => Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: _buildRouteCard(route),
+              )),
+        const SizedBox(height: 20),
       ],
     );
   }
@@ -303,24 +304,29 @@ class _TripRequestPageV2State extends State<TripRequestPageV2> {
                 children: [
                   const Icon(
                     Icons.attach_money,
-                    color: AppTheme.primaryLightColor,
+                    color: AppTheme.textHintColor,
                     size: 20,
                   ),
                   Text(
-                    '\$${route.totalPrice.toStringAsFixed(0)} MXN',
+                    // '\$${route.totalPrice.toStringAsFixed(0)} MXN',
+                    NumberFormat.currency(
+                            locale: 'es_MX', symbol: '', decimalDigits: 2)
+                        .format(route.totalPrice),
                     style: const TextStyle(
-                      color: AppTheme.primaryLightColor,
+                      color: AppTheme.textSecondaryColor,
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   if (route.tollCost != null) ...[
                     const SizedBox(width: 4),
-                    const Text(
-                      '(incluye casetas)',
-                      style: TextStyle(
-                        color: AppTheme.textSecondaryColor,
-                        fontSize: 12,
+                    Builder(
+                      builder: (ctx) => Text(
+                        AppLocalizations.of(ctx)!.includesTolls,
+                        style: const TextStyle(
+                          color: AppTheme.textSecondaryColor,
+                          fontSize: 12,
+                        ),
                       ),
                     ),
                   ],
@@ -357,14 +363,16 @@ class _TripRequestPageV2State extends State<TripRequestPageV2> {
     );
   }
 
-  Widget _buildRouteDetails() {
+  Widget _buildRouteDetails(ScrollController scrollController) {
     if (_selectedRoute == null) return const SizedBox();
 
     final route = _selectedRoute!;
     final selectedMultiplier = _serviceMultipliers[_selectedServiceType] ?? 1.0;
     final finalPrice = route.totalPrice * selectedMultiplier;
+    final l10n = AppLocalizations.of(context)!;
 
     return SingleChildScrollView(
+      controller: scrollController,
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -393,8 +401,14 @@ class _TripRequestPageV2State extends State<TripRequestPageV2> {
                   _polylines.clear();
                 });
               },
-              icon: const Icon(Icons.arrow_back),
-              label: const Text('Cambiar ruta'),
+              icon: const Icon(
+                Icons.arrow_back,
+                color: AppTheme.textPrimaryColor,
+              ),
+              label: Text(
+                l10n.changeRoute,
+                style: const TextStyle(color: AppTheme.textPrimaryColor),
+              ),
             ),
 
             const SizedBox(height: 16),
@@ -414,34 +428,34 @@ class _TripRequestPageV2State extends State<TripRequestPageV2> {
             // Detalles del trayecto
             _buildInfoRow(
               Icons.location_on,
-              'Origen',
+              l10n.originLabel,
               route.origin.name,
             ),
             const SizedBox(height: 8),
             _buildInfoRow(
               Icons.flag,
-              'Destino',
+              l10n.destinationLabel,
               route.destination.name,
             ),
             const SizedBox(height: 8),
             _buildInfoRow(
               Icons.straighten,
-              'Distancia',
+              l10n.distanceLabel,
               '${route.distanceKm.toStringAsFixed(1)} km',
             ),
             const SizedBox(height: 8),
             _buildInfoRow(
               Icons.access_time,
-              'Tiempo estimado',
-              '${route.estimatedDurationMinutes} minutos',
+              l10n.estimatedTime,
+              '${route.estimatedDurationMinutes} ${l10n.minutes}',
             ),
 
             const SizedBox(height: 24),
 
             // Selector de tipo de servicio
-            const Text(
-              'Tipo de servicio',
-              style: TextStyle(
+            Text(
+              l10n.serviceType,
+              style: const TextStyle(
                 color: AppTheme.textPrimaryColor,
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
@@ -482,7 +496,7 @@ class _TripRequestPageV2State extends State<TripRequestPageV2> {
                             ? Icons.radio_button_checked
                             : Icons.radio_button_unchecked,
                         color: isSelected
-                            ? AppTheme.primaryLightColor
+                            ? AppTheme.textHintColor
                             : AppTheme.textSecondaryColor,
                       ),
                       const SizedBox(width: 12),
@@ -491,7 +505,7 @@ class _TripRequestPageV2State extends State<TripRequestPageV2> {
                           entry.key,
                           style: TextStyle(
                             color: isSelected
-                                ? AppTheme.primaryLightColor
+                                ? AppTheme.textSecondaryColor
                                 : AppTheme.textPrimaryColor,
                             fontSize: 16,
                             fontWeight: isSelected
@@ -501,15 +515,17 @@ class _TripRequestPageV2State extends State<TripRequestPageV2> {
                         ),
                       ),
                       Text(
-                        '\$${price.toStringAsFixed(0)} MXN',
+                        NumberFormat.currency(
+                                locale: 'es_MX', symbol: '\$', decimalDigits: 2)
+                            .format(price),
                         style: TextStyle(
                           color: isSelected
-                              ? AppTheme.primaryLightColor
+                              ? AppTheme.textSecondaryColor
                               : AppTheme.textPrimaryColor,
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
-                      ),
+                      )
                     ],
                   ),
                 ),
@@ -533,16 +549,19 @@ class _TripRequestPageV2State extends State<TripRequestPageV2> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    'Total a pagar',
-                    style: TextStyle(
+                  Text(
+                    l10n.totalToPay,
+                    style: const TextStyle(
                       color: Colors.white,
                       fontSize: 18,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
                   Text(
-                    '\$${finalPrice.toStringAsFixed(0)} MXN',
+                    // '\$${finalPrice.toStringAsFixed(0)} MXN',
+                    NumberFormat.currency(
+                            locale: 'es_MX', symbol: '\$', decimalDigits: 2)
+                        .format(finalPrice),
                     style: const TextStyle(
                       color: Colors.white,
                       fontSize: 24,
@@ -557,7 +576,7 @@ class _TripRequestPageV2State extends State<TripRequestPageV2> {
 
             // Botón confirmar
             CustomButton(
-              text: 'Solicitar viaje',
+              text: l10n.requestTrip,
               onPressed: () => _confirmTrip(),
             ),
 
@@ -580,7 +599,7 @@ class _TripRequestPageV2State extends State<TripRequestPageV2> {
               Text(
                 label,
                 style: const TextStyle(
-                  color: AppTheme.textSecondaryColor,
+                  color: AppTheme.textPrimaryColor,
                   fontSize: 12,
                 ),
               ),
@@ -673,7 +692,7 @@ class _TripRequestPageV2State extends State<TripRequestPageV2> {
     if (authState is! AuthAuthenticated) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Debes iniciar sesión')),
+          SnackBar(content: Text(AppLocalizations.of(context)!.mustLogin)),
         );
       }
       return;

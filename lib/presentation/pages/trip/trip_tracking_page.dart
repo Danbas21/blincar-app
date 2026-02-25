@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:blincar_app/l10n/app_localizations.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'dart:async';
 import '../../../core/theme/app_theme.dart';
@@ -91,7 +93,6 @@ class _TripTrackingPageState extends State<TripTrackingPage> {
             });
           },
           (trip) {
-            
             // Determinar color del vehículo basado en datos del viaje
             _determineVehicleColor(trip);
 
@@ -105,8 +106,9 @@ class _TripTrackingPageState extends State<TripTrackingPage> {
             _centerMapOnRoute(trip);
 
             // Si el viaje se completó, mostrar dialog y cerrar (solo una vez)
-            if (trip.status == TripStatus.completed && !_hasShownCompletedDialog) {
-                            _hasShownCompletedDialog = true;
+            if (trip.status == TripStatus.completed &&
+                !_hasShownCompletedDialog) {
+              _hasShownCompletedDialog = true;
               // Usar Future.delayed para evitar llamar a showDialog durante build
               WidgetsBinding.instance.addPostFrameCallback((_) {
                 if (mounted) {
@@ -122,8 +124,8 @@ class _TripTrackingPageState extends State<TripTrackingPage> {
 
   /// 📍 Escucha la ubicación del conductor en tiempo real desde Firebase
   void _startDriverLocationTracking() {
-
-    final locationRef = _database.ref('blincar/trips/${widget.tripId}/currentLocation');
+    final locationRef =
+        _database.ref('blincar/trips/${widget.tripId}/currentLocation');
 
     _locationSubscription = locationRef.onValue.listen((DatabaseEvent event) {
       if (!mounted) return;
@@ -158,14 +160,14 @@ class _TripTrackingPageState extends State<TripTrackingPage> {
 
               // Agregar punto a la ruta si es significativamente diferente
               if (_routePoints.isEmpty ||
-                  _calculateDistance(_routePoints.last, newPosition) > 0.00005) {
+                  _calculateDistance(_routePoints.last, newPosition) >
+                      0.00005) {
                 _routePoints.add(newPosition);
               }
             }
 
             // Actualizar el marcador y la polilínea
             _updateVehicleMarker();
-
           }
         } catch (e) {
           debugPrint('[TripTracking] ❌ Error en stream de ubicación: $e');
@@ -189,7 +191,8 @@ class _TripTrackingPageState extends State<TripTrackingPage> {
 
   /// Calcula la distancia aproximada entre dos puntos
   double _calculateDistance(LatLng p1, LatLng p2) {
-    return ((p1.latitude - p2.latitude).abs() + (p1.longitude - p2.longitude).abs());
+    return ((p1.latitude - p2.latitude).abs() +
+        (p1.longitude - p2.longitude).abs());
   }
 
   /// Actualiza el marcador del vehículo con rotación
@@ -274,7 +277,8 @@ class _TripTrackingPageState extends State<TripTrackingPage> {
       _markers.add(Marker(
         markerId: const MarkerId('driver'),
         position: _driverLocation!,
-        icon: _vehicleMarker ?? BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
+        icon: _vehicleMarker ??
+            BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueBlue),
         infoWindow: InfoWindow(
           title: '${trip.driverName!} 🚐',
           snippet: trip.vehiclePlate ?? 'Suburban Ejecutiva',
@@ -357,84 +361,87 @@ class _TripTrackingPageState extends State<TripTrackingPage> {
 
   void _showTripCompletedDialog() {
     if (!mounted) {
-            return;
+      return;
     }
 
-    
     showDialog(
       context: context,
       barrierDismissible: false,
-      builder: (context) => AlertDialog(
-        backgroundColor: AppTheme.surfaceColor,
-        title: const Row(
-          children: [
-            Icon(Icons.check_circle, color: AppTheme.successColor, size: 32),
-            SizedBox(width: 12),
-            Text(
-              'Viaje Completado',
-              style: TextStyle(color: AppTheme.textPrimaryColor),
-            ),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Text(
-              '¡Tu viaje ha finalizado con éxito!',
-              style: TextStyle(color: AppTheme.textSecondaryColor),
-            ),
-            const SizedBox(height: 16),
-            if (_currentTrip != null) ...[
-              _buildInfoRow('Total', '\$${_currentTrip!.totalPrice.toStringAsFixed(2)}'),
-              _buildInfoRow('Duración',
-                  _formatDuration(_currentTrip!.tripDuration)),
-              _buildInfoRow('Distancia',
-                  '${_currentTrip!.route.distanceKm.toStringAsFixed(1)} km'),
+      builder: (context) {
+        final l10n = AppLocalizations.of(context)!;
+        return AlertDialog(
+          backgroundColor: AppTheme.surfaceColor,
+          title: Row(
+            children: [
+              const Icon(Icons.check_circle, color: AppTheme.successColor, size: 32),
+              const SizedBox(width: 12),
+              Text(
+                l10n.tripCompletedTitle,
+                style: const TextStyle(color: AppTheme.textPrimaryColor),
+              ),
             ],
+          ),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                l10n.tripCompletedMessage,
+                style: const TextStyle(color: AppTheme.textSecondaryColor),
+              ),
+              const SizedBox(height: 16),
+              if (_currentTrip != null) ...[
+                _buildInfoRow(
+                    l10n.totalLabel, '\$${_currentTrip!.totalPrice.toStringAsFixed(2)}'),
+                _buildInfoRow(
+                    l10n.durationLabel, _formatDuration(_currentTrip!.tripDuration)),
+                _buildInfoRow(l10n.distanceLabel,
+                    '${_currentTrip!.route.distanceKm.toStringAsFixed(1)} km'),
+              ],
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () async {
+                // Limpiar tripId activo del storage
+                final storageService = getIt<StorageService>();
+                await storageService.clearActiveTripId();
+
+                if (mounted) {
+                  Navigator.of(context).pop();
+                  Navigator.of(context).popUntil((route) => route.isFirst);
+                }
+              },
+              child: Text(
+                l10n.skipButton,
+                style: const TextStyle(color: AppTheme.textSecondaryColor),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                // Limpiar tripId activo del storage
+                final storageService = getIt<StorageService>();
+                await storageService.clearActiveTripId();
+
+                // Cerrar el dialog
+                if (mounted) {
+                  Navigator.of(context).pop();
+                }
+
+                // Mostrar página de calificación
+                if (mounted) {
+                  _showRatingPage();
+                }
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppTheme.successColor,
+                foregroundColor: Colors.white,
+              ),
+              child: Text(l10n.rateTrip),
+            ),
           ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () async {
-              // Limpiar tripId activo del storage
-              final storageService = getIt<StorageService>();
-              await storageService.clearActiveTripId();
-
-              if (mounted) {
-                Navigator.of(context).pop();
-                Navigator.of(context).popUntil((route) => route.isFirst);
-              }
-            },
-            child: const Text(
-              'Omitir',
-              style: TextStyle(color: AppTheme.textSecondaryColor),
-            ),
-          ),
-          ElevatedButton(
-            onPressed: () async {
-              // Limpiar tripId activo del storage
-              final storageService = getIt<StorageService>();
-              await storageService.clearActiveTripId();
-
-              // Cerrar el dialog
-              if (mounted) {
-                Navigator.of(context).pop();
-              }
-
-              // Mostrar página de calificación
-              if (mounted) {
-                _showRatingPage();
-              }
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppTheme.successColor,
-              foregroundColor: Colors.white,
-            ),
-            child: const Text('Calificar viaje'),
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -476,6 +483,7 @@ class _TripTrackingPageState extends State<TripTrackingPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     // Prevenir que el usuario salga accidentalmente con el botón back
     return PopScope(
       canPop: false,
@@ -484,30 +492,36 @@ class _TripTrackingPageState extends State<TripTrackingPage> {
         // Mostrar confirmación antes de salir
         final shouldPop = await showDialog<bool>(
           context: context,
-          builder: (context) => AlertDialog(
-            backgroundColor: AppTheme.surfaceColor,
-            title: const Text(
-              '¿Salir del viaje?',
-              style: TextStyle(color: AppTheme.textPrimaryColor),
-            ),
-            content: const Text(
-              'Tu viaje está en curso. ¿Estás seguro de que quieres salir? Podrás regresar desde la página principal.',
-              style: TextStyle(color: AppTheme.textSecondaryColor),
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(false),
-                child: const Text('Cancelar'),
+          builder: (context) {
+            final dialogL10n = AppLocalizations.of(context)!;
+            return AlertDialog(
+              backgroundColor: AppTheme.surfaceColor,
+              title: Text(
+                dialogL10n.exitTripTitle,
+                style: const TextStyle(color: AppTheme.textPrimaryColor),
               ),
-              TextButton(
-                onPressed: () => Navigator.of(context).pop(true),
-                child: const Text(
-                  'Salir',
-                  style: TextStyle(color: AppTheme.errorColor),
+              content: Text(
+                dialogL10n.exitTripMessage,
+                style: const TextStyle(color: AppTheme.textSecondaryColor),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: Text(
+                    dialogL10n.cancel,
+                    style: const TextStyle(color: AppTheme.textPrimaryColor),
+                  ),
                 ),
-              ),
-            ],
-          ),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(true),
+                  child: Text(
+                    dialogL10n.exitButton,
+                    style: const TextStyle(color: AppTheme.errorColor),
+                  ),
+                ),
+              ],
+            );
+          },
         );
         if (shouldPop == true && mounted) {
           Navigator.of(context).pop();
@@ -515,103 +529,103 @@ class _TripTrackingPageState extends State<TripTrackingPage> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: const Text('Viaje en Curso'),
+          title: Text(l10n.tripInProgressTitle),
           backgroundColor: AppTheme.primaryLightColor,
           foregroundColor: Colors.white,
           elevation: 0,
         ),
-      body: _isLoading
-          ? const Center(
-              child: CircularProgressIndicator(),
-            )
-          : _error != null
-              ? Center(
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+        body: _isLoading
+            ? const Center(
+                child: CircularProgressIndicator(),
+              )
+            : _error != null
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(Icons.error_outline,
+                            size: 64, color: AppTheme.errorColor),
+                        const SizedBox(height: 16),
+                        Text(
+                          l10n.errorLoadingTrip,
+                          style: const TextStyle(
+                            color: AppTheme.textPrimaryColor,
+                            fontSize: 18,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          _error!,
+                          style: const TextStyle(
+                            color: AppTheme.textSecondaryColor,
+                            fontSize: 14,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ],
+                    ),
+                  )
+                : Stack(
                     children: [
-                      const Icon(Icons.error_outline,
-                          size: 64, color: AppTheme.errorColor),
-                      const SizedBox(height: 16),
-                      Text(
-                        'Error al cargar el viaje',
-                        style: const TextStyle(
-                          color: AppTheme.textPrimaryColor,
-                          fontSize: 18,
-                        ),
+                      // Mapa
+                      GoogleMap(
+                        initialCameraPosition: _initialPosition,
+                        markers: _markers,
+                        polylines: _polylines,
+                        onMapCreated: (controller) {
+                          _mapController = controller;
+                          if (_currentTrip != null) {
+                            _centerMapOnRoute(_currentTrip!);
+                          }
+                        },
+                        myLocationEnabled: true,
+                        myLocationButtonEnabled: true,
+                        zoomControlsEnabled: true,
+                        mapToolbarEnabled: false,
                       ),
-                      const SizedBox(height: 8),
-                      Text(
-                        _error!,
-                        style: const TextStyle(
-                          color: AppTheme.textSecondaryColor,
-                          fontSize: 14,
+
+                      // Panel de información del viaje
+                      Positioned(
+                        top: 16,
+                        left: 16,
+                        right: 16,
+                        child: _buildTripInfoPanel(),
+                      ),
+
+                      // Botón de chat con conductor
+                      if (_currentTrip != null &&
+                          _currentTrip!.isActive &&
+                          _currentTrip!.driverName != null)
+                        Positioned(
+                          bottom: 100,
+                          right: 24,
+                          child: _buildChatButton(),
                         ),
-                        textAlign: TextAlign.center,
+
+                      // Botón de pánico
+                      Positioned(
+                        bottom: 24,
+                        right: 24,
+                        child: _buildPanicButton(),
                       ),
                     ],
                   ),
-                )
-              : Stack(
-                  children: [
-                    // Mapa
-                    GoogleMap(
-                      initialCameraPosition: _initialPosition,
-                      markers: _markers,
-                      polylines: _polylines,
-                      onMapCreated: (controller) {
-                        _mapController = controller;
-                        if (_currentTrip != null) {
-                          _centerMapOnRoute(_currentTrip!);
-                        }
-                      },
-                      myLocationEnabled: true,
-                      myLocationButtonEnabled: true,
-                      zoomControlsEnabled: true,
-                      mapToolbarEnabled: false,
+        floatingActionButton: _currentTrip != null && _currentTrip!.isActive
+            ? FloatingActionButton.extended(
+                onPressed: () {
+                  // TODO: Implementar finalización de viaje (solo para driver)
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(l10n.onlyDriverCanEnd),
                     ),
-
-                    // Panel de información del viaje
-                    Positioned(
-                      top: 16,
-                      left: 16,
-                      right: 16,
-                      child: _buildTripInfoPanel(),
-                    ),
-
-                    // Botón de chat con conductor
-                    if (_currentTrip != null &&
-                        _currentTrip!.isActive &&
-                        _currentTrip!.driverName != null)
-                      Positioned(
-                        bottom: 100,
-                        right: 24,
-                        child: _buildChatButton(),
-                      ),
-
-                    // Botón de pánico
-                    Positioned(
-                      bottom: 24,
-                      right: 24,
-                      child: _buildPanicButton(),
-                    ),
-                  ],
-                ),
-      floatingActionButton: _currentTrip != null && _currentTrip!.isActive
-          ? FloatingActionButton.extended(
-              onPressed: () {
-                // TODO: Implementar finalización de viaje (solo para driver)
-                ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text(
-                        'Solo el conductor puede finalizar el viaje'),
-                  ),
-                );
-              },
-              backgroundColor: AppTheme.warningColor,
-              icon: const Icon(Icons.info_outline),
-              label: const Text('Esperando finalización'),
-            )
-          : null,
+                  );
+                },
+                backgroundColor: AppTheme.warningColor,
+                icon: const Icon(Icons.info_outline),
+                label: Text(l10n.waitingCompletion),
+              )
+            : null,
+        floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
       ), // Scaffold
     ); // PopScope
   }
@@ -620,6 +634,7 @@ class _TripTrackingPageState extends State<TripTrackingPage> {
     if (_currentTrip == null) return const SizedBox.shrink();
 
     final trip = _currentTrip!;
+    final l10n = AppLocalizations.of(context)!;
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -655,10 +670,10 @@ class _TripTrackingPageState extends State<TripTrackingPage> {
               const SizedBox(width: 8),
               Text(
                 trip.isActive
-                    ? 'En Curso'
+                    ? l10n.statusInProgress
                     : trip.isPending
-                        ? 'Pendiente'
-                        : 'Asignado',
+                        ? l10n.statusPending
+                        : l10n.statusAssigned,
                 style: const TextStyle(
                   color: AppTheme.textPrimaryColor,
                   fontSize: 16,
@@ -667,9 +682,12 @@ class _TripTrackingPageState extends State<TripTrackingPage> {
               ),
               const Spacer(),
               Text(
-                '\$${trip.totalPrice.toStringAsFixed(2)}',
+                // '\$${trip.totalPrice.toStringAsFixed(2)}',
+                NumberFormat.currency(
+                        locale: 'es_MX', symbol: '\$', decimalDigits: 2)
+                    .format(trip.totalPrice),
                 style: const TextStyle(
-                  color: AppTheme.primaryLightColor,
+                  color: AppTheme.textSecondaryColor,
                   fontSize: 18,
                   fontWeight: FontWeight.bold,
                 ),
@@ -728,8 +746,8 @@ class _TripTrackingPageState extends State<TripTrackingPage> {
                     if (phone == null || phone.isEmpty) {
                       if (context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Número de teléfono no disponible'),
+                          SnackBar(
+                            content: Text(AppLocalizations.of(context)!.phoneNotAvailable),
                             backgroundColor: AppTheme.errorColor,
                           ),
                         );
@@ -743,8 +761,8 @@ class _TripTrackingPageState extends State<TripTrackingPage> {
                     } else {
                       if (context.mounted) {
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('No se puede realizar la llamada'),
+                          SnackBar(
+                            content: Text(AppLocalizations.of(context)!.cannotMakeCall),
                             backgroundColor: AppTheme.errorColor,
                           ),
                         );
@@ -807,7 +825,8 @@ class _TripTrackingPageState extends State<TripTrackingPage> {
                 GestureDetector(
                   onTap: _toggleVehicleColor,
                   child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: AppTheme.cardColor,
                       borderRadius: BorderRadius.circular(12),
@@ -988,12 +1007,14 @@ class _TripTrackingPageState extends State<TripTrackingPage> {
       },
       backgroundColor: AppTheme.errorColor,
       icon: const Icon(Icons.warning_rounded, color: Colors.white, size: 28),
-      label: const Text(
-        'PÁNICO',
-        style: TextStyle(
-          color: Colors.white,
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
+      label: Builder(
+        builder: (ctx) => Text(
+          AppLocalizations.of(ctx)!.panicButtonLabel,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
       heroTag: 'panic',

@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:blincar_app/l10n/app_localizations.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/services/storage_service.dart';
 import '../../../core/services/service_locator.dart';
@@ -111,10 +112,11 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppTheme.backgroundColor,
       appBar: AppBar(
-        title: const Text('Notificaciones'),
+        title: Text(l10n.notifications),
         backgroundColor: AppTheme.backgroundColor,
         foregroundColor: AppTheme.textPrimaryColor,
         elevation: 0,
@@ -123,16 +125,16 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
         padding: const EdgeInsets.all(24),
         children: [
           // Estado de permisos
-          _buildPermissionCard(),
+          _buildPermissionCard(l10n),
 
           const SizedBox(height: 24),
 
           // Tipos de notificaciones
-          _buildSectionTitle('Tipos de notificaciones'),
+          _buildSectionTitle(l10n.notificationTypes),
           const SizedBox(height: 12),
           _buildNotificationToggle(
-            'Viajes',
-            'Actualizaciones de estado, llegada del conductor, etc.',
+            l10n.notifTrips,
+            l10n.notifTripsDescription,
             Icons.directions_car,
             _tripNotifications,
             (value) {
@@ -141,8 +143,8 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
             },
           ),
           _buildNotificationToggle(
-            'Pagos',
-            'Confirmaciones de pago y recibos',
+            l10n.notifPayments,
+            l10n.notifPaymentsDescription,
             Icons.payment,
             _paymentNotifications,
             (value) {
@@ -151,8 +153,8 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
             },
           ),
           _buildNotificationToggle(
-            'Seguridad',
-            'Alertas de seguridad y actividad sospechosa',
+            l10n.notifSecurity,
+            l10n.notifSecurityDescription,
             Icons.security,
             _securityNotifications,
             (value) {
@@ -162,8 +164,8 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
             isImportant: true,
           ),
           _buildNotificationToggle(
-            'Promociones',
-            'Ofertas especiales y descuentos',
+            l10n.notifPromotions,
+            l10n.notifPromotionsDescription,
             Icons.local_offer,
             _promoNotifications,
             (value) {
@@ -175,11 +177,11 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
           const SizedBox(height: 24),
 
           // Sonido y vibración
-          _buildSectionTitle('Sonido y vibración'),
+          _buildSectionTitle(l10n.soundVibration),
           const SizedBox(height: 12),
           _buildSettingTile(
-            'Sonido',
-            'Reproducir sonido con las notificaciones',
+            l10n.soundLabel,
+            l10n.soundDescription,
             Icons.volume_up,
             Switch(
               value: _soundEnabled,
@@ -191,8 +193,8 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
             ),
           ),
           _buildSettingTile(
-            'Vibración',
-            'Vibrar con las notificaciones',
+            l10n.vibrationLabel,
+            l10n.vibrationDescription,
             Icons.vibration,
             Switch(
               value: _vibrationEnabled,
@@ -207,11 +209,11 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
           const SizedBox(height: 24),
 
           // Horario de No Molestar
-          _buildSectionTitle('No molestar'),
+          _buildSectionTitle(l10n.doNotDisturb),
           const SizedBox(height: 12),
           _buildSettingTile(
-            'Horario de silencio',
-            'Silenciar notificaciones durante un horario',
+            l10n.quietHours,
+            l10n.quietHoursDescription,
             Icons.do_not_disturb_on,
             Switch(
               value: _quietHoursEnabled,
@@ -224,7 +226,7 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
           ),
           if (_quietHoursEnabled) ...[
             _buildTimePicker(
-              'Inicio',
+              l10n.startTime,
               _quietStart,
               (time) {
                 setState(() => _quietStart = time);
@@ -233,7 +235,7 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
               },
             ),
             _buildTimePicker(
-              'Fin',
+              l10n.endTime,
               _quietEnd,
               (time) {
                 setState(() => _quietEnd = time);
@@ -258,7 +260,7 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
                   const SizedBox(width: 12),
                   Expanded(
                     child: Text(
-                      'Las alertas de seguridad siempre se mostrarán',
+                      l10n.securityAlertsAlways,
                       style: TextStyle(
                         color: AppTheme.warningColor.withValues(alpha: 0.8),
                         fontSize: 12,
@@ -274,7 +276,7 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
     );
   }
 
-  Widget _buildPermissionCard() {
+  Widget _buildPermissionCard(AppLocalizations l10n) {
     if (_isLoadingPermissions) {
       return Container(
         padding: const EdgeInsets.all(20),
@@ -325,8 +327,8 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
               children: [
                 Text(
                   _permissionsGranted
-                      ? 'Notificaciones activas'
-                      : 'Notificaciones desactivadas',
+                      ? l10n.notificationsEnabled
+                      : l10n.notificationsDisabled,
                   style: TextStyle(
                     color: _permissionsGranted
                         ? AppTheme.successColor
@@ -338,8 +340,8 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
                 const SizedBox(height: 4),
                 Text(
                   _permissionsGranted
-                      ? 'Recibirás notificaciones de Blincar'
-                      : 'Habilita para recibir alertas importantes',
+                      ? l10n.notificationsEnabledDesc
+                      : l10n.enableSystemNotifications,
                   style: TextStyle(
                     color: AppTheme.textSecondaryColor.withValues(alpha: 0.8),
                     fontSize: 12,
@@ -357,7 +359,7 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
                 padding:
                     const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               ),
-              child: const Text('Activar'),
+              child: Text(l10n.enableButton),
             ),
         ],
       ),
@@ -435,12 +437,14 @@ class _NotificationSettingsPageState extends State<NotificationSettingsPage> {
                           color: AppTheme.warningColor.withValues(alpha: 0.2),
                           borderRadius: BorderRadius.circular(4),
                         ),
-                        child: const Text(
-                          'Importante',
-                          style: TextStyle(
-                            color: AppTheme.warningColor,
-                            fontSize: 10,
-                            fontWeight: FontWeight.w600,
+                        child: Builder(
+                          builder: (ctx) => Text(
+                            AppLocalizations.of(ctx)!.importantLabel,
+                            style: const TextStyle(
+                              color: AppTheme.warningColor,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                         ),
                       ),
